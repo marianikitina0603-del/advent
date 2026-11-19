@@ -36,7 +36,7 @@
 </section>
 <section id="sceneScreen" class="scene hidden">
 <div class="scene-tabs"><button class="btn secondary" id="sceneBack">← К карте</button><span class="pill" id="sceneDate">1 декабря</span><span class="pill" id="sceneMode">ОГЭ</span></div>
-<div class="scene-visual"><img src="assets/locations/day01_street_lanterns.png" alt="Зимняя улица с погасшими фонарями и панелью управления"><span id="visualStatus" class="visual-status">0 из 6 фонарей</span><button type="button" id="shieldBtn" class="scene-interact" aria-label="Нажать на распределительный щит и открыть задания">⚙ Открыть щит</button><div class="light-dots" id="lightDots" aria-hidden="true"></div></div>
+<div class="scene-visual"><img id="sceneStateBase" src="assets/locations/day01_street_lanterns.png" alt="Зимняя улица Хронбурга, состояние освещения"><img id="sceneStateOverlay" class="state-overlay" src="assets/locations/day01_street_lanterns_state1.webp" alt="" aria-hidden="true"><span id="visualStatus" class="visual-status">0 из 6 фонарей</span><button type="button" id="shieldBtn" class="scene-interact" aria-label="Нажать на распределительный щит и открыть задания">⚙ Открыть щит</button></div>
 <div class="scene-progress" id="sceneProgress" aria-label="Этапы ремонта освещения"></div>
 <h2>День 1. Огонёк надежды</h2>
 <div class="storyline"><img src="assets/characters/character_tik.png" alt="Механическая сова Тик"><p id="storyText">Тик: Все фонари погасли! Реши три математические загадки, чтобы вернуть свет на улицы Хронбурга.</p></div>
@@ -105,9 +105,20 @@ function refreshSide(){$("ogeBtn").className="btn "+(exam==="oge"?"selected":"se
 renderMap()}
 function setExam(e){closeTask();exam=e;progress=load();index=0;review=false;history.replaceState({},'',location.pathname+"?exam="+exam+(preview?"&preview=1":""));refreshSide();if(scene)openDay(1)}
 function showScene(v){if(!v)closeTask();scene=v;$("mapScreen").classList.toggle("hidden",v);$("sceneScreen").classList.toggle("hidden",!v);$("homeBtn").classList.toggle("hidden",!v);window.scrollTo({top:0,behavior:"smooth"})}
-function openDay(d){if(!available(d))return;review=isDone();index=review?0:([0,1,2].find(i=>!progress.solved.includes(i))??0);showScene(true);renderQuestion();updateScene();if(!isDone())openTask();else finishReviewScene()}
+function openDay(d){if(!available(d))return;review=isDone();index=review?0:([0,1,2].find(i=>!progress.solved.includes(i))??0);showScene(true);setSceneState(isDone()?3:solved().length,true);renderQuestion();updateScene();if(!isDone())openTask();else finishReviewScene()}
 function solved(){return progress.solved.filter(n=>Number.isInteger(n)&&n>=0&&n<=2)}
-function renderLights(){const el=$("lightDots");el.replaceChildren();const count=(isDone()?3:solved().length)*2;for(let i=0;i<6;i++){const dot=document.createElement("div");dot.className="light "+(i<count?"on":"");el.append(dot)}$("visualStatus").textContent=count+" из 6 фонарей";$("shieldBtn").classList.toggle("is-complete",count===6);$("shieldBtn").textContent=count===6?"✓ Щит восстановлен":"⚙ Открыть щит";updateCircuits()}
+const sceneStates=["assets/locations/day01_street_lanterns.png","assets/locations/day01_street_lanterns_state1.webp","assets/locations/day01_street_lanterns_state2.webp","assets/locations/day01_street_lanterns_state3.webp"];
+let currentSceneState=0,sceneTransitionVersion=0;
+sceneStates.slice(1).forEach(src=>{const img=new Image();img.src=src});
+function setSceneState(state,immediate=false){
+state=Math.max(0,Math.min(3,state));if(state===currentSceneState&&!immediate)return;
+const version=++sceneTransitionVersion;const base=$("sceneStateBase"),overlay=$("sceneStateOverlay");
+if(immediate){overlay.style.transition="none";base.src=sceneStates[state];overlay.style.opacity="0";currentSceneState=state;return}
+overlay.style.transition="none";overlay.style.opacity="0";overlay.src=sceneStates[state];
+const reveal=()=>{if(version!==sceneTransitionVersion)return;requestAnimationFrame(()=>{if(version!==sceneTransitionVersion)return;overlay.style.transition="opacity 1000ms ease";overlay.style.opacity="1";setTimeout(()=>{if(version!==sceneTransitionVersion)return;base.src=sceneStates[state];overlay.style.opacity="0";currentSceneState=state},1080)})};
+if(overlay.complete&&overlay.naturalWidth>0)reveal();else{overlay.onload=reveal;overlay.onerror=()=>{if(version!==sceneTransitionVersion)return;base.src=sceneStates[state];overlay.style.opacity="0";currentSceneState=state}}
+}
+function renderLights(){const count=(isDone()?3:solved().length)*2;setSceneState(count/2);$("visualStatus").textContent=count+" из 6 фонарей";$("shieldBtn").classList.toggle("is-complete",count===6);$("shieldBtn").textContent=count===6?"✓ Щит восстановлен":"⚙ Открыть щит";updateCircuits()}
 let soundEnabled=false, audioContext=null;
 function playTone(freq){if(!soundEnabled)return;try{audioContext=audioContext||new (window.AudioContext||window.webkitAudioContext)();const osc=audioContext.createOscillator(),gain=audioContext.createGain();osc.type="sine";osc.frequency.setValueAtTime(freq,audioContext.currentTime);gain.gain.setValueAtTime(.08,audioContext.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+.4);osc.connect(gain);gain.connect(audioContext.destination);osc.start();osc.stop(audioContext.currentTime+.42)}catch(e){}}
 function playVictory(){[523,659,784,1046].forEach((freq,i)=>setTimeout(()=>playTone(freq),i*190))}
