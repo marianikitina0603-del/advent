@@ -1,0 +1,50 @@
+
+/* Chronburg, day one: game-quality scene polish */
+.scene{background:radial-gradient(circle at 40% 0%,#233f60,#0f2039 65%);padding:clamp(12px,2vw,24px)}
+.scene-visual{isolation:isolate;box-shadow:0 18px 36px #01081690,inset 0 0 55px #07142a}
+.scene-visual:after{content:"";pointer-events:none;position:absolute;inset:0;background:linear-gradient(0deg,#071528bb,transparent 34%,#07152822);z-index:1}
+.scene-visual .light-dots{top:auto;bottom:7%;left:11%;right:11%;z-index:3;display:grid;grid-template-columns:repeat(6,1fr);gap:1.6%}
+.scene-visual .light{justify-self:center;width:clamp(13px,2.2vw,27px);height:clamp(13px,2.2vw,27px);background:radial-gradient(circle,#4b6476,#1a2639);border:2px solid #b5a57c;box-shadow:0 0 0 3px #10192a99;position:relative;transition:background .6s,box-shadow .6s,transform .6s}
+.scene-visual .light.on{background:#fff7b0;box-shadow:0 0 12px 5px #ffe8a8,0 0 37px 17px #f3b95788;transform:scale(1.08)}
+.scene-visual .light.on:after{content:"✦";font-size:12px;position:absolute;top:-18px;left:calc(50% - 5px);color:#fff4be;animation:lightRise 1.5s ease-out}
+@keyframes lightRise{0%{opacity:0;transform:translateY(8px)}40%{opacity:1}100%{opacity:.65;transform:translateY(-6px)}}
+.scene-visual .light-dots:before{content:"СЕТЬ ФОНАРЕЙ";position:absolute;bottom:calc(100% + 10px);left:0;font-size:clamp(9px,1.2vw,12px);font-weight:900;letter-spacing:.17em;color:#ffe6ad;text-shadow:0 2px 9px #000}
+.scene-visual .scene-interact{position:absolute;left:40%;top:69%;transform:translate(-50%,-50%);z-index:5;border:2px solid #f9dca0;border-radius:999px;background:#182b47ed;box-shadow:0 0 0 7px #efbe5a22,0 5px 23px #000b;padding:10px 15px;color:#fff4d7;font-size:clamp(10px,1.3vw,14px);font-weight:800;animation:panelPulse 3s ease-in-out infinite}
+.scene-visual .scene-interact:hover{background:#5a482e}
+@keyframes panelPulse{50%{box-shadow:0 0 0 13px #efbe5a11,0 0 20px #f7bc6b88}}
+.scene-visual .scene-interact.is-complete{border-color:#97e4c6;background:#1b594e;animation:none}
+.scene-visual .visual-status{position:absolute;z-index:4;left:12px;top:12px;border:1px solid #d7ba7a;background:#111e36ed;color:#f1d7a6;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:900}
+.scene .scene-progress{display:flex;gap:8px;flex-wrap:wrap;margin:11px 0 2px}
+.scene .circuit{flex:1;min-width:160px;border:1px solid #67839b;background:#102642;border-radius:13px;padding:11px 13px;display:flex;align-items:center;gap:10px;color:#e1e8e9;text-align:left;box-shadow:inset 0 0 0 1px #111d32}
+.scene .circuit span:first-child{background:#293d57;border:1px solid #7c8d9c;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:#ffdb97;flex:none;font-weight:900}
+.scene .circuit strong{font-size:13px}.scene .circuit small{display:block;font-size:11px;color:#adbed1}
+.scene .circuit.active{border-color:#efc477;background:#463826}.scene .circuit.complete{border-color:#8fe7ca;background:#17453e}.scene .circuit.complete span:first-child{background:#276f5a;color:#d6ffe8}
+.scene .circuit:disabled{cursor:default}.scene .circuit:focus-visible{outline:3px solid white}
+.scene .scene-actions{background:#132b4a;border-radius:14px;padding:12px 16px;border:1px solid #5e7896;align-items:center}
+.scene .storyline{border-width:2px;box-shadow:0 10px 30px #0005}
+.scene .storyline p{font-size:clamp(13px,1.6vw,15px)}
+.scene .scene-note{font-size:12px;color:#bed3e5;line-height:1.6;margin:12px 0 2px}
+.scene .dialog{background:linear-gradient(120deg,#1d433c,#15283e);border-color:#eac476}
+.scene .dialog h3{color:#fff1bb}
+#winPanel{position:relative;overflow:hidden;animation:rewardReveal .65s ease both}
+@keyframes rewardReveal{from{opacity:0;transform:translateY(16px) scale(.99)}to{opacity:1;transform:none}}
+#winPanel .reward-feature{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin:13px 0;background:#122d3c;border:1px solid #b99b65;border-radius:14px;padding:12px}
+#winPanel .reward-feature img{width:110px;height:110px;object-fit:contain;filter:drop-shadow(0 0 15px #e9be5a55)}
+#winPanel .reward-feature strong{color:#ffe09e;font-size:18px}
+.scene .task-modal .modal-inner{scrollbar-color:#b48c58 #142944}
+.scene .mathcard{box-shadow:inset 0 0 45px #9c814520}
+.scene .mathcard .formula{padding:5px 0}
+.scene .mathcard #feedback{padding:13px 15px;border-left:4px solid #a68d63}
+.scene .mathcard #feedback.good{border-color:#237d55}
+.scene .mathcard #feedback.bad{border-color:#c3584a}
+.scene .mathcard .helper button{min-height:39px}
+#soundBtn{font-size:12px}
+@media(max-width:680px){
+.scene-visual .scene-interact{left:48%;top:65%;max-width:145px;padding:8px 9px}
+.scene-visual .visual-status{font-size:10px;padding:5px 8px;left:6px;top:6px}
+.scene .scene-progress{display:grid;grid-template-columns:1fr}
+.scene .circuit{min-width:0}.scene .scene-actions{flex-direction:column;align-items:stretch}
+.scene .scene-actions .btn{width:100%}
+#winPanel .reward-feature{justify-content:center;text-align:center}
+}
+@media(prefers-reduced-motion:reduce){.scene-visual .scene-interact,#winPanel{animation:none!important}}
