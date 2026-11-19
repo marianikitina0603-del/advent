@@ -104,7 +104,7 @@ function refreshSide(){$("ogeBtn").className="btn "+(exam==="oge"?"selected":"se
 renderMap()}
 function setExam(e){exam=e;progress=load();index=0;review=false;history.replaceState({},'',location.pathname+"?exam="+exam+(preview?"&preview=1":""));refreshSide();if(scene)openDay(1)}
 function showScene(v){if(!v)closeTask();scene=v;$("mapScreen").classList.toggle("hidden",v);$("sceneScreen").classList.toggle("hidden",!v);$("homeBtn").classList.toggle("hidden",!v);window.scrollTo({top:0,behavior:"smooth"})}
-function openDay(d){if(!available(d))return;index=0;review=isDone();showScene(true);renderQuestion();closeTask()}
+function openDay(d){if(!available(d))return;index=0;review=isDone();showScene(true);renderQuestion();openTask()}
 function solved(){return progress.solved.filter(n=>Number.isInteger(n)&&n>=0&&n<=2)}
 function renderLights(){const el=$("lightDots");el.replaceChildren();const count=(review?3:solved().length)*2;for(let i=0;i<6;i++){const dot=document.createElement("div");dot.className="light "+(i<count?"on":"");el.append(dot)}}
 let focusBeforeModal=null;
