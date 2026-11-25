@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
 <link rel="stylesheet" href="css/chronburg-shared.css">
+<link rel="stylesheet" href="css/chronburg-collection.css">
 <style>
 :root{color-scheme:dark;--bg:#0a1326;--panel:#132440ed;--panel2:#172b4a;--gold:#efc477;--line:#56708a88;--text:#f7f1df;--muted:#bdcde0;--mint:#8ee4c6}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -15%,#29456a,#0a1326 70%);font-family:Manrope,Arial,sans-serif;color:var(--text);min-height:100vh}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #fff0a2;outline-offset:3px}
@@ -60,12 +61,13 @@
 <div><div class="tag">Выбери экзамен</div><div class="exam-choice" style="margin-top:9px"><button id="ogeBtn" class="btn selected">ОГЭ · 9 класс</button><button id="egeBtn" class="btn secondary">ЕГЭ · профиль</button></div><p class="muted">Единая история, разные математические испытания и отдельный прогресс.</p></div>
 <div><h2>Подготовка к празднику</h2><div style="display:flex;justify-content:space-between;gap:10px"><span class="muted">Собрано искр времени</span><b id="progressNumber">0 / 24</b></div><div class="progressbar" style="margin-top:9px"><div id="progressFill"></div></div></div>
 <div class="tik"><img src="assets/characters/character_tik.png" alt="Тик"><p id="tikLine">«Привет! Я Тик, твой помощник. Хронбургу нужна твоя помощь, чтобы вернуть Новый год!»</p></div>
-<div><h2>Твоя коллекция</h2><div id="reward" class="ornament locked"><img src="assets/ornaments/ornament_day01_lantern.png" alt="Игрушка-фонарик"><div><b>Золотой фонарик</b><p class="muted" id="rewardStatus">Заверши день 1, чтобы получить.</p></div></div><div id="reward2" class="ornament locked" style="margin-top:10px"><img src="assets/ornaments/ornament_day02_gingerbread.png" alt="Новогодний пряник"><div><b>Пряник Марты</b><p class="muted" id="reward2Status">Заверши день 2, чтобы получить.</p></div></div><div id="reward3" class="ornament locked" style="margin-top:10px"><img src="assets/ornaments/ornament_day03_mailbox.png" alt="Почтовый ящик Хронбурга"><div><b>Новогодний почтовый ящик</b><p class="muted" id="reward3Status">Заверши день 3, чтобы получить.</p></div></div><div class="tree-preview"><img class="tree-base" src="assets/trees/christmas_tree_empty.png" alt="Новогодняя ёлка Хронбурга"><img id="placedOrnament" class="placed placed-lantern hidden" src="assets/ornaments/ornament_day01_lantern.png" alt="Полученный фонарик на ёлке"><img id="placedOrnament2" class="placed placed-gingerbread hidden" src="assets/ornaments/ornament_day02_gingerbread.png" alt="Пряник Марты на ёлке"><img id="placedOrnament3" class="placed placed-mailbox hidden" src="assets/ornaments/ornament_day03_mailbox.png" alt="Почтовый ящик на ёлке"></div><p class="chronburg-tree-caption">Общая ёлка Хронбурга: украшения появляются после выполненных дней.</p></div>
+<div id="chronburgCollection"></div>
 <div class="notice" id="releaseNotice">🔐 Пилотная версия: доступен только полностью подготовленный день 1. Остальные дни добавим по мере разработки. Автоматическая защищённая публикация ещё не подключена.</div>
 <div><button class="btn secondary" id="importBtn" style="width:100%">↑ Загрузить сохранение</button><input type="file" id="importInput" accept="application/json,.json" class="hidden"><button class="btn secondary" id="resetBtn" style="width:100%;margin-top:8px">↻ Сбросить прогресс</button></div>
 </aside>
 </div><p class="footer">Хронбург · Прототип 0.4 · 2026 · Дата на устройстве используется лишь для визуального календаря. Защищённое расписание публикаций будет настроено отдельно.</p>
 </div>
+<script src="js/chronburg-collection.js"></script>
 <script src="data/day01.js"></script>
 <script>
 "use strict";
@@ -79,6 +81,7 @@ const params=new URLSearchParams(location.search);const preview=params.has("prev
 function dateNow(){let p=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Moscow",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date());let x={};p.forEach(e=>x[e.type]=e.value);return {year:+x.year,month:+x.month,day:+x.day}}
 const now=dateNow();const unlocked=preview?24:now.year>2026?24:now.year<2026?0:now.month>12?24:now.month<12?0:Math.min(24,now.day);
 let exam=params.get("exam")==="ege"?"ege":"oge";let scene=false;let index=0;let review=false;
+const collectionView=window.ChronburgCollection.mount(document.getElementById("chronburgCollection"),exam);
 function storageKey(){return "chronburg:2026:"+exam+":v1"}
 function initial(){return {completed:[],solved:[],errors:[],hints:0,updated:null}}
 function load(){try{const a=JSON.parse(localStorage.getItem(storageKey()));if(a&&Array.isArray(a.completed)&&Array.isArray(a.solved))return a}catch(e){}return initial()}
@@ -98,8 +101,18 @@ const pin=document.createElement("button");pin.className="marker "+(status==="co
 const btn=document.createElement("button");btn.className="day "+(status==="complete"?"complete":status==="ready"?"active":"unreleased");btn.disabled=!available(d);btn.innerHTML=d+'<span class="sym">'+(status==="complete"?"✓":status==="ready"?"★":"🔒")+"</span>";btn.title=pin.title;btn.setAttribute("aria-label",pin.title);btn.onclick=()=>openDay(d);grid.append(btn)
 }
 }
-function refreshSide(){$("ogeBtn").className="btn "+(exam==="oge"?"selected":"secondary");$("egeBtn").className="btn "+(exam==="ege"?"selected":"secondary");$("modeInfo").textContent=exams[exam].name;$("sceneMode").textContent=exams[exam].name;let n=Number(isDone())+Number(day2Progress())+Number(day3Progress());$("progressNumber").textContent=n+" / 24";$("progressFill").style.width=n/24*100+"%";$("reward").classList.toggle("locked",!isDone());$("rewardStatus").textContent=isDone()?"Получено! Ёлка украшена.":"Заверши день 1, чтобы получить.";$("placedOrnament").classList.toggle("hidden",!isDone());$("reward2").classList.toggle("locked",!day2Progress());$("reward2Status").textContent=day2Progress()?"Получено! Пряник уже на ёлке.":"Заверши день 2, чтобы получить.";$("placedOrnament2").classList.toggle("hidden",!day2Progress());$("reward3").classList.toggle("locked",!day3Progress());$("reward3Status").textContent=day3Progress()?"Получено! Почтовый ящик на ёлке.":"Заверши день 3, чтобы получить.";$("placedOrnament3").classList.toggle("hidden",!day3Progress());$("tikLine").textContent=day3Progress()?"«Письма отправлены! Три Искры времени спасены».":day2Progress()?"«Пекарня спасена! Следующее испытание — новогодняя почта».":isDone()?"«Первый свет возвращён! Теперь пекарне Марты нужна наша помощь».":"«Хронбургу нужны искры времени! Начни с фонарей на городской улице».";
-renderMap()}
+function refreshSide(){
+ $("ogeBtn").className="btn "+(exam==="oge"?"selected":"secondary");
+ $("egeBtn").className="btn "+(exam==="ege"?"selected":"secondary");
+ $("modeInfo").textContent=exams[exam].name;
+ $("sceneMode").textContent=exams[exam].name;
+ const n=Number(isDone())+Number(day2Progress())+Number(day3Progress());
+ $("progressNumber").textContent=n+" / 24";
+ $("progressFill").style.width=n/24*100+"%";
+ collectionView.refresh(exam);
+ $("tikLine").textContent=day3Progress()?"«Письма отправлены! Три Искры времени спасены».":day2Progress()?"«Пекарня спасена! Следующее испытание — новогодняя почта».":isDone()?"«Первый свет возвращён! Теперь пекарне Марты нужна наша помощь».":"«Хронбургу нужны искры времени! Начни с фонарей на городской улице».";
+ renderMap();
+}
 function setExam(e){closeTask();exam=e;progress=load();index=0;review=false;history.replaceState({},'',location.pathname+"?exam="+exam+(preview?"&preview=1":""));refreshSide();if(scene)openDay(1)}
 function showScene(v){if(!v)closeTask();scene=v;$("mapScreen").classList.toggle("hidden",v);$("sceneScreen").classList.toggle("hidden",!v);$("homeBtn").classList.toggle("hidden",!v);window.scrollTo({top:0,behavior:"smooth"})}
 function openDay(d){if(!available(d))return;if(d===2||d===3){location.href="day0"+d+".html?exam="+exam+(preview?"&preview=1":"");return;}review=isDone();index=review?0:([0,1,2,3].find(i=>!progress.solved.includes(i))??0);showScene(true);setSceneState(isDone()?3:solved().length,true);renderQuestion();updateScene();if(isDone())finishReviewScene()}
