@@ -84,7 +84,8 @@
 @media(max-width:1050px){.layout{grid-template-columns:1fr}.aside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.aside>*{min-width:0}}
 @media(max-width:650px){.wrap{padding:10px}.aside{display:flex}}
 </style>
-<link rel="stylesheet" href="css/chronburg-shared.css"><link rel="stylesheet" href="css/day3-mail.css"></head><body>
+<link rel="stylesheet" href="css/chronburg-shared.css">
+<link rel="stylesheet" href="css/chronburg-collection.css"><link rel="stylesheet" href="css/day3-mail.css"></head><body>
 <div class="wrap">
 <header class="top"><div><small>Новогодний математический квест • Хронбург • 3 декабря</small><h1>✦ Новогодняя почта</h1></div><nav class="topnav"><a class="btn secondary" id="mapLink" href="index.html?preview=1" style="text-decoration:none">← Карта Хронбурга</a><button class="btn secondary" id="export">↓ Прогресс</button></nav></header>
 <div class="layout"><main class="frame">
@@ -112,25 +113,20 @@
 </main>
 <aside class="aside"><div><h2>Экзамен</h2><div class="exam-switch"><button class="btn active" id="oge">ОГЭ</button><button class="btn secondary" id="ege">ЕГЭ профиль</button></div><p class="helper">У каждого экзамена собственный набор заданий и сохранение прогресса.</p></div>
 <div><h2>Почтовые задания</h2><div class="pills"><span class="pill" id="questionCount">— заданий</span><span class="pill" id="doneCount">0 выполнено</span></div><div class="progress" style="margin-top:12px"><b id="progressBar"></b></div><p class="helper">Перетащи конверт в золотую подсвеченную ячейку. Затем реши задание внутри письма. Новое письмо появится после правильного ответа.</p></div>
-<div class="advent-tree-panel">
-<h2>Твоя коллекция</h2><div class="bakery-collection">
-<div id="bakeryReward1" class="ornament locked"><img src="assets/ornaments/ornament_day01_lantern.png" alt="Золотой фонарик"><div><b>Золотой фонарик</b><p id="bakeryReward1Status">Награда дня 1</p></div></div>
-<div id="bakeryReward2" class="ornament locked"><img src="assets/ornaments/ornament_day02_gingerbread.png" alt="Пряник Марты"><div><b>Пряник Марты</b><p id="bakeryReward2Status">Награда дня 2</p></div></div>
-<div id="bakeryReward3" class="ornament locked"><img src="assets/ornaments/ornament_day03_mailbox.png" alt="Почтовый ящик"><div><b>Праздничный почтовый ящик</b><p id="bakeryReward3Status">Заверши день 3, чтобы получить.</p></div></div>
-</div>
-<div class="tree-preview"><img class="tree-base" src="assets/trees/christmas_tree_empty.png" alt="Общая новогодняя ёлка Хронбурга"><img id="treeDay1Ornament" class="placed placed-lantern hidden" src="assets/ornaments/ornament_day01_lantern.png" alt="Фонарик на ёлке"><img id="treeDay2Ornament" class="placed placed-gingerbread hidden" src="assets/ornaments/ornament_day02_gingerbread.png" alt="Пряник на ёлке"><img id="treeDay3Ornament" class="placed placed-mailbox hidden" src="assets/ornaments/ornament_day03_mailbox.png" alt="Почтовый ящик на ёлке"></div>
-<p class="chronburg-tree-caption" id="treeProgress">Украшения появляются после прохождения дней.</p></div>
+<div id="chronburgCollection"></div>
 <div class="teacher"><details open><summary>🔐 Учительский предпросмотр</summary><p class="helper">Чтобы проверить реальные задания третьего дня, выбери закрытый JSON-файл, подготовленный отдельно. Он останется на твоём устройстве и не загрузится в GitHub.</p><input type="file" id="import" accept=".json,application/json"><p class="helper" id="importStatus" aria-live="polite">Набор ещё не загружен.</p><p class="helper">В проверочном комплекте ОГЭ основной рисунок задания №1 заменён проверенным резервным вариантом: в исходном рисунке отсутствовала буква b. К нему составлен аналог. Остальные ключи сверены с рисунками.</p></details></div>
 <div class="secret">В публичной версии нет заданий и ответов будущего дня. Учитель загружает их локально для тестирования. Это не система авторизации: не пересылай приватный JSON ученикам до даты открытия.</div>
 <div><button class="btn secondary" id="reset" style="width:100%">↻ Сбросить прохождение</button></div></aside></div></div>
 <div class="dialog hidden" id="dialog" role="dialog" aria-modal="true" aria-labelledby="questionTitle"><div class="curtain" id="curtain"></div><div class="modal"><div class="modal-header"><span id="taskNumber">Праздничный заказ</span><button type="button" id="close" class="x" aria-label="Закрыть задание">×</button></div>
 <div class="paper"><h2 id="questionTitle"></h2><p id="questionText"></p><div id="tableArea"></div><div class="sources" id="source"></div><div class="answerbox"><input id="answer" autocomplete="off" inputmode="decimal" aria-label="Ответ на задание" placeholder="Введите ответ"><button class="btn" id="check">Проверить</button></div><div class="keyboard" id="keyboard"></div><div class="row"><button class="btn secondary" id="hint">💡 Подсказка</button><button class="btn secondary hidden" id="reserve">↻ Резервный аналог</button><button class="btn secondary" id="draftBtn">✎ Черновик</button></div><div class="feedback" id="feedback" aria-live="polite">Проверь расчёт и введи ответ.</div><div class="draft hidden" id="draftWrap"><canvas id="draftCanvas" width="700" height="230"></canvas><button class="btn secondary" id="clearDraft">Очистить</button></div></div></div></div>
+<script src="js/chronburg-collection.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
 <script>
 "use strict";
 (function(){
 const $=id=>document.getElementById(id);
 const query=new URLSearchParams(location.search);const isPreview=query.has("preview");let exam=query.get("exam")==="ege"?"ege":"oge";
+const collectionView=window.ChronburgCollection.mount(document.getElementById("chronburgCollection"),exam);
 function mapUrl(){return "index.html?exam="+encodeURIComponent(exam)+(isPreview?"&preview=1":"")}
 function updateMapLinks(){$("mapLink").href=mapUrl();$("rewardMapLink").href=mapUrl()}
 
@@ -258,18 +254,7 @@ function inlineMath(el,text){
 function notify(text,kind){inlineMath($("feedback"),text);$("feedback").className="feedback"+(kind?" "+kind:"")}
 function activeTask(){const d=data();return d&&d[index]?alternate?d[index].reserve:d[index]:null}
 function sendAudio(pitch){if(!soundOn)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();let o=audio.createOscillator(),g=audio.createGain();o.frequency.value=pitch;g.gain.setValueAtTime(.07,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.22);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+.23)}catch(e){}}
-function refreshTree(){
- let first=false,second=false;
- try{const p=JSON.parse(localStorage.getItem("chronburg:2026:"+exam+":v1"));first=!!(p&&Array.isArray(p.completed)&&p.completed.includes(1))}catch(e){}
- try{const p=JSON.parse(localStorage.getItem("chronburg:2026:day02:"+exam+":v1"));second=!!(p&&p.complete===true)}catch(e){}
- const third=progress.complete===true;
- for(const [i,done] of [first,second,third].entries()){
-   $("bakeryReward"+(i+1)).classList.toggle("locked",!done);
-   $("treeDay"+(i+1)+"Ornament").classList.toggle("hidden",!done);
-   $("bakeryReward"+(i+1)+"Status").textContent=done?"Получено! Игрушка на ёлке.":"Заверши день "+(i+1)+", чтобы получить.";
- }
- $("treeProgress").textContent=[first,second,third].filter(Boolean).length+" из 24 украшений на ёлке Хронбурга";
-}
+function refreshTree(){collectionView.refresh(exam)}
 function show(){
  reconcileProgress();updateMapLinks();refreshTree();
  const d=data(),n=d?d.length:stepZones().length;
