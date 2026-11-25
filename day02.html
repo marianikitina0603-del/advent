@@ -86,6 +86,7 @@
 <img class="color-layer" data-layer="oven" src="assets/locations/day02_bakery.png" alt="" aria-hidden="true" decoding="async">
 <img class="color-layer" data-layer="pastries" src="assets/locations/day02_bakery.png" alt="" aria-hidden="true" decoding="async">
 <div class="label" id="sceneLabel">Пекарня ждёт помощи</div><div class="scene-tools" id="hotspots"></div><div class="layer-instruction">Наведи на золотую искру, чтобы увидеть область, затем нажми для задания</div></div>
+<div class="release-status" id="releaseStatus" role="status" aria-live="polite">Проверяем публикацию заданий…</div>
 <div class="counter"><b id="countLabel">Подготовлено заказов: 0</b><span id="timeLabel">Математика: 10–20 минут</span></div>
 <div class="status-list" id="stageButtons"></div>
 <div class="story"><img src="assets/characters/character_tik.png" alt="Сова Тик"><p id="storyText">Тик: «У Марты важные праздничные заказы. Помоги разобраться с расчётами, чтобы пекарня ожила!»</p></div>
@@ -95,13 +96,14 @@
 <aside class="aside"><div><h2>Экзамен</h2><div class="exam-switch"><button class="btn active" id="oge">ОГЭ</button><button class="btn secondary" id="ege">ЕГЭ профиль</button></div><p class="helper">У каждого экзамена собственный набор заданий и сохранение прогресса.</p></div>
 <div><h2>Заказы Марты</h2><div class="pills"><span class="pill" id="questionCount">— заданий</span><span class="pill" id="doneCount">0 выполнено</span></div><div class="progress" style="margin-top:12px"><b id="progressBar"></b></div><p class="helper">Сначала печь, затем вкусности и ингредиенты. Цвет появляется только после правильного решения. В ЕГЭ четвёртое задание раскрывает всю пекарню.</p></div>
 <div id="chronburgCollection"></div>
-<div class="teacher"><details open><summary>🔐 Учительский предпросмотр</summary><p class="helper">Чтобы проверить реальные задания второго дня, выбери закрытый JSON-файл, подготовленный отдельно. Он останется на твоём устройстве и не загрузится в GitHub.</p><input type="file" id="import" accept=".json,application/json"><p class="helper" id="importStatus" aria-live="polite">Набор ещё не загружен.</p></details></div>
+<div class="teacher" id="teacherPanel"><details open><summary>🔐 Учительский предпросмотр</summary><p class="helper">Чтобы проверить реальные задания второго дня, выбери закрытый JSON-файл, подготовленный отдельно. Он останется на твоём устройстве и не загрузится в GitHub.</p><input type="file" id="import" accept=".json,application/json"><p class="helper" id="importStatus" aria-live="polite">Набор ещё не загружен.</p></details></div>
 <div class="secret">В публичной версии нет заданий и ответов будущего дня. Учитель загружает их локально для тестирования. Это не система авторизации: не пересылай приватный JSON ученикам до даты открытия.</div>
 <div><button class="btn secondary" id="reset" style="width:100%">↻ Сбросить прохождение</button></div></aside></div></div>
 <div class="dialog hidden" id="dialog" role="dialog" aria-modal="true" aria-labelledby="questionTitle"><div class="curtain" id="curtain"></div><div class="modal chronburg-math-modal"><div class="modal-header"><span id="taskNumber">Праздничный заказ</span><button type="button" id="close" class="x" aria-label="Закрыть задание">×</button></div>
 <div class="paper chronburg-math-paper"><h2 id="questionTitle"></h2><div id="questionText" class="math-question"></div><div id="tableArea"></div><div class="sources" id="source"></div><div class="answerbox"><input id="answer" autocomplete="off" inputmode="decimal" aria-label="Ответ на задание или номер варианта" placeholder="Ответ или № варианта"><button class="btn" id="check">Проверить</button></div><div class="keyboard" id="keyboard"></div><div class="row"><button class="btn secondary" id="hint">💡 Подсказка</button><button class="btn secondary hidden" id="reserve">↻ Резервный аналог</button><button class="btn secondary" id="draftBtn">✎ Черновик</button></div><div class="feedback" id="feedback" aria-live="polite">Проверь расчёт и введи ответ.</div><div class="draft hidden" id="draftWrap"><canvas id="draftCanvas" width="700" height="230"></canvas><button class="btn secondary" id="clearDraft">Очистить</button></div></div></div></div>
 <script src="js/chronburg-collection.js"></script>
 <script src="js/chronburg-math.js"></script>
+<script src="js/chronburg-release-client.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
 <script>
 "use strict";
@@ -109,6 +111,7 @@
 const $=id=>document.getElementById(id);
 const query=new URLSearchParams(location.search);const isPreview=query.has("preview");let exam=query.get("exam")==="ege"?"ege":"oge";
 const collectionView=window.ChronburgCollection.mount(document.getElementById("chronburgCollection"),exam);
+document.getElementById("teacherPanel").classList.toggle("hidden",!isPreview);
 function mapUrl(){return "index.html?exam="+encodeURIComponent(exam)+(isPreview?"&preview=1":"")}
 function updateMapLinks(){$("mapLink").href=mapUrl();$("sceneBackLink").href=mapUrl();$("rewardMapLink").href=mapUrl();const now=new Date();const m=new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Moscow",year:"numeric",month:"2-digit",day:"2-digit"}).format(now);const canGo=isPreview||m>="2026-12-03";$("continueDay3").classList.toggle("hidden",!canGo);$("continueDay3").href="day03.html?exam="+encodeURIComponent(exam)+(isPreview?"&preview=1":"")}
 
@@ -228,6 +231,12 @@ $("reset").onclick=()=>{if(confirm("Очистить прогресс дня 2 �
 $("export").onclick=()=>{const data=JSON.stringify({app:"chronburg",day:2,exam,progress},null,2);let url=URL.createObjectURL(new Blob([data],{type:"application/json"}));let a=document.createElement("a");a.href=url;a.download="chronburg-day02-"+exam+"-progress.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),700)};
 const pad=$("keyboard");["1","2","3","4","5","6","7","8","9","0","/","−",",","⌫"].forEach(k=>{const b=document.createElement("button");b.textContent=k;b.onclick=()=>{const v=$("answer");v.value=k==="⌫"?v.value.slice(0,-1):v.value+(k==="−"?"-":k);v.focus()};pad.append(b)});
 const cv=$("draftCanvas"),ctx=cv.getContext("2d");let painting=false;const pt=e=>{const b=cv.getBoundingClientRect();return{x:(e.clientX-b.left)*cv.width/b.width,y:(e.clientY-b.top)*cv.height/b.height}};cv.onpointerdown=e=>{painting=true;cv.setPointerCapture(e.pointerId);let p=pt(e);ctx.beginPath();ctx.moveTo(p.x,p.y)};cv.onpointermove=e=>{if(!painting)return;let p=pt(e);ctx.lineTo(p.x,p.y);ctx.strokeStyle="#28405b";ctx.lineWidth=3;ctx.lineCap="round";ctx.stroke()};cv.onpointerup=cv.onpointercancel=()=>painting=false;$("draftBtn").onclick=()=>$("draftWrap").classList.toggle("hidden");$("clearDraft").onclick=()=>ctx.clearRect(0,0,cv.width,cv.height);
-show();window.addEventListener("pageshow",()=>{progress=load();show()});
+show();
+window.ChronburgRelease.attach({
+ day:2,
+ onReady:incoming=>{if(!bank){bank=incoming;show()}},
+ onStatus:(message,kind)=>{const status=$("releaseStatus");status.textContent=message;status.dataset.status=kind}
+});
+window.addEventListener("pageshow",()=>{progress=load();show()});
 })();
 </script></body></html>
