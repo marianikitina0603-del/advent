@@ -47,7 +47,7 @@
 @media(prefers-reduced-motion:reduce){.scene .hotspot.current{animation:none!important}.scene .color-layer{transition:none!important}}
 </style></head><body>
 <div class="wrap">
-<header class="top"><div><small>Новогодний математический квест • Хронбург • 2 декабря</small><h1>✦ Пекарня Марты</h1></div><nav class="topnav"><a class="btn secondary" href="index.html?preview=1" style="text-decoration:none">← Карта Хронбурга</a><button class="btn secondary" id="export">↓ Прогресс</button></nav></header>
+<header class="top"><div><small>Новогодний математический квест • Хронбург • 2 декабря</small><h1>✦ Пекарня Марты</h1></div><nav class="topnav"><a class="btn secondary" id="mapLink" href="index.html?preview=1" style="text-decoration:none">← Карта Хронбурга</a><button class="btn secondary" id="export">↓ Прогресс</button></nav></header>
 <div class="layout"><main class="frame">
 <div class="scene" id="scene">
 <img class="bakery-background" src="assets/locations/day02_bakery.png" alt="Пекарня Марты: чёрно-белая сцена постепенно становится цветной">
@@ -59,7 +59,7 @@
 <div class="status-list" id="stageButtons"></div>
 <div class="story"><img src="assets/characters/character_tik.png" alt="Сова Тик"><p id="storyText">Тик: «У Марты важные праздничные заказы. Помоги разобраться с расчётами, чтобы пекарня ожила!»</p></div>
 <div class="actions"><button class="btn" id="taskOpen">🍪 Открыть следующий заказ</button><button class="btn secondary" id="sound">♪ Звук: выкл.</button></div>
-<div class="reward hidden" id="finishPanel"><img src="assets/ornaments/ornament_day02_gingerbread.png" onerror="this.style.display='none'" alt="Украшение-пряник"><div><b>Праздничные заказы готовы!</b><p>Тик: «В пекарне снова пахнет выпечкой. Ещё одна искра спасена!»</p><button class="btn secondary" id="replay">Повторить задания</button></div></div>
+<div class="reward hidden" id="finishPanel"><img src="assets/ornaments/ornament_day02_gingerbread.png" alt="Игрушка-пряник Марты"><div><b>Вторая Искра времени получена!</b><p>Марта: «Вы спасли мой праздничный заказ! Возьмите пряник для вашей ёлки». Тик: «Теперь возвращаемся на карту — Хронбург постепенно оживает!»</p><div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:12px"><a class="btn" id="rewardMapLink" href="index.html?preview=1" style="text-decoration:none">✨ Забрать пряник и вернуться на карту</a><button class="btn secondary" id="replay">Повторить задания</button></div></div></div>
 </main>
 <aside class="aside"><div><h2>Экзамен</h2><div class="exam-switch"><button class="btn active" id="oge">ОГЭ</button><button class="btn secondary" id="ege">ЕГЭ профиль</button></div><p class="helper">У каждого экзамена собственный набор заданий и сохранение прогресса.</p></div>
 <div><h2>Заказы Марты</h2><div class="pills"><span class="pill" id="questionCount">— заданий</span><span class="pill" id="doneCount">0 выполнено</span></div><div class="progress" style="margin-top:12px"><b id="progressBar"></b></div><p class="helper">Сначала печь, затем вкусности и ингредиенты. Цвет появляется только после правильного решения. В ЕГЭ четвёртое задание раскрывает всю пекарню.</p></div>
@@ -73,7 +73,10 @@
 "use strict";
 (function(){
 const $=id=>document.getElementById(id);
-let exam=new URLSearchParams(location.search).get("exam")==="ege"?"ege":"oge";
+const query=new URLSearchParams(location.search);const isPreview=query.has("preview");let exam=query.get("exam")==="ege"?"ege":"oge";
+function mapUrl(){return "index.html?exam="+encodeURIComponent(exam)+(isPreview?"&preview=1":"")}
+function updateMapLinks(){$("mapLink").href=mapUrl();$("rewardMapLink").href=mapUrl()}
+
 let bank=null,index=0,alternate=false,review=false,soundOn=false,audio=null;
 const zoneNames=["oven","pastries","ingredients"];
 const stepZones=()=>exam==="oge"?["oven","pastries","ingredients"]:["oven","pastries","ingredients","all"];
@@ -100,6 +103,8 @@ function clearPreview(name){if(previewZone===name){previewZone=null;paintLayers(
 function saveKey(){return "chronburg:2026:day02:"+exam+":v1"}
 function load(){try{let v=JSON.parse(localStorage.getItem(saveKey()));if(v&&Array.isArray(v.solved))return v}catch(e){}return {solved:[],errors:[],hints:0,complete:false}}
 let progress=load();function save(){try{localStorage.setItem(saveKey(),JSON.stringify(progress))}catch(e){}}
+function reconcileProgress(){if(progress.complete===true)return;const d=data();if(d&&d.length>0&&d.every((_,i)=>progress.solved.includes(i))){progress.complete=true;save()}}
+
 function data(){return bank&&bank.exams&&bank.exams[exam]}
 function num(s){s=String(s).trim().replace(/\s+/g,"").replace(",",".");if(!/^-?(?:\d+(?:\.\d+)?|\.\d+)(?:\/-?(?:\d+(?:\.\d+)?|\.\d+))?$/.test(s))return NaN;const p=s.split("/");return p.length===2?Number(p[0])/Number(p[1]):Number(p[0])}
 function inlineMath(el,text){el.replaceChildren();const parts=String(text||"").split(/(\$[^$]+\$)/g);for(const part of parts){if(part.startsWith("$")&&part.endsWith("$")){const node=document.createElement("span");if(window.katex)try{katex.render(part.slice(1,-1),node,{throwOnError:false})}catch(e){node.textContent=part.slice(1,-1)}else node.textContent=part;el.appendChild(node)}else el.appendChild(document.createTextNode(part))}}
@@ -107,7 +112,7 @@ function notify(text,kind){inlineMath($("feedback"),text);$("feedback").classNam
 function activeTask(){const d=data();return d&&d[index]?alternate?d[index].reserve:d[index]:null}
 function sendAudio(pitch){if(!soundOn)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();let o=audio.createOscillator(),g=audio.createGain();o.frequency.value=pitch;g.gain.setValueAtTime(.07,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.22);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+.23)}catch(e){}}
 function show(){
- const d=data(),n=d?d.length:stepZones().length;
+ reconcileProgress();updateMapLinks();const d=data(),n=d?d.length:stepZones().length;
  const completed=new Set(progress.solved.filter(i=>Number.isInteger(i)&&i>=0&&i<n));
  const solved=completed.size;
  const labels=exam==="oge"?["Печь","Вкусности","Ингредиенты"]:["Печь","Вкусности","Ингредиенты","Праздничный финал"];
@@ -175,7 +180,7 @@ function check(){const t=activeTask();if(!t)return;const val=num($("answer").val
 if(Math.abs(val-expect)<1e-8){const already=progress.solved.includes(index);if(!review&&!already){progress.solved.push(index);progress.solved.sort((a,b)=>a-b);if(progress.solved.length===data().length)progress.complete=true;save()}sendAudio(660);previewZone=null;close();show()}
 else{notify("Пока неверно. Проверь условие и вычисления. При необходимости открой резервный аналог.","bad");if(!review){progress.errors.push({task:index+1,answer:$("answer").value,time:new Date().toISOString(),reserve:alternate});save();if(!alternate&&data()[index].reserve)$("reserve").classList.remove("hidden")}}}
 $("import").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text());if(x.kind!=="chronburg-private-day2"||x.day!==2||!x.exams||!Array.isArray(x.exams.oge)||!Array.isArray(x.exams.ege))throw Error("Неверный формат файла");for(const key of ["oge","ege"])for(const task of x.exams[key])if(!task.text||!task.answer||!task.reserve)throw Error("В комплекте отсутствуют данные");bank=x;previewZone=null;$("importStatus").textContent="✓ Комплект загружен локально: ОГЭ — "+x.exams.oge.length+", ЕГЭ — "+x.exams.ege.length+" задания.";show()}catch(err){$("importStatus").textContent="Не удалось загрузить комплект: "+err.message}e.target.value=""};
-$("oge").onclick=()=>{exam="oge";progress=load();review=false;previewZone=null;show()};$("ege").onclick=()=>{exam="ege";progress=load();review=false;previewZone=null;show()};
+$("oge").onclick=()=>{close();exam="oge";progress=load();review=false;previewZone=null;history.replaceState({}, "", "day02.html?exam=oge"+(isPreview?"&preview=1":""));show()};$("ege").onclick=()=>{close();exam="ege";progress=load();review=false;previewZone=null;history.replaceState({}, "", "day02.html?exam=ege"+(isPreview?"&preview=1":""));show()};
 $("taskOpen").onclick=()=>{if(!data()){alert("Сначала выбери JSON-файл в блоке преподавателя справа.");return}open(progress.complete?0:Math.min(progress.solved.length,data().length-1))};
 $("check").onclick=check;$("answer").onkeydown=e=>{if(e.key==="Enter")check()};$("close").onclick=close;$("curtain").onclick=close;document.onkeydown=e=>{if(e.key==="Escape")close()};
 $("reserve").onclick=()=>{alternate=true;renderTask()};$("hint").onclick=()=>{notify("Подсказка: выдели ключевые данные условия. Для процентов составь отношение, для практической задачи — таблицу вычислений, для формулы — подставь известные величины.");if(!review){progress.hints++;save()}};
@@ -185,6 +190,6 @@ $("reset").onclick=()=>{if(confirm("Очистить прогресс дня 2 �
 $("export").onclick=()=>{const data=JSON.stringify({app:"chronburg",day:2,exam,progress},null,2);let url=URL.createObjectURL(new Blob([data],{type:"application/json"}));let a=document.createElement("a");a.href=url;a.download="chronburg-day02-"+exam+"-progress.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),700)};
 const pad=$("keyboard");["1","2","3","4","5","6","7","8","9","0","/","−",",","⌫"].forEach(k=>{const b=document.createElement("button");b.textContent=k;b.onclick=()=>{const v=$("answer");v.value=k==="⌫"?v.value.slice(0,-1):v.value+(k==="−"?"-":k);v.focus()};pad.append(b)});
 const cv=$("draftCanvas"),ctx=cv.getContext("2d");let painting=false;const pt=e=>{const b=cv.getBoundingClientRect();return{x:(e.clientX-b.left)*cv.width/b.width,y:(e.clientY-b.top)*cv.height/b.height}};cv.onpointerdown=e=>{painting=true;cv.setPointerCapture(e.pointerId);let p=pt(e);ctx.beginPath();ctx.moveTo(p.x,p.y)};cv.onpointermove=e=>{if(!painting)return;let p=pt(e);ctx.lineTo(p.x,p.y);ctx.strokeStyle="#28405b";ctx.lineWidth=3;ctx.lineCap="round";ctx.stroke()};cv.onpointerup=cv.onpointercancel=()=>painting=false;$("draftBtn").onclick=()=>$("draftWrap").classList.toggle("hidden");$("clearDraft").onclick=()=>ctx.clearRect(0,0,cv.width,cv.height);
-show();
+show();window.addEventListener("pageshow",()=>{progress=load();show()});
 })();
 </script></body></html>
