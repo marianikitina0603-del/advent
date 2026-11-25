@@ -38,6 +38,7 @@
 <div class="wrap">
 <header class="top"><div><small>Новогодний математический квест • Хронбург • 3 декабря</small><h1>✦ Новогодняя почта</h1></div><nav class="topnav"><a class="btn secondary" id="mapLink" href="index.html?preview=1" style="text-decoration:none">← Карта Хронбурга</a><button class="btn secondary" id="export">↓ Прогресс</button></nav></header>
 <div class="layout"><main class="frame">
+<div class="chronburg-date-tabs" aria-label="Дата и экзамен"><a class="btn secondary" id="sceneBackLink" href="index.html?preview=1">← К карте</a><span class="pill" id="sceneDate">3 декабря</span><span class="pill" id="sceneMode">ОГЭ</span></div>
 <div class="scene post-game" id="scene">
 <img class="post-background" src="assets/locations/day03_post_office.png" alt="Полноцветная новогодняя почта Хронбурга с сортировочными ячейками">
 <div class="post-success-ink" aria-hidden="true"></div>
@@ -78,7 +79,7 @@ const $=id=>document.getElementById(id);
 const query=new URLSearchParams(location.search);const isPreview=query.has("preview");let exam=query.get("exam")==="ege"?"ege":"oge";
 const collectionView=window.ChronburgCollection.mount(document.getElementById("chronburgCollection"),exam);
 function mapUrl(){return "index.html?exam="+encodeURIComponent(exam)+(isPreview?"&preview=1":"")}
-function updateMapLinks(){$("mapLink").href=mapUrl();$("rewardMapLink").href=mapUrl()}
+function updateMapLinks(){$("mapLink").href=mapUrl();$("sceneBackLink").href=mapUrl();$("rewardMapLink").href=mapUrl()}
 
 let bank=null,index=0,alternate=false,review=false,soundOn=false,audio=null;
 const stepZones=()=>exam==="oge"?["sorting","stamps","routes"]:["sorting","stamps","routes","dispatch"];
@@ -207,6 +208,7 @@ function activeTask(){const d=data();return d&&d[index]?alternate?d[index].reser
 function sendAudio(pitch){if(!soundOn)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();let o=audio.createOscillator(),g=audio.createGain();o.frequency.value=pitch;g.gain.setValueAtTime(.07,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.22);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+.23)}catch(e){}}
 function refreshTree(){collectionView.refresh(exam)}
 function show(){
+ $("sceneMode").textContent=exam==="ege"?"ЕГЭ профиль":"ОГЭ";
  reconcileProgress();updateMapLinks();refreshTree();
  const d=data(),n=d?d.length:stepZones().length;
  const completed=new Set(progress.solved.filter(i=>Number.isInteger(i)&&i>=0&&i<n));
