@@ -79,6 +79,7 @@
 <div class="wrap">
 <header class="top"><div><small>Новогодний математический квест • Хронбург • 2 декабря</small><h1>✦ Пекарня Марты</h1></div><nav class="topnav"><a class="btn secondary" id="mapLink" href="index.html?preview=1" style="text-decoration:none">← Карта Хронбурга</a><button class="btn secondary" id="export">↓ Прогресс</button></nav></header>
 <div class="layout"><main class="frame">
+<div class="chronburg-date-tabs" aria-label="Дата и экзамен"><a class="btn secondary" id="sceneBackLink" href="index.html?preview=1">← К карте</a><span class="pill" id="sceneDate">2 декабря</span><span class="pill" id="sceneMode">ОГЭ</span></div>
 <div class="scene" id="scene">
 <img class="bakery-background" src="assets/locations/day02_bakery.png" alt="Пекарня Марты: чёрно-белая сцена постепенно становится цветной">
 <img class="color-layer" data-layer="ingredients" src="assets/locations/day02_bakery.png" alt="" aria-hidden="true" decoding="async">
@@ -109,7 +110,7 @@ const $=id=>document.getElementById(id);
 const query=new URLSearchParams(location.search);const isPreview=query.has("preview");let exam=query.get("exam")==="ege"?"ege":"oge";
 const collectionView=window.ChronburgCollection.mount(document.getElementById("chronburgCollection"),exam);
 function mapUrl(){return "index.html?exam="+encodeURIComponent(exam)+(isPreview?"&preview=1":"")}
-function updateMapLinks(){$("mapLink").href=mapUrl();$("rewardMapLink").href=mapUrl();const now=new Date();const m=new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Moscow",year:"numeric",month:"2-digit",day:"2-digit"}).format(now);const canGo=isPreview||m>="2026-12-03";$("continueDay3").classList.toggle("hidden",!canGo);$("continueDay3").href="day03.html?exam="+encodeURIComponent(exam)+(isPreview?"&preview=1":"")}
+function updateMapLinks(){$("mapLink").href=mapUrl();$("sceneBackLink").href=mapUrl();$("rewardMapLink").href=mapUrl();const now=new Date();const m=new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Moscow",year:"numeric",month:"2-digit",day:"2-digit"}).format(now);const canGo=isPreview||m>="2026-12-03";$("continueDay3").classList.toggle("hidden",!canGo);$("continueDay3").href="day03.html?exam="+encodeURIComponent(exam)+(isPreview?"&preview=1":"")}
 
 let bank=null,index=0,alternate=false,review=false,soundOn=false,audio=null;
 const zoneNames=["oven","pastries","ingredients"];
@@ -148,6 +149,7 @@ function activeTask(){const d=data();return d&&d[index]?alternate?d[index].reser
 function sendAudio(pitch){if(!soundOn)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();let o=audio.createOscillator(),g=audio.createGain();o.frequency.value=pitch;g.gain.setValueAtTime(.07,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.22);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+.23)}catch(e){}}
 function refreshTree(){collectionView.refresh(exam)}
 function show(){
+ $("sceneMode").textContent=exam==="ege"?"ЕГЭ профиль":"ОГЭ";
  reconcileProgress();updateMapLinks();refreshTree();const d=data(),n=d?d.length:stepZones().length;
  const completed=new Set(progress.solved.filter(i=>Number.isInteger(i)&&i>=0&&i<n));
  const solved=completed.size;
