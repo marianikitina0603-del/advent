@@ -1,0 +1,24 @@
+
+.chronburg-math-modal{width:min(850px,100%);max-height:min(94dvh,920px);border:2px solid #d6ae72;border-radius:23px;background:linear-gradient(135deg,#273b57,#0b1a2e);box-shadow:0 28px 90px #000c;padding:14px}
+.chronburg-math-modal .modal-header{font:600 17px "Playfair Display",Georgia,serif;color:#f6d59f;margin:0 3px 12px}
+.chronburg-math-paper{background:#f4ecd8;color:#302c26;border:5px ridge #b18c57;border-radius:19px;padding:20px}
+.chronburg-math-paper h2{margin:8px 0 14px;font:700 22px Manrope,Arial,sans-serif;color:#302c26}
+.math-question{font-size:clamp(17px,1.55vw,21px);line-height:1.7;overflow-wrap:break-word;color:#302c26;min-height:62px}
+.math-question-line{margin:8px 0 12px;max-width:100%;overflow-x:auto;overflow-y:hidden}
+.math-question-line .katex{font-size:1.08em}
+.math-question .math-inline{display:inline-block;margin:0 .13em;vertical-align:baseline}
+.math-question .math-inline .katex{white-space:nowrap}
+.math-question .math-display{overflow-x:auto;max-width:100%;font-size:clamp(20px,2.2vw,30px);text-align:center;padding:12px 4px;margin:9px 0 13px}
+.math-question .math-display .katex-display{margin:.25em 0}
+.math-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:15px 0;max-width:680px}
+.math-option{display:flex;align-items:center;gap:11px;padding:10px 13px;background:#fff9ec;border:1px solid #b9a27a;border-radius:12px;min-width:0;box-shadow:0 2px 6px #88744e18}
+.math-option-number{display:grid;place-items:center;flex:0 0 29px;width:29px;height:29px;background:#6c5635;border-radius:50%;color:#fff8e8;font-size:14px;font-weight:800}
+.math-option-value{font-size:clamp(17px,1.8vw,22px);overflow-x:auto;min-width:0}
+.math-question .math-option .math-inline{vertical-align:middle}
+.chronburg-math-paper .answerbox input{font-size:23px;font-weight:700;background:#fff;border:2px solid #a48d6b;border-radius:11px;padding:10px;width:min(100%,230px);text-align:center;color:#2e2a24}
+.chronburg-math-paper .keyboard{margin:10px auto;max-width:430px}
+.chronburg-math-paper .keyboard button{border:1px solid #b6a17d;border-radius:7px;background:#fff9e9;color:#382e23;font-weight:800;min-width:37px;min-height:35px}
+.chronburg-math-paper .feedback{padding:10px 12px;border-radius:12px;min-height:43px;background:#dfd2b5;font-size:13px;margin-top:12px;line-height:1.5}
+.chronburg-math-paper .feedback.good{background:#bbdfc3}
+.chronburg-math-paper .feedback.bad{background:#f3c8bf}
+@media(max-width:550px){.chronburg-math-paper{padding:12px;border-width:3px}.math-question{font-size:17px}.math-options{gap:6px}.math-option{gap:6px;padding:8px}.math-option-number{flex-basis:25px;width:25px;height:25px}.chronburg-math-modal{padding:9px}}
