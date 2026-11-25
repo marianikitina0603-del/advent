@@ -84,51 +84,34 @@
 @media(max-width:1050px){.layout{grid-template-columns:1fr}.aside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.aside>*{min-width:0}}
 @media(max-width:650px){.wrap{padding:10px}.aside{display:flex}}
 </style>
-<link rel="stylesheet" href="css/chronburg-shared.css"><style id="day3-post">
-.scene .bakery-background{filter:grayscale(1) brightness(.83);transition:filter .8s}
-.scene.complete .bakery-background{filter:none}
-.scene .color-layer{opacity:0;filter:none!important;transition:opacity .75s}
-.scene .color-layer.restored{opacity:1}
-.scene .color-layer.preview{opacity:.48}
-.scene.complete .color-layer{opacity:0!important}
-.scene .color-layer[data-layer="sorting"]{mask-image:radial-gradient(ellipse 29% 45% at 55% 30%,#000 32%,transparent 100%);-webkit-mask-image:radial-gradient(ellipse 29% 45% at 55% 30%,#000 32%,transparent 100%)}
-.scene .color-layer[data-layer="stamps"]{mask-image:radial-gradient(ellipse 28% 44% at 30% 72%,#000 28%,transparent 100%);-webkit-mask-image:radial-gradient(ellipse 28% 44% at 30% 72%,#000 28%,transparent 100%)}
-.scene .color-layer[data-layer="routes"]{mask-image:radial-gradient(ellipse 27% 46% at 76% 70%,#000 31%,transparent 100%);-webkit-mask-image:radial-gradient(ellipse 27% 46% at 76% 70%,#000 31%,transparent 100%)}
-.scene .hotspot[data-zone="sorting"]{left:55%;top:37%}
-.scene .hotspot[data-zone="stamps"]{left:24%;top:76%}
-.scene .hotspot[data-zone="routes"]{left:77%;top:68%}
-.scene .hotspot{min-width:39px;width:39px;height:39px;padding:0;font-size:18px;background:#392f22d9;border:1.5px solid #f7ca82}
-.scene .hotspot.done{display:none}
-.mail-route{padding:13px 16px 5px;display:flex;align-items:center;flex-wrap:wrap;gap:9px;background:#10243d;border-top:1px solid #8d7958;color:#f9ddb1;font-size:12px}
-.mail-route>span:first-child{font-weight:800}
-.mail-segment{border-radius:99px;padding:6px 10px;background:#1b3653;border:1px solid #58718b;color:#c6d4e0}
-.mail-segment.sent{background:#205c4b;border-color:#83c9ab;color:white}
-.mail-segment.route-current{border-color:#f5d18e;background:#654a28;color:white}
-.display-formula{margin:14px 0;font-size:18px;overflow-x:auto;text-align:center}
-.paper #questionText{white-space:pre-line}
-@media(max-width:640px){.mail-route{gap:5px}.mail-segment{font-size:10px;padding:5px 7px}.display-formula{font-size:15px}}
-</style></head><body>
+<link rel="stylesheet" href="css/chronburg-shared.css"><link rel="stylesheet" href="css/day3-mail.css"></head><body>
 <div class="wrap">
 <header class="top"><div><small>Новогодний математический квест • Хронбург • 3 декабря</small><h1>✦ Новогодняя почта</h1></div><nav class="topnav"><a class="btn secondary" id="mapLink" href="index.html?preview=1" style="text-decoration:none">← Карта Хронбурга</a><button class="btn secondary" id="export">↓ Прогресс</button></nav></header>
 <div class="layout"><main class="frame">
-<div class="scene" id="scene">
-<img class="bakery-background" src="assets/locations/day03_post_office.png" alt="Новогодняя почта Хронбурга: сортировочная стена, письма и карта города">
-<img class="color-layer" data-layer="sorting" src="assets/locations/day03_post_office.png" alt="" aria-hidden="true">
-<img class="color-layer" data-layer="stamps" src="assets/locations/day03_post_office.png" alt="" aria-hidden="true">
-<img class="color-layer" data-layer="routes" src="assets/locations/day03_post_office.png" alt="" aria-hidden="true">
-<div class="label" id="sceneLabel">Почта ждёт помощи</div>
-<div class="scene-tools" id="hotspots"></div>
-<div class="layer-instruction">Наведи на золотую искру, чтобы увидеть зону сортировки</div>
+<div class="scene post-game" id="scene">
+<img class="post-background" src="assets/locations/day03_post_office.png" alt="Полноцветная новогодняя почта Хронбурга с сортировочными ячейками">
+<div class="post-success-ink" aria-hidden="true"></div>
+<div class="label" id="sceneLabel">Новогодняя почта · ожидает письма</div>
+<div class="mail-slots" id="mailSlots">
+  <div class="mail-slot" data-zone="sorting" id="drop-sorting" aria-label="Ячейка сортировки"><b>Сортировка</b><small>Письмо 1</small></div>
+  <div class="mail-slot" data-zone="stamps" id="drop-stamps" aria-label="Ячейка марок"><b>Марки</b><small>Письмо 2</small></div>
+  <div class="mail-slot" data-zone="routes" id="drop-routes" aria-label="Ячейка маршрута"><b>Маршрут</b><small>Письмо 3</small></div>
+  <div class="mail-slot" data-zone="dispatch" id="drop-dispatch" aria-label="Ячейка отправки"><b>Отправка</b><small>Письмо 4</small></div>
+</div>
+<div class="mail-tray" id="letterTray" aria-hidden="true"><p>Почта Марты</p><span style="font-size:27px;opacity:.65">▱</span></div>
+<button class="mail-letter" id="activeLetter" type="button" aria-label="Перетащить письмо в подсвеченную ячейку"><span class="envelope-mark">✉</span></button>
+<div class="layer-instruction" id="dragHint">Перетащи письмо в подсвеченную ячейку</div>
+<div class="post-error" id="dropFeedback" aria-live="polite"></div>
 </div>
 <div class="mail-route" id="mailRoute" aria-label="Маршрут доставки писем"><span>✉ Почта</span><span class="mail-segment" id="route0">① Сортировка</span><span class="mail-segment" id="route1">② Марки</span><span class="mail-segment" id="route2">③ Маршрут</span><span class="mail-segment" id="route3">④ Отправка</span></div>
 <div class="counter"><b id="countLabel">Подготовлено писем: 0</b><span id="timeLabel">Маршрут писем • 10–20 минут</span></div>
-<div class="status-list" id="stageButtons"></div>
+<div class="post-status-list" id="stageButtons"></div>
 <div class="story"><img src="assets/characters/character_tik.png" alt="Сова Тик"><p id="storyText">Тик: «Праздничные письма перепутались. Давай восстановим сортировку, марки и маршрут доставки!»</p></div>
-<div class="actions"><button class="btn" id="taskOpen">✉ Открыть следующее письмо</button><button class="btn secondary" id="sound">♪ Звук: выкл.</button></div>
+<div class="actions"><button class="btn secondary" id="taskOpen">⌨ Поместить письмо (без перетаскивания)</button><button class="btn secondary" id="sound">♪ Звук: выкл.</button></div>
 <div class="reward hidden" id="finishPanel"><img src="assets/ornaments/ornament_day03_mailbox.png" alt="Почтовый ящик Хронбурга"><div><b>Третья Искра времени получена!</b><p>Почтмейстер: «Все письма снова найдут своих адресатов! Возьми праздничный почтовый ящик для общей ёлки». Тик: «Возвращаемся на карту Хронбурга!»</p><div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:12px"><a class="btn" id="rewardMapLink" href="index.html?preview=1" style="text-decoration:none">✨ Забрать почтовый ящик и вернуться на карту</a><button class="btn secondary" id="replay">Повторить задания</button></div></div></div>
 </main>
 <aside class="aside"><div><h2>Экзамен</h2><div class="exam-switch"><button class="btn active" id="oge">ОГЭ</button><button class="btn secondary" id="ege">ЕГЭ профиль</button></div><p class="helper">У каждого экзамена собственный набор заданий и сохранение прогресса.</p></div>
-<div><h2>Почтовые задания</h2><div class="pills"><span class="pill" id="questionCount">— заданий</span><span class="pill" id="doneCount">0 выполнено</span></div><div class="progress" style="margin-top:12px"><b id="progressBar"></b></div><p class="helper">Сначала сортировка писем, затем марки и маршрут. После каждого верного ответа соответствующая зона становится цветной; в ЕГЭ четвёртое задание завершает отправку.</p></div>
+<div><h2>Почтовые задания</h2><div class="pills"><span class="pill" id="questionCount">— заданий</span><span class="pill" id="doneCount">0 выполнено</span></div><div class="progress" style="margin-top:12px"><b id="progressBar"></b></div><p class="helper">Перетащи конверт в золотую подсвеченную ячейку. Затем реши задание внутри письма. Новое письмо появится после правильного ответа.</p></div>
 <div class="advent-tree-panel">
 <h2>Твоя коллекция</h2><div class="bakery-collection">
 <div id="bakeryReward1" class="ornament locked"><img src="assets/ornaments/ornament_day01_lantern.png" alt="Золотой фонарик"><div><b>Золотой фонарик</b><p id="bakeryReward1Status">Награда дня 1</p></div></div>
@@ -152,33 +135,104 @@ function mapUrl(){return "index.html?exam="+encodeURIComponent(exam)+(isPreview?
 function updateMapLinks(){$("mapLink").href=mapUrl();$("rewardMapLink").href=mapUrl()}
 
 let bank=null,index=0,alternate=false,review=false,soundOn=false,audio=null;
-const zoneNames=["sorting","stamps","routes"];
-const stepZones=()=>exam==="oge"?["sorting","stamps","routes"]:["sorting","stamps","routes","all"];
-const zoneFor=(n,i)=>stepZones()[i]||"all";
-const imageLayer=name=>document.querySelector('.color-layer[data-layer="'+name+'"]');
-let previewZone=null;
-function paintLayers(){
- const done=new Set(progress.solved);
- const names=stepZones();
+const stepZones=()=>exam==="oge"?["sorting","stamps","routes"]:["sorting","stamps","routes","dispatch"];
+const stepLabels=()=>exam==="oge"?["Сортировка писем","Почтовые марки","Маршрут доставки"]:["Сортировка писем","Почтовые марки","Маршрут доставки","Отправка праздничной почты"];
+let delivering=false,dragging=false,dragPointer=null,dragStart=null,dropPending=false,dropTimer=null;
+const letterHome={left:10.2,top:79};
+const slot=name=>document.querySelector('.mail-slot[data-zone="'+name+'"]');
+function currentStep(){return stepZones().findIndex((name,i)=>!progress.solved.includes(i))}
+function currentZone(){const i=currentStep();return i<0?null:stepZones()[i]}
+function moveLetter(left,top){const el=$("activeLetter");el.style.left=left+"%";el.style.top=top+"%"}
+function restoreLetter(){
+ if(dropTimer!==null){clearTimeout(dropTimer);dropTimer=null}
+ delivering=false;dragging=false;dragPointer=null;
+ const letter=$("activeLetter");
+ letter.classList.remove("dragging","delivered");
+ letter.classList.add("returning");
+ moveLetter(letterHome.left,letterHome.top);
+ setTimeout(()=>letter.classList.remove("returning"),300);
+}
+function updateMailGame(){
+ const steps=stepZones(),current=currentZone();
  $("scene").classList.toggle("complete",!!progress.complete);
- for(const name of zoneNames){
-   const layer=imageLayer(name),step=names.indexOf(name);
-   if(layer){
-     const restored=step>=0&&done.has(step);
-     layer.classList.toggle("restored",restored&&!progress.complete);
-     layer.classList.toggle("preview",!restored&&!progress.complete&&previewZone===name);
-   }
- }
+ document.querySelectorAll(".mail-slot").forEach(el=>{
+   const idx=steps.indexOf(el.dataset.zone);
+   el.classList.toggle("hidden",idx<0);
+   el.classList.toggle("done",idx>=0&&progress.solved.includes(idx));
+   el.classList.toggle("active",!progress.complete&&idx>=0&&el.dataset.zone===current);
+   el.classList.toggle("inactive",idx>=0&&!progress.solved.includes(idx)&&el.dataset.zone!==current);
+   el.classList.remove("hovered");
+ });
  for(let i=0;i<4;i++){
    const seg=$("route"+i);
-   seg.classList.toggle("sent",progress.complete||done.has(i));
-   seg.classList.toggle("route-current",!progress.complete&&i===progress.solved.length);
+   seg.classList.toggle("sent",progress.complete||progress.solved.includes(i));
+   seg.classList.toggle("route-current",!progress.complete&&i===currentStep());
    seg.classList.toggle("hidden",i===3&&exam==="oge");
  }
+ const letter=$("activeLetter");
+ letter.classList.toggle("hidden",!!progress.complete);
+ letter.disabled=!!progress.complete;
+ $("letterTray").classList.toggle("hidden",!!progress.complete);
+ if(!delivering)restoreLetter();
+ $("dropFeedback").textContent="";
 }
-function preview(name){previewZone=name==="all"?null:name;paintLayers()}
-function clearPreview(name){if(previewZone===name){previewZone=null;paintLayers()}}
-
+function dropLetter(){
+ if(progress.complete||delivering||currentStep()<0)return;
+ if(!data()){$("dropFeedback").textContent="Для проверки задания загрузи учительский JSON в правой панели.";restoreLetter();return}
+ const zone=slot(currentZone()),box=zone.getBoundingClientRect(),sc=$("scene").getBoundingClientRect();
+ delivering=true;
+ const letter=$("activeLetter");
+ letter.classList.remove("dragging");letter.classList.add("delivered");
+ moveLetter((box.left+box.width/2-sc.left)/sc.width*100,(box.top+box.height/2-sc.top)/sc.height*100);
+ zone.classList.add("hovered");
+ sendAudio(520);
+ dropTimer=setTimeout(()=>{
+  dropTimer=null;
+  if(!delivering)return;
+  open(currentStep());
+ },260);
+}
+function hitTarget(clientX,clientY){
+ const zone=slot(currentZone());if(!zone)return false;
+ const r=zone.getBoundingClientRect();
+ const letter=$("activeLetter").getBoundingClientRect();
+ const overlap=letter.left<r.right&&letter.right>r.left&&letter.top<r.bottom&&letter.bottom>r.top;
+ const pointerInside=clientX>=r.left&&clientX<=r.right&&clientY>=r.top&&clientY<=r.bottom;
+ return overlap||pointerInside;
+}
+function setupLetterDrag(){
+ const letter=$("activeLetter"),scene=$("scene");
+ letter.addEventListener("pointerdown",e=>{
+   if(progress.complete||delivering||currentStep()<0)return;
+   if(e.pointerType==="mouse"&&e.button!==0)return;
+   const rect=letter.getBoundingClientRect();
+   dragStart={x:e.clientX,y:e.clientY,cx:rect.left+rect.width/2,cy:rect.top+rect.height/2};
+   dragging=true;dragPointer=e.pointerId;
+   letter.classList.remove("returning");letter.classList.add("dragging");
+   letter.setPointerCapture(e.pointerId);
+   e.preventDefault();
+ });
+ letter.addEventListener("pointermove",e=>{
+   if(!dragging||e.pointerId!==dragPointer||!dragStart)return;
+   const rect=scene.getBoundingClientRect();
+   const x=dragStart.cx+(e.clientX-dragStart.x);
+   const y=dragStart.cy+(e.clientY-dragStart.y);
+   moveLetter(Math.max(4,Math.min(96,(x-rect.left)/rect.width*100)),Math.max(7,Math.min(93,(y-rect.top)/rect.height*100)));
+   const zone=slot(currentZone());
+   if(zone)zone.classList.toggle("hovered",hitTarget(e.clientX,e.clientY));
+ });
+ letter.addEventListener("pointerup",e=>{
+   if(!dragging||e.pointerId!==dragPointer)return;
+   const matched=hitTarget(e.clientX,e.clientY);
+   dragging=false;dragPointer=null;
+   if(letter.hasPointerCapture(e.pointerId))letter.releasePointerCapture(e.pointerId);
+   letter.classList.remove("dragging");
+   if(matched)dropLetter();else{restoreLetter();$("dropFeedback").textContent="Попробуй попасть в подсвеченную ячейку."}
+ });
+ letter.addEventListener("pointercancel",()=>{if(dragging)restoreLetter()});
+ // Keyboard and accessibility alternative: Space/Enter picks up and delivers to the highlighted slot.
+ letter.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();dropLetter()}});
+}
 function saveKey(){return "chronburg:2026:day03:"+exam+":v1"}
 function load(){try{let v=JSON.parse(localStorage.getItem(saveKey()));if(v&&Array.isArray(v.solved))return v}catch(e){}return {solved:[],errors:[],hints:0,complete:false}}
 let progress=load();function save(){try{localStorage.setItem(saveKey(),JSON.stringify(progress))}catch(e){}}
@@ -221,52 +275,46 @@ function show(){
  const d=data(),n=d?d.length:stepZones().length;
  const completed=new Set(progress.solved.filter(i=>Number.isInteger(i)&&i>=0&&i<n));
  const solved=completed.size;
- const labels=exam==="oge"?["Сортировка писем","Почтовые марки","Маршрут доставки"]:["Сортировка писем","Почтовые марки","Маршрут доставки","Отправка праздничной почты"];
- const steps=stepZones(),active=progress.complete?-1:steps.findIndex((_,i)=>!completed.has(i));
+ const labels=stepLabels(),active=progress.complete?-1:currentStep();
  $("oge").className="btn "+(exam==="oge"?"active":"secondary");
  $("ege").className="btn "+(exam==="ege"?"active":"secondary");
  $("questionCount").textContent=d?n+" заданий":"Задания ещё не загружены";
  $("doneCount").textContent=solved+" выполнено";
- $("countLabel").textContent="Доставлено этапов: "+solved+" из "+n;
+ $("countLabel").textContent="Рассортировано писем: "+solved+" из "+n;
  $("progressBar").style.width=n?solved/n*100+"%":"0%";
- $("sceneLabel").textContent=progress.complete?"Почта Хронбурга работает":"Новогодняя почта · этап "+Math.min(solved+1,n)+" из "+n;
+ $("sceneLabel").textContent=progress.complete?"Почта Хронбурга работает":"Новогодняя почта · письмо "+Math.min(solved+1,n)+" из "+n;
  $("timeLabel").textContent=exam==="oge"?"ОГЭ · около 10 минут":"ЕГЭ · около 12 минут";
- $("taskOpen").textContent=progress.complete?"↻ Повторить испытания":"✉ "+(labels[active]||"Открыть письмо");
+ $("taskOpen").disabled=progress.complete;
+ $("taskOpen").classList.toggle("hidden",!!progress.complete);
  $("finishPanel").classList.toggle("hidden",!progress.complete);
- $("hotspots").replaceChildren();$("stageButtons").replaceChildren();
+ $("stageButtons").replaceChildren();
  for(let i=0;i<n;i++){
-   const zone=steps[i],done=completed.has(i),current=i===active;
-   if(current&&zone!=="all"){
-     const hot=document.createElement("button");hot.type="button";hot.className="hotspot current";hot.dataset.zone=zone;hot.textContent="✉";hot.setAttribute("aria-label","Открыть: "+labels[i]);
-     hot.onpointerenter=()=>preview(zone);hot.onpointerleave=()=>clearPreview(zone);hot.onfocus=()=>preview(zone);hot.onblur=()=>clearPreview(zone);
-     hot.onclick=()=>{clearPreview(zone);open(i)};$("hotspots").append(hot);
-   }
-   const card=document.createElement("button");card.type="button";card.className="stagebtn "+(done?"done":current?"current":"");card.textContent=(done?"✓ ":i+1+". ")+labels[i];
-   const small=document.createElement("small");small.textContent=done?"Письмо доставлено":current?"Открыть письмо":"Ожидает";card.append(small);
-   card.disabled=!current&&!progress.complete;
-   if(current&&zone!=="all"){card.onpointerenter=()=>preview(zone);card.onpointerleave=()=>clearPreview(zone);card.onfocus=()=>preview(zone);card.onblur=()=>clearPreview(zone)}
-   card.onclick=()=>{clearPreview(zone);open(i)};$("stageButtons").append(card);
+   const card=document.createElement("button");
+   card.type="button";card.className="stagebtn "+(completed.has(i)?"done":i===active?"current":"");
+   card.textContent=(completed.has(i)?"✓ ":""+(i+1)+". ")+labels[i];
+   const small=document.createElement("small");small.textContent=completed.has(i)?"Доставлено":i===active?"Перетащи конверт":"Ожидает";
+   card.append(small);card.disabled=true;$("stageButtons").append(card);
  }
- paintLayers();
- $("storyText").textContent=progress.complete?"Тик: «Все письма доставлены! Хронбург снова готов отправлять новогодние поздравления».":active===0?"Тик: «Почтовые ящики перепутаны. Начнём с сортировки писем!».":active===1?"Тик: «Теперь нужно восстановить почтовые марки!».":active===2?"Тик: «Письма готовы! Осталось построить маршрут доставки».":"Тик: «Последний штемпель — и почта заработает в полную силу!».";
+ updateMailGame();
+ $("storyText").textContent=progress.complete?"Тик: «Все праздничные письма на месте! Хронбург готов к отправке новогодних поздравлений».":active===0?"Тик: «Смотри, первая ячейка светится! Перетащи туда письмо, и мы узнаем, что с ним делать».":active===1?"Тик: «Первое письмо обработано. Поместим следующее в ячейку марок».":active===2?"Тик: «Осталось восстановить маршрут доставки. Найди подсвеченную ячейку!».":"Тик: «Последнее письмо отправляется на праздничную почту!».";
 }
 function renderTask(){const t=activeTask();if(!t)return;$("taskNumber").textContent=(alternate?"Резервное письмо":"Письмо")+" "+(index+1)+" из "+data().length;$("questionTitle").textContent=alternate?"Дополнительное письмо":"Письмо "+(index+1);inlineMath($("questionText"),t.text);$("source").textContent="Источник: "+t.source;$("tableArea").replaceChildren();if(t.table&&Array.isArray(t.table.columns)&&Array.isArray(t.table.rows)){const wrap=document.createElement("div");wrap.className="tblwrap";const table=document.createElement("table");table.className="tbl";const head=document.createElement("tr");t.table.columns.forEach(x=>{const cell=document.createElement("th");cell.textContent=x;head.append(cell)});table.append(head);t.table.rows.forEach(row=>{const tr=document.createElement("tr");row.forEach(val=>{const td=document.createElement("td");td.textContent=val;tr.append(td)});table.append(tr)});wrap.append(table);$("tableArea").append(wrap)}$("answer").value="";$("check").disabled=false;$("answer").disabled=false;$("reserve").classList.add("hidden");if(t.image){const picture=document.createElement("img");picture.src=t.image;picture.alt="Рисунок к заданию";picture.style.cssText="display:block;width:min(100%,640px);height:auto;object-fit:contain;margin:12px auto;border-radius:10px";$("tableArea").append(picture)}notify(t.answer===null||t.answer===undefined?"Ответ требует проверки рисунка преподавателем. Автоматическая проверка отключена.":"Проверь вычисления и введи ответ.");}
 function open(i){if(!data()){alert("Сначала загрузи учительский JSON для проверки дня 3.");return}index=i;review=progress.complete;alternate=false;renderTask();$("dialog").classList.remove("hidden");document.body.style.overflow="hidden";$("close").focus()}
-function close(){$("dialog").classList.add("hidden");document.body.style.overflow=""}
+function close(){const wasOpen=!$("dialog").classList.contains("hidden");$("dialog").classList.add("hidden");document.body.style.overflow="";if(wasOpen&&!progress.complete){restoreLetter();const z=slot(currentZone());if(z)z.classList.remove("hovered")}}
 function check(){const t=activeTask();if(!t)return;if(t.answer===null||t.answer===undefined||t.review_status==="requires_image_visual_review"){notify("Это задание ещё требует проверки рисунка преподавателем. Автоматическая проверка недоступна.","bad");return}const val=num($("answer").value),expect=num(t.answer);if(!Number.isFinite(val)){notify("Введите число. Для дроби можно использовать запись a/b.","bad");return}if(!Number.isFinite(expect)){notify("Ошибка подготовленного ключа: сообщи преподавателю.","bad");return}
-if(Math.abs(val-expect)<1e-8){const already=progress.solved.includes(index);if(!review&&!already){progress.solved.push(index);progress.solved.sort((a,b)=>a-b);if(progress.solved.length===data().length)progress.complete=true;save()}sendAudio(660);previewZone=null;close();show()}
+if(Math.abs(val-expect)<1e-8){const already=progress.solved.includes(index);if(!review&&!already){progress.solved.push(index);progress.solved.sort((a,b)=>a-b);if(progress.solved.length===data().length)progress.complete=true;save()}sendAudio(660);close();show()}
 else{notify("Пока неверно. Проверь условие и вычисления. При необходимости открой резервный аналог.","bad");if(!review){progress.errors.push({task:index+1,answer:$("answer").value,time:new Date().toISOString(),reserve:alternate});save();if(!alternate&&data()[index].reserve)$("reserve").classList.remove("hidden")}}}
 $("import").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text());if(x.kind!=="chronburg-private-day3"||x.day!==3||!x.exams||!Array.isArray(x.exams.oge)||!Array.isArray(x.exams.ege))throw Error("Неверный формат файла");for(const key of ["oge","ege"])for(const task of x.exams[key])if(!task.text||!task.reserve)throw Error("В комплекте отсутствуют данные");bank=x;previewZone=null;$("importStatus").textContent="✓ Комплект загружен локально: ОГЭ — "+x.exams.oge.length+", ЕГЭ — "+x.exams.ege.length+" задания.";show()}catch(err){$("importStatus").textContent="Не удалось загрузить комплект: "+err.message}e.target.value=""};
 $("oge").onclick=()=>{close();exam="oge";progress=load();review=false;previewZone=null;history.replaceState({}, "", "day03.html?exam=oge"+(isPreview?"&preview=1":""));show()};$("ege").onclick=()=>{close();exam="ege";progress=load();review=false;previewZone=null;history.replaceState({}, "", "day03.html?exam=ege"+(isPreview?"&preview=1":""));show()};
-$("taskOpen").onclick=()=>{if(!data()){alert("Сначала загрузи приватный файл заданий третьего дня в блоке учителя.");return}open(progress.complete?0:Math.min(progress.solved.length,data().length-1))};
+$("taskOpen").onclick=()=>dropLetter();
 $("check").onclick=check;$("answer").onkeydown=e=>{if(e.key==="Enter")check()};$("close").onclick=close;$("curtain").onclick=close;document.onkeydown=e=>{if(e.key==="Escape")close()};
 $("reserve").onclick=()=>{alternate=true;renderTask()};$("hint").onclick=()=>{notify("Подсказка: выдели ключевые данные условия. Для процентов составь отношение, для практической задачи — таблицу вычислений, для формулы — подставь известные величины.");if(!review){progress.hints++;save()}};
 $("sound").onclick=()=>{soundOn=!soundOn;$("sound").textContent=soundOn?"♫ Звук: вкл.":"♪ Звук: выкл.";if(soundOn)sendAudio(530)};
-$("replay").onclick=()=>open(0);
-$("reset").onclick=()=>{if(confirm("Очистить прогресс дня 3 для выбранного экзамена?")){progress={solved:[],errors:[],hints:0,complete:false};previewZone=null;save();show()}};
-$("export").onclick=()=>{const data=JSON.stringify({app:"chronburg",day:2,exam,progress},null,2);let url=URL.createObjectURL(new Blob([data],{type:"application/json"}));let a=document.createElement("a");a.href=url;a.download="chronburg-day03-"+exam+"-progress.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),700)};
+$("replay").onclick=()=>{if(confirm("Начать почтовую мини-игру заново? Прогресс третьего дня будет сброшен.")){progress={solved:[],errors:[],hints:0,complete:false};save();show()}};
+$("reset").onclick=()=>{if(confirm("Очистить прогресс дня 3 для выбранного экзамена?")){progress={solved:[],errors:[],hints:0,complete:false};save();show()}};
+$("export").onclick=()=>{const data=JSON.stringify({app:"chronburg",day:3,exam,progress},null,2);let url=URL.createObjectURL(new Blob([data],{type:"application/json"}));let a=document.createElement("a");a.href=url;a.download="chronburg-day03-"+exam+"-progress.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),700)};
 const pad=$("keyboard");["1","2","3","4","5","6","7","8","9","0","/","−",",","⌫"].forEach(k=>{const b=document.createElement("button");b.textContent=k;b.onclick=()=>{const v=$("answer");v.value=k==="⌫"?v.value.slice(0,-1):v.value+(k==="−"?"-":k);v.focus()};pad.append(b)});
 const cv=$("draftCanvas"),ctx=cv.getContext("2d");let painting=false;const pt=e=>{const b=cv.getBoundingClientRect();return{x:(e.clientX-b.left)*cv.width/b.width,y:(e.clientY-b.top)*cv.height/b.height}};cv.onpointerdown=e=>{painting=true;cv.setPointerCapture(e.pointerId);let p=pt(e);ctx.beginPath();ctx.moveTo(p.x,p.y)};cv.onpointermove=e=>{if(!painting)return;let p=pt(e);ctx.lineTo(p.x,p.y);ctx.strokeStyle="#28405b";ctx.lineWidth=3;ctx.lineCap="round";ctx.stroke()};cv.onpointerup=cv.onpointercancel=()=>painting=false;$("draftBtn").onclick=()=>$("draftWrap").classList.toggle("hidden");$("clearDraft").onclick=()=>ctx.clearRect(0,0,cv.width,cv.height);
-show();window.addEventListener("pageshow",()=>{progress=load();show()});
+setupLetterDrag();show();window.addEventListener("pageshow",()=>{progress=load();show()});
 })();
 </script></body></html>
