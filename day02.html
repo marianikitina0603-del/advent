@@ -45,6 +45,17 @@
 .scene .layer-instruction{font-size:11px;opacity:.87;max-width:85%}
 @media(max-width:650px){.scene .hotspot{min-width:31px;width:31px;height:31px}.scene .layer-instruction{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.scene .hotspot.current{animation:none!important}.scene .color-layer{transition:none!important}}
+</style><style id="day2-tree">
+.advent-tree-panel{border:1px solid #967b51;background:linear-gradient(145deg,#182f48,#0d1d30);border-radius:16px;padding:14px;text-align:center}
+.advent-tree-panel h2{margin:0 0 7px}
+.advent-tree-image{position:relative;width:min(100%,180px);margin:auto;isolation:isolate}
+.advent-tree-image .tree-base{width:100%;height:auto;display:block;filter:drop-shadow(0 8px 17px #0008)}
+.advent-tree-image .tree-orn{position:absolute;width:26%;height:auto;object-fit:contain;filter:drop-shadow(0 0 7px #ffdf8eaa);animation:treeAppear .6s ease-out}
+.advent-tree-image .tree-orn-one{left:45%;top:44%}
+.advent-tree-image .tree-orn-two{left:26%;top:56%}
+.advent-tree-panel .helper{margin:7px 0 0}
+@keyframes treeAppear{from{opacity:0;transform:scale(.35)}to{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.advent-tree-image .tree-orn{animation:none}}
 </style></head><body>
 <div class="wrap">
 <header class="top"><div><small>Новогодний математический квест • Хронбург • 2 декабря</small><h1>✦ Пекарня Марты</h1></div><nav class="topnav"><a class="btn secondary" id="mapLink" href="index.html?preview=1" style="text-decoration:none">← Карта Хронбурга</a><button class="btn secondary" id="export">↓ Прогресс</button></nav></header>
@@ -63,6 +74,15 @@
 </main>
 <aside class="aside"><div><h2>Экзамен</h2><div class="exam-switch"><button class="btn active" id="oge">ОГЭ</button><button class="btn secondary" id="ege">ЕГЭ профиль</button></div><p class="helper">У каждого экзамена собственный набор заданий и сохранение прогресса.</p></div>
 <div><h2>Заказы Марты</h2><div class="pills"><span class="pill" id="questionCount">— заданий</span><span class="pill" id="doneCount">0 выполнено</span></div><div class="progress" style="margin-top:12px"><b id="progressBar"></b></div><p class="helper">Сначала печь, затем вкусности и ингредиенты. Цвет появляется только после правильного решения. В ЕГЭ четвёртое задание раскрывает всю пекарню.</p></div>
+<div class="advent-tree-panel">
+<h2>🎄 Ёлка Хронбурга</h2>
+<div class="advent-tree-image">
+<img class="tree-base" src="assets/trees/christmas_tree_empty.png" alt="Общая новогодняя ёлка Хронбурга">
+<img id="treeDay1Ornament" class="tree-orn tree-orn-one hidden" src="assets/ornaments/ornament_day01_lantern.png" alt="Золотой фонарик">
+<img id="treeDay2Ornament" class="tree-orn tree-orn-two hidden" src="assets/ornaments/ornament_day02_gingerbread.png" alt="Пряник Марты">
+</div>
+<p class="helper" id="treeProgress">Украшения появляются после выполнения игровых дней.</p>
+</div>
 <div class="teacher"><details open><summary>🔐 Учительский предпросмотр</summary><p class="helper">Чтобы проверить реальные задания второго дня, выбери закрытый JSON-файл, подготовленный отдельно. Он останется на твоём устройстве и не загрузится в GitHub.</p><input type="file" id="import" accept=".json,application/json"><p class="helper" id="importStatus" aria-live="polite">Набор ещё не загружен.</p></details></div>
 <div class="secret">В публичной версии нет заданий и ответов будущего дня. Учитель загружает их локально для тестирования. Это не система авторизации: не пересылай приватный JSON ученикам до даты открытия.</div>
 <div><button class="btn secondary" id="reset" style="width:100%">↻ Сбросить прохождение</button></div></aside></div></div>
@@ -111,8 +131,17 @@ function inlineMath(el,text){el.replaceChildren();const parts=String(text||"").s
 function notify(text,kind){inlineMath($("feedback"),text);$("feedback").className="feedback"+(kind?" "+kind:"")}
 function activeTask(){const d=data();return d&&d[index]?alternate?d[index].reserve:d[index]:null}
 function sendAudio(pitch){if(!soundOn)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();let o=audio.createOscillator(),g=audio.createGain();o.frequency.value=pitch;g.gain.setValueAtTime(.07,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.22);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+.23)}catch(e){}}
+function refreshTree(){
+ let first=false;
+ try{const p=JSON.parse(localStorage.getItem("chronburg:2026:"+exam+":v1"));first=!!(p&&Array.isArray(p.completed)&&p.completed.includes(1))}catch(e){}
+ const second=progress.complete===true;
+ $("treeDay1Ornament").classList.toggle("hidden",!first);
+ $("treeDay2Ornament").classList.toggle("hidden",!second);
+ const n=Number(first)+Number(second);
+ $("treeProgress").textContent=n+" из 24 украшений · "+(second?"Пряник Марты уже на ёлке!":first?"Фонарик получен. Следующий — пряник Марты.":"Начни с первого дня, чтобы получить фонарик.");
+}
 function show(){
- reconcileProgress();updateMapLinks();const d=data(),n=d?d.length:stepZones().length;
+ reconcileProgress();updateMapLinks();refreshTree();const d=data(),n=d?d.length:stepZones().length;
  const completed=new Set(progress.solved.filter(i=>Number.isInteger(i)&&i>=0&&i<n));
  const solved=completed.size;
  const labels=exam==="oge"?["Печь","Вкусности","Ингредиенты"]:["Печь","Вкусности","Ингредиенты","Праздничный финал"];
