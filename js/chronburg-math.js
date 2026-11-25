@@ -7,7 +7,7 @@ window.ChronburgMath=(function(){
   if(window.katex)try{window.katex.render(latex,node,{throwOnError:false,displayMode:display,strict:"ignore"});return node}catch(e){}
   node.textContent=latex;return node
  }
- const expression=/(\$\$[\s\S]*?\$\$|\$[^$\n]+\$|\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]|\d+\/\d+|√\s*\(?\s*\d+(?:\s*[+\-]\s*\d+)?\s*\)?|[A-Za-zА-Яа-я]\s*[²³⁴⁵⁶⁷⁸⁹])/g;
+ const expression=/(\$\$[\s\S]*?\$\$|\$[^$\n]+\$|\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]|\d+\/\d+|√\s*(?:\([^)]*\)|\d+)|[A-Za-zА-Яа-я]\s*[²³⁴⁵⁶⁷⁸⁹])/g;
  function inline(target,text){
   let previous=0,m;expression.lastIndex=0;
   while((m=expression.exec(text))!==null){
