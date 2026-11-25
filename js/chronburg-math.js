@@ -29,7 +29,7 @@ window.ChronburgMath=(function(){
   if(matches.length!==4||matches.map(m=>Number(m[1])).join("")!=="1234")return null;
   return matches.map(m=>m[2].trim().replace(/;$/,""))
  }
- function render(target,raw){
+ function render(target,raw,onChoice){
   target.replaceChildren();const text=clean(raw);if(!text)return;
   const rows=text.split(/\n+/);
   for(const row of rows){
@@ -37,7 +37,22 @@ window.ChronburgMath=(function(){
    const opts=options(line);
    if(opts){
     const grid=el("div","math-options");grid.setAttribute("aria-label","Варианты ответа");
-    opts.forEach((value,i)=>{const item=el("div","math-option"),number=el("span","math-option-number",String(i+1)),body=el("span","math-option-value");inline(body,value);item.append(number,body);grid.append(item)});
+    opts.forEach((value,i)=>{
+      const selectable=typeof onChoice==="function";
+      const item=el(selectable?"button":"div","math-option"),number=el("span","math-option-number",String(i+1)),body=el("span","math-option-value");
+      if(selectable){
+        item.type="button";
+        item.setAttribute("aria-label","Вариант "+(i+1)+": "+value);
+        item.setAttribute("aria-pressed","false");
+        item.addEventListener("click",()=>{
+          for(const sibling of grid.children){sibling.classList.remove("selected");sibling.setAttribute("aria-pressed","false")}
+          item.classList.add("selected");
+          item.setAttribute("aria-pressed","true");
+          onChoice(i+1);
+        });
+      }
+      inline(body,value);item.append(number,body);grid.append(item);
+    });
     target.append(grid);continue;
    }
    const p=el("div","math-question-line");inline(p,line);target.append(p);
