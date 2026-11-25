@@ -22,3 +22,10 @@
 .chronburg-math-paper .feedback.good{background:#bbdfc3}
 .chronburg-math-paper .feedback.bad{background:#f3c8bf}
 @media(max-width:550px){.chronburg-math-paper{padding:12px;border-width:3px}.math-question{font-size:17px}.math-options{gap:6px}.math-option{gap:6px;padding:8px}.math-option-number{flex-basis:25px;width:25px;height:25px}.chronburg-math-modal{padding:9px}}
+
+/* Selected answer card: unified, accessible across the bakery and post office. */
+.math-option[type="button"]{cursor:pointer;font-family:inherit;color:#302c26;text-align:left}
+.math-option[type="button"]:hover{border-color:#93632c;background:#fff1d5;box-shadow:0 0 0 2px #d4b3743d}
+.math-option.selected{border-color:#8b6631;background:#efdfb9;box-shadow:inset 0 0 0 2px #d5b77c}
+.math-option.selected .math-option-number{background:#285e4b;color:#fff7df}
+.math-option[type="button"]:focus-visible{outline:3px solid #a77a37;outline-offset:3px}
