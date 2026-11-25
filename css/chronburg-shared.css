@@ -36,3 +36,9 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff0
 .chronburg-date-tabs .pill{padding:8px 12px;border-radius:999px;background:#142944;border:1px solid #697b8e;font-size:12px;font-weight:500;color:#e9d19a;white-space:nowrap}
 .chronburg-date-tabs .pill#sceneDate{border-color:#b38b57;color:#ffdda4}
 @media(max-width:480px){.chronburg-date-tabs{padding:9px;gap:6px}.chronburg-date-tabs .btn,.chronburg-date-tabs .pill{padding:7px 9px;font-size:11px}}
+
+/* Automatic publishing status shown to students on days 2 and 3. */
+.release-status{display:block;padding:10px 16px;background:#192f49;color:#f1d5a2;border-bottom:1px solid #7a664c6b;font:600 12px/1.6 Manrope,Arial,sans-serif}
+.release-status[data-status="waiting"]{background:#192f49;color:#f1d5a2}
+.release-status[data-status="success"]{background:#1d453b;color:#d9f9e9}
+.release-status[data-status="error"]{background:#53302f;color:#ffe2d5}
