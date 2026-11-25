@@ -1,0 +1,42 @@
+
+/* Day 3: mail sorting is a distinct full-colour drag-and-drop game. */
+.scene.post-game{position:relative;isolation:isolate;background:#122b44;overflow:hidden;touch-action:pan-y}
+.scene.post-game .post-background{display:block;width:100%;height:100%;object-fit:fill;filter:none!important}
+.scene.post-game:after{background:linear-gradient(180deg,#08162531,transparent 30%,#0816256e 100%);z-index:1}
+.scene.post-game .label,.scene.post-game .layer-instruction{z-index:7}
+.scene.post-game .layer-instruction{bottom:8px;max-width:78%;font-size:11px;pointer-events:none}
+.scene.post-game .mail-slots{position:absolute;inset:0;z-index:4;pointer-events:none}
+.mail-slot{position:absolute;box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;width:clamp(66px,13%,135px);height:clamp(48px,14%,95px);padding:8px;color:#fff0cf;background:#0c2642b8;border:2px solid #9db0b87a;border-radius:12px;box-shadow:0 5px 20px #00112688;text-align:center;font-weight:800;font-size:clamp(10px,1.18vw,14px);line-height:1.1;pointer-events:none;transition:transform .2s,box-shadow .2s,background .2s}
+.mail-slot small{font-size:10px;opacity:.8;font-weight:600}
+.mail-slot[data-zone="sorting"]{left:43%;top:22%}
+.mail-slot[data-zone="stamps"]{left:21%;top:46%}
+.mail-slot[data-zone="routes"]{left:66%;top:48%}
+.mail-slot[data-zone="dispatch"]{left:50%;top:70%}
+.mail-slot.active{border:2px dashed #ffe4a5;background:#765027d6;box-shadow:0 0 0 5px #e7b66529,0 0 28px #ffc45fba,0 9px 24px #0009;animation:mailTarget 2.1s ease-in-out infinite}
+.mail-slot.hovered{background:#c18532ea;transform:scale(1.07);border-style:solid;box-shadow:0 0 0 7px #ffe2a157,0 0 34px #ffcf83}
+.mail-slot.done{border:1px solid #85d7ae;background:#174d44e0;box-shadow:0 4px 14px #0005}
+.mail-slot.done::before{content:"✉";font-size:clamp(17px,2.2vw,30px);color:#fff2d3}
+.mail-slot.done small{display:none}
+.mail-slot.inactive{opacity:.55}
+.mail-slot.hidden{display:none!important}
+@keyframes mailTarget{50%{box-shadow:0 0 0 8px #e7b66513,0 0 35px #ffc45f9e,0 9px 24px #0009}}
+.mail-tray{position:absolute;z-index:8;left:3.2%;bottom:7.8%;width:clamp(86px,14%,150px);height:clamp(73px,21%,132px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;border-radius:15px;background:#122a45cb;border:1px solid #e0bd7e95;box-shadow:0 6px 25px #0009}
+.mail-tray p{margin:0;color:#f9dba9;font-size:clamp(9px,1vw,12px);font-weight:750}
+.mail-letter{position:absolute;z-index:10;display:flex;align-items:center;justify-content:center;width:clamp(53px,8%,98px);height:clamp(36px,11%,68px);border:2px solid #996b35;border-radius:9px;background:linear-gradient(145deg,#fff9e9,#ead6ae);box-shadow:0 8px 16px #0008;color:#7e5228;font-size:clamp(24px,3.4vw,43px);cursor:grab;user-select:none;touch-action:none;transform:translate(-50%,-50%);transition:box-shadow .2s,background .2s;will-change:left,top}
+.mail-letter.dragging{cursor:grabbing;z-index:25;box-shadow:0 20px 29px #000a,0 0 0 4px #ffebad65}
+.mail-letter.returning{transition:left .28s ease,top .28s ease,box-shadow .2s}
+.mail-letter.delivered{cursor:default;pointer-events:none;transform:translate(-50%,-50%) scale(.82);filter:drop-shadow(0 0 10px #ffe2ab)}
+.mail-letter:disabled{opacity:.58;cursor:not-allowed}
+.mail-letter .envelope-mark{pointer-events:none}
+.mail-slot.keyboard-target{outline:3px solid #fff2c4}
+.post-game .post-error{position:absolute;z-index:12;bottom:3%;right:2%;padding:7px 12px;background:#172c44ec;color:#ffe6bc;border:1px solid #e5b775;border-radius:11px;font-size:11px;max-width:56%}
+.post-game .post-error:empty{display:none}
+.post-game .post-success-ink{position:absolute;z-index:3;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 55%,#ffda7530,transparent 65%);opacity:0;transition:opacity 1s}
+.post-game.complete .post-success-ink{opacity:1}
+.post-status-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px;padding:14px}
+.post-status-list .stagebtn{cursor:default;min-height:60px}
+.post-status-list .stagebtn.current{box-shadow:0 0 0 2px #d3a75855}
+.post-status-list .stagebtn:disabled{opacity:1}
+.post-game .label{font-size:12px}
+@media(max-width:700px){.mail-slot{padding:4px;border-radius:7px;font-size:10px;gap:1px}.mail-slot small{font-size:8px}.mail-tray{border-radius:9px}.post-game .layer-instruction{font-size:9px;max-width:88%}.mail-letter{border-radius:6px}.post-status-list{grid-template-columns:repeat(2,1fr)}}
+@media(prefers-reduced-motion:reduce){.mail-slot.active{animation:none!important}.mail-letter.returning,.post-game .post-success-ink{transition:none!important}}
