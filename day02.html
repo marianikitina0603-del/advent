@@ -84,7 +84,7 @@
 @media(max-width:1050px){.layout{grid-template-columns:1fr}.aside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.aside>*{min-width:0}}
 @media(max-width:650px){.wrap{padding:10px}.aside{display:flex}}
 </style>
-<link rel="stylesheet" href="css/chronburg-shared.css"></head><body>
+<link rel="stylesheet" href="css/chronburg-shared.css"><style>.tree-preview .placed-mailbox{left:63%;top:58%;width:36px}</style></head><body>
 <div class="wrap">
 <header class="top"><div><small>Новогодний математический квест • Хронбург • 2 декабря</small><h1>✦ Пекарня Марты</h1></div><nav class="topnav"><a class="btn secondary" id="mapLink" href="index.html?preview=1" style="text-decoration:none">← Карта Хронбурга</a><button class="btn secondary" id="export">↓ Прогресс</button></nav></header>
 <div class="layout"><main class="frame">
@@ -106,9 +106,9 @@
 <h2>Твоя коллекция</h2>
 <div class="bakery-collection">
   <div id="bakeryReward1" class="ornament locked"><img src="assets/ornaments/ornament_day01_lantern.png" alt="Золотой фонарик"><div><b>Золотой фонарик</b><p id="bakeryReward1Status">Заверши день 1, чтобы получить.</p></div></div>
-  <div id="bakeryReward2" class="ornament locked"><img src="assets/ornaments/ornament_day02_gingerbread.png" alt="Пряник Марты"><div><b>Пряник Марты</b><p id="bakeryReward2Status">Заверши день 2, чтобы получить.</p></div></div>
+  <div id="bakeryReward2" class="ornament locked"><img src="assets/ornaments/ornament_day02_gingerbread.png" alt="Пряник Марты"><div><b>Пряник Марты</b><p id="bakeryReward2Status">Заверши день 2, чтобы получить.</p></div></div><div id="bakeryReward3" class="ornament locked"><img src="assets/ornaments/ornament_day03_mailbox.png" alt="Праздничный почтовый ящик"><div><b>Праздничный почтовый ящик</b><p id="bakeryReward3Status">Заверши день 3, чтобы получить.</p></div></div>
 </div>
-<div class="tree-preview"><img class="tree-base" src="assets/trees/christmas_tree_empty.png" alt="Новогодняя ёлка Хронбурга"><img id="treeDay1Ornament" class="placed placed-lantern hidden" src="assets/ornaments/ornament_day01_lantern.png" alt="Золотой фонарик на ёлке"><img id="treeDay2Ornament" class="placed placed-gingerbread hidden" src="assets/ornaments/ornament_day02_gingerbread.png" alt="Пряник Марты на ёлке"></div>
+<div class="tree-preview"><img class="tree-base" src="assets/trees/christmas_tree_empty.png" alt="Новогодняя ёлка Хронбурга"><img id="treeDay1Ornament" class="placed placed-lantern hidden" src="assets/ornaments/ornament_day01_lantern.png" alt="Золотой фонарик на ёлке"><img id="treeDay2Ornament" class="placed placed-gingerbread hidden" src="assets/ornaments/ornament_day02_gingerbread.png" alt="Пряник Марты на ёлке"><img id="treeDay3Ornament" class="placed placed-mailbox hidden" src="assets/ornaments/ornament_day03_mailbox.png" alt="Почтовый ящик на ёлке"></div>
 <p class="chronburg-tree-caption" id="treeProgress">Украшения появляются после выполнения игровых дней.</p>
 </div>
 <div class="teacher"><details open><summary>🔐 Учительский предпросмотр</summary><p class="helper">Чтобы проверить реальные задания второго дня, выбери закрытый JSON-файл, подготовленный отдельно. Он останется на твоём устройстве и не загрузится в GitHub.</p><input type="file" id="import" accept=".json,application/json"><p class="helper" id="importStatus" aria-live="polite">Набор ещё не загружен.</p></details></div>
@@ -160,16 +160,20 @@ function notify(text,kind){inlineMath($("feedback"),text);$("feedback").classNam
 function activeTask(){const d=data();return d&&d[index]?alternate?d[index].reserve:d[index]:null}
 function sendAudio(pitch){if(!soundOn)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();let o=audio.createOscillator(),g=audio.createGain();o.frequency.value=pitch;g.gain.setValueAtTime(.07,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.22);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+.23)}catch(e){}}
 function refreshTree(){
- let first=false;
+ let first=false;let third=false;
  try{const p=JSON.parse(localStorage.getItem("chronburg:2026:"+exam+":v1"));first=!!(p&&Array.isArray(p.completed)&&p.completed.includes(1))}catch(e){}
  const second=progress.complete===true;
+ try{const p=JSON.parse(localStorage.getItem("chronburg:2026:day03:"+exam+":v1"));third=!!(p&&p.complete===true)}catch(e){}
+ $("bakeryReward3").classList.toggle("locked",!third);
+ $("bakeryReward3Status").textContent=third?"Получено! Почтовый ящик на ёлке.":"Заверши день 3, чтобы получить.";
+ $("treeDay3Ornament").classList.toggle("hidden",!third);
  $("bakeryReward1").classList.toggle("locked",!first);
  $("bakeryReward2").classList.toggle("locked",!second);
  $("bakeryReward1Status").textContent=first?"Получено! Ёлка украшена.":"Заверши день 1, чтобы получить.";
  $("bakeryReward2Status").textContent=second?"Получено! Пряник уже на ёлке.":"Заверши день 2, чтобы получить.";
  $("treeDay1Ornament").classList.toggle("hidden",!first);
  $("treeDay2Ornament").classList.toggle("hidden",!second);
- const n=Number(first)+Number(second);
+ const n=Number(first)+Number(second)+Number(third);
  $("treeProgress").textContent=n+" из 24 украшений · "+(second?"Пряник Марты уже на ёлке!":first?"Фонарик получен. Следующий — пряник Марты.":"Начни с первого дня, чтобы получить фонарик.");
 }
 function show(){
