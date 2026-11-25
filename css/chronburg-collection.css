@@ -1,0 +1,37 @@
+
+/* Shared Chronburg collectible tree and museum: used by map and every day */
+.chronburg-collect{width:100%;display:flex;flex-direction:column;align-items:center;gap:9px}
+.chronburg-collect .collect-heading{font:600 23px "Playfair Display",Georgia,serif;color:#ffdda4;margin:0}
+.chronburg-collect .collect-tree{position:relative;width:min(230px,100%);margin:auto;aspect-ratio:1/1.35}
+.chronburg-collect .collect-tree>img.tree-art{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 8px 19px #0007)}
+.chronburg-collect .tree-toy{position:absolute;width:26%;height:19%;object-fit:contain;filter:drop-shadow(0 0 9px #ffcc7a);animation:collectReveal .6s ease-out}
+.chronburg-collect .tree-toy[hidden]{display:none}
+.chronburg-collect .tree-toy[data-day="1"]{left:42%;top:39%}
+.chronburg-collect .tree-toy[data-day="2"]{left:24%;top:53%}
+.chronburg-collect .tree-toy[data-day="3"]{left:57%;top:54%}
+.chronburg-collect .collect-meta{color:#bdcde0;font-size:12px;text-align:center;margin:0}
+.chronburg-collect .collect-open{width:100%;max-width:250px}
+.chronburg-collect .collect-open:focus-visible{outline:3px solid #fff0a2}
+.chronburg-collect .collect-overlay[hidden]{display:none}
+.chronburg-collect .collect-overlay{position:fixed;inset:0;z-index:1500;display:grid;place-items:center;padding:16px;background:#050c1ccf;backdrop-filter:blur(8px)}
+.chronburg-collect .collect-window{width:min(800px,100%);max-height:92dvh;overflow:auto;border:2px solid #c49b59;border-radius:20px;background:linear-gradient(145deg,#273e59,#101e32);color:#f7f1df;box-shadow:0 25px 70px #000b;padding:16px}
+.chronburg-collect .collect-head{display:flex;justify-content:space-between;align-items:start;gap:15px;margin-bottom:14px}
+.chronburg-collect .collect-title{font:600 clamp(22px,3vw,30px) "Playfair Display",Georgia,serif;margin:0;color:#ffdda4}
+.chronburg-collect .collect-subtitle{color:#becce0;font-size:13px;margin:6px 0 0;line-height:1.5}
+.chronburg-collect .collect-close{width:39px;height:39px;flex:0 0 39px;border:1px solid #c9a46b;border-radius:99px;color:white;background:#233c59;font-size:24px;cursor:pointer}
+.chronburg-collect .collect-close:focus-visible{outline:3px solid #fff0a2}
+.chronburg-collect .collect-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:11px}
+.chronburg-collect .collect-item{position:relative;min-width:0;display:flex;flex-direction:column;align-items:center;gap:7px;padding:10px 7px 12px;border:1px solid #8091a266;border-radius:14px;background:#18304a;text-align:center}
+.chronburg-collect .collect-item.earned{border-color:#d9b67a;background:#27453f}
+.chronburg-collect .collect-item.locked{background:#1b293b}
+.chronburg-collect .collect-item img{width:75px;height:74px;object-fit:contain}
+.chronburg-collect .collect-item.locked img{filter:grayscale(1) brightness(.6);opacity:.66}
+.chronburg-collect .collect-item .mystery{display:grid;place-items:center;font:600 37px "Playfair Display",Georgia,serif;width:75px;height:74px;color:#acb5bf;filter:grayscale(1);background:radial-gradient(#5e6d7d88,transparent 70%)}
+.chronburg-collect .collect-item strong{font-size:12px;line-height:1.35}
+.chronburg-collect .collect-item small{font-size:11px;color:#bdcde0}
+.chronburg-collect .collect-item .collect-state{font-size:11px;color:#f5d49d}
+.chronburg-collect .collect-item.locked .collect-state{color:#9faebd}
+body.chronburg-collection-open{overflow:hidden}
+@keyframes collectReveal{from{opacity:0;transform:scale(.45)}to{opacity:1;transform:scale(1)}}
+@media(max-width:650px){.chronburg-collect .collect-tree{width:min(190px,100%)}.chronburg-collect .collect-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.chronburg-collect .collect-item{padding:8px 4px}.chronburg-collect .collect-item img,.chronburg-collect .collect-item .mystery{width:59px;height:58px}.chronburg-collect .collect-window{padding:12px}}
+@media(prefers-reduced-motion:reduce){.chronburg-collect .tree-toy{animation:none!important}}
