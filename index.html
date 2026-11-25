@@ -84,8 +84,8 @@ function load(){try{const a=JSON.parse(localStorage.getItem(storageKey()));if(a&
 let progress=load();
 function save(){progress.updated=new Date().toISOString();localStorage.setItem(storageKey(),JSON.stringify(progress))}
 function isDone(){return progress.completed.includes(1)}
-function available(day){return day<=unlocked&&day===1} // Future-day tasks intentionally not shipped.
-function renderDates(){$("todayPill").textContent=preview?"🔧 Предпросмотр":"📅 "+new Intl.DateTimeFormat("ru-RU",{timeZone:"Europe/Moscow",day:"numeric",month:"long"}).format(new Date());$("releaseNotice").textContent=preview?"🔧 Режим предпросмотра интерфейса (не защищён авторизацией). Только день 1 содержит задания; будущие материалы не опубликованы.":"🔐 Прототип: сейчас подготовлен только день 1. Будущие задания отсутствуют в публичной сборке. Строгая ежедневная публикация ещё не включена."}
+function available(day){return (day===1&&day<=unlocked)||(day===2&&preview)} // Day 2 preview has no public question bank.
+function renderDates(){$("todayPill").textContent=preview?"🔧 Предпросмотр":"📅 "+new Intl.DateTimeFormat("ru-RU",{timeZone:"Europe/Moscow",day:"numeric",month:"long"}).format(new Date());$("releaseNotice").textContent=preview?"🔧 Режим предпросмотра интерфейса (не защищён авторизацией). День 1 доступен для игры; день 2 — только игровая сцена с локальной загрузкой учительского набора. Будущие материалы не опубликованы.":"🔐 Прототип: сейчас опубликован день 1; для дня 2 готова сцена, но задания пока хранятся вне публичной сборки. Строгая ежедневная публикация ещё не включена."}
 function renderMap(){
 const map=$("mapMarkers"),grid=$("dayGrid");map.replaceChildren();grid.replaceChildren();
 for(let d=1;d<=24;d++){
@@ -98,7 +98,7 @@ function refreshSide(){$("ogeBtn").className="btn "+(exam==="oge"?"selected":"se
 renderMap()}
 function setExam(e){closeTask();exam=e;progress=load();index=0;review=false;history.replaceState({},'',location.pathname+"?exam="+exam+(preview?"&preview=1":""));refreshSide();if(scene)openDay(1)}
 function showScene(v){if(!v)closeTask();scene=v;$("mapScreen").classList.toggle("hidden",v);$("sceneScreen").classList.toggle("hidden",!v);$("homeBtn").classList.toggle("hidden",!v);window.scrollTo({top:0,behavior:"smooth"})}
-function openDay(d){if(!available(d))return;review=isDone();index=review?0:([0,1,2,3].find(i=>!progress.solved.includes(i))??0);showScene(true);setSceneState(isDone()?3:solved().length,true);renderQuestion();updateScene();if(isDone())finishReviewScene()}
+function openDay(d){if(!available(d))return;if(d===2){location.href="day02.html?exam="+exam;return;}review=isDone();index=review?0:([0,1,2,3].find(i=>!progress.solved.includes(i))??0);showScene(true);setSceneState(isDone()?3:solved().length,true);renderQuestion();updateScene();if(isDone())finishReviewScene()}
 function solved(){return progress.solved.filter(n=>Number.isInteger(n)&&n>=0&&n<=3)}
 const sceneStates=["assets/locations/day01_street_lanterns.png","assets/locations/day01_street_lanterns_state1.webp","assets/locations/day01_street_lanterns_state2.webp","assets/locations/day01_street_lanterns_state3.webp"];
 let currentSceneState=0,sceneTransitionVersion=0;
