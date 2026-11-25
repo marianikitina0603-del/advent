@@ -27,3 +27,5 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff0
 .bakery-collection .ornament p{margin:5px 0 0;font-size:12px;color:var(--muted)}
 .bakery-collection .ornament b{font-weight:750}
 @media(prefers-reduced-motion:reduce){.btn{transition:none!important}}
+
+.tree-preview .placed-mailbox{left:63%;top:58%;width:36px}
