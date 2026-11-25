@@ -37,7 +37,7 @@
 <section id="sceneScreen" class="scene hidden">
 <div class="scene-tabs"><button class="btn secondary" id="sceneBack">← К карте</button><span class="pill" id="sceneDate">1 декабря</span><span class="pill" id="sceneMode">ОГЭ</span></div>
 <div class="scene-visual"><img id="sceneStateBase" src="assets/locations/day01_street_lanterns.png" alt="Зимняя улица Хронбурга, состояние освещения"><img id="sceneStateOverlay" class="state-overlay" src="assets/locations/day01_street_lanterns_state1.webp" alt="" aria-hidden="true"><span id="visualStatus" class="visual-status">0 из 6 фонарей</span><button type="button" id="shieldBtn" class="scene-interact" aria-label="Нажать на распределительный щит и открыть задания">⚙ Открыть щит</button></div>
-<div class="scene-progress" id="sceneProgress" aria-label="Этапы ремонта освещения"></div>
+<div class="scene-progress" id="sceneProgress" aria-label="Этапы ремонта освещения"></div><div class="hidden" id="bonusPanel" style="margin-top:12px;padding:15px;background:#203c58;border:1px solid #e9b85b;border-radius:14px"><b>✦ Финальный замок Искры времени</b><p class="muted">Все фонари горят. Осталось решить последнее испытание, чтобы получить Искру времени и золотой фонарик.</p><button class="btn" id="bonusBtn">🔑 Открыть четвёртое задание</button></div>
 <h2>День 1. Огонёк надежды</h2>
 <div class="storyline"><img src="assets/characters/character_tik.png" alt="Механическая сова Тик"><p id="storyText">Тик: Все фонари погасли! Реши три математические загадки, чтобы вернуть свет на улицы Хронбурга.</p></div>
 <div class="scene-actions"><button class="btn" id="openTaskBtn">⚙ Проверить распределительный щит</button><button class="btn secondary" id="soundBtn" aria-pressed="false">♪ Звук: выкл.</button><p class="muted" id="sceneInstructions">Нажми на щит или первую секцию, чтобы открыть задание. После верного ответа окно закроется, и загорятся два фонаря.</p></div><p class="scene-note" id="sceneNote">Три секции сети · по два фонаря в каждой · прогресс сохраняется автоматически</p>
@@ -48,7 +48,7 @@
 <div class="formula" id="formula"></div>
 <div class="inputrow"><input id="answer" autocomplete="off" inputmode="decimal" placeholder="Ответ" aria-label="Ответ на математическую задачу"><button class="btn" id="checkBtn">Проверить</button></div>
 <div class="keypad" id="keypad"></div>
-<div class="helper"><button id="hintBtn" class="btn secondary">💡 Подсказка</button><button id="draftBtn" class="btn secondary">✎ Черновик</button><button id="nextBtn" class="btn hidden">Продолжить →</button></div>
+<div class="helper"><button id="hintBtn" class="btn secondary">💡 Подсказка</button><button id="reserveBtn" class="btn secondary hidden">↻ Резервный аналог</button><button id="draftBtn" class="btn secondary">✎ Черновик</button><button id="nextBtn" class="btn hidden">Продолжить →</button></div>
 <div id="feedback" class="feedback" aria-live="polite">Каждый верный ответ зажжёт два фонаря.</div>
 <div id="draftWrap" class="hidden"><canvas id="draft" width="700" height="230" style="width:100%;height:180px;touch-action:none;background:repeating-linear-gradient(#fff 0px,#fff 22px,#d9e8f0 23px);border:1px solid #bbb;border-radius:8px;margin-top:8px"></canvas><button class="btn secondary mini" id="clearDraft">Очистить черновик</button></div>
 </div></div></div>
@@ -63,21 +63,14 @@
 <div class="notice" id="releaseNotice">🔐 Пилотная версия: доступен только полностью подготовленный день 1. Остальные дни добавим по мере разработки. Автоматическая защищённая публикация ещё не подключена.</div>
 <div><button class="btn secondary" id="importBtn" style="width:100%">↑ Загрузить сохранение</button><input type="file" id="importInput" accept="application/json,.json" class="hidden"><button class="btn secondary" id="resetBtn" style="width:100%;margin-top:8px">↻ Сбросить прогресс</button></div>
 </aside>
-</div><p class="footer">Хронбург · Прототип 0.2 · 2026 · Дата на устройстве используется лишь для визуального календаря. Защищённое расписание публикаций будет настроено отдельно.</p>
+</div><p class="footer">Хронбург · Прототип 0.3 · 2026 · Дата на устройстве используется лишь для визуального календаря. Защищённое расписание публикаций будет настроено отдельно.</p>
 </div>
+<script src="data/day01.js"></script>
 <script>
 "use strict";
 (function(){
 const A={map:"assets/maps/chronburg_map_base.png"};
-const exams={oge:{name:"ОГЭ",tasks:[
-{title:"Первая пара фонарей",latex:"\\frac34+\\frac18",answer:"7/8",hint:"Приведи дроби к общему знаменателю $8$: $\\frac{3}{4}=\\frac{6}{8}$.",explain:"$\\frac{6}{8}+\\frac{1}{8}=\\frac{7}{8}$."},
-{title:"Вторая пара фонарей",latex:"2^3\\cdot 2^2",answer:"32",hint:"При умножении степеней с одинаковым основанием показатели складываются: $a^m\\cdot a^n=a^{m+n}$.",explain:"$2^{3+2}=2^5=32$."},
-{title:"Последняя пара фонарей",latex:"\\sqrt{144}-5",answer:"7",hint:"Чему равен арифметический квадратный корень $\\sqrt{144}$?",explain:"$\\sqrt{144}-5=12-5=7$."}
-]},ege:{name:"ЕГЭ профиль",tasks:[
-{title:"Первая пара фонарей",latex:"2^{x+1}=16",answer:"3",hint:"Представь $16$ в виде степени двойки: $16=2^4$.",explain:"$x+1=4$, поэтому $x=3$."},
-{title:"Вторая пара фонарей",latex:"\\log_2{x}=5",answer:"32",hint:"Используй определение логарифма: $\\log_2 x=5\\iff x=2^5$.",explain:"$x=2^5=32$."},
-{title:"Последняя пара фонарей",latex:"\\sqrt{x+7}=4",answer:"9",hint:"Возведи обе части в квадрат: $(\\sqrt{x+7})^2=4^2$.",explain:"$x+7=16$, $x=9$. Проверка: $\\sqrt{9+7}=\\sqrt{16}=4$."}
-]}};
+const exams=window.CHRONBURG_DAY1;
 const titleDays=["Огонёк надежды","Рецепт праздника","Новогодняя почта","Мастерская игрушек","Доставка ёлки","Ярмарка случайностей","Новогодние гирлянды","Снежный эликсир","Мост к саду","Лестница звёзд","Зимняя оранжерея","Обсерватория","Праздничные арки","Разбитая звезда","Библиотека теорем","Архив праздников","Сломанные игрушки","Лабиринт","Зеркала огней","Сейф часовщика","Испытание хранителя","Репетиция","Ошибка мастера","Сердце Нового года"];
 const positions=[[81,76],[68,74],[57,76],[44,71],[27,66],[87,61],[74,47],[59,56],[48,56],[34,50],[85,40],[72,34],[50,38],[32,34],[20,30],[10,23],[17,45],[60,24],[82,21],[36,19],[47,14],[65,14],[73,11],[55,7]];
 const $=id=>document.getElementById(id);
@@ -105,8 +98,8 @@ function refreshSide(){$("ogeBtn").className="btn "+(exam==="oge"?"selected":"se
 renderMap()}
 function setExam(e){closeTask();exam=e;progress=load();index=0;review=false;history.replaceState({},'',location.pathname+"?exam="+exam+(preview?"&preview=1":""));refreshSide();if(scene)openDay(1)}
 function showScene(v){if(!v)closeTask();scene=v;$("mapScreen").classList.toggle("hidden",v);$("sceneScreen").classList.toggle("hidden",!v);$("homeBtn").classList.toggle("hidden",!v);window.scrollTo({top:0,behavior:"smooth"})}
-function openDay(d){if(!available(d))return;if(!isDone()&&solved().length===3){progress.completed.push(1);save()}review=isDone();index=review?0:([0,1,2].find(i=>!progress.solved.includes(i))??0);showScene(true);setSceneState(isDone()?3:solved().length,true);renderQuestion();updateScene();if(isDone())finishReviewScene()}
-function solved(){return progress.solved.filter(n=>Number.isInteger(n)&&n>=0&&n<=2)}
+function openDay(d){if(!available(d))return;review=isDone();index=review?0:([0,1,2,3].find(i=>!progress.solved.includes(i))??0);showScene(true);setSceneState(isDone()?3:solved().length,true);renderQuestion();updateScene();if(isDone())finishReviewScene()}
+function solved(){return progress.solved.filter(n=>Number.isInteger(n)&&n>=0&&n<=3)}
 const sceneStates=["assets/locations/day01_street_lanterns.png","assets/locations/day01_street_lanterns_state1.webp","assets/locations/day01_street_lanterns_state2.webp","assets/locations/day01_street_lanterns_state3.webp"];
 let currentSceneState=0,sceneTransitionVersion=0;
 sceneStates.slice(1).forEach(src=>{const img=new Image();img.src=src});
@@ -118,39 +111,48 @@ overlay.style.transition="none";overlay.style.opacity="0";overlay.src=sceneState
 const reveal=()=>{if(version!==sceneTransitionVersion)return;requestAnimationFrame(()=>{if(version!==sceneTransitionVersion)return;overlay.style.transition="opacity 1000ms ease";overlay.style.opacity="1";setTimeout(()=>{if(version!==sceneTransitionVersion)return;base.src=sceneStates[state];overlay.style.opacity="0";currentSceneState=state},1080)})};
 if(overlay.complete&&overlay.naturalWidth>0)reveal();else{overlay.onload=reveal;overlay.onerror=()=>{if(version!==sceneTransitionVersion)return;base.src=sceneStates[state];overlay.style.opacity="0";currentSceneState=state}}
 }
-function renderLights(){const count=(isDone()?3:solved().length)*2;setSceneState(count/2);$("visualStatus").textContent=count+" из 6 фонарей";$("shieldBtn").classList.toggle("is-complete",count===6);$("shieldBtn").textContent=count===6?"✓ Щит восстановлен":"⚙ Открыть щит";updateCircuits()}
+function renderLights(){const count=Math.min(3,(isDone()?3:solved().filter(i=>i<3).length))*2;setSceneState(count/2);$("visualStatus").textContent=count+" из 6 фонарей";$("shieldBtn").classList.toggle("is-complete",count===6);$("shieldBtn").textContent=count===6?"✓ Щит восстановлен":"⚙ Открыть щит";updateCircuits()}
 let soundEnabled=false, audioContext=null;
 function playTone(freq){if(!soundEnabled)return;try{audioContext=audioContext||new (window.AudioContext||window.webkitAudioContext)();const osc=audioContext.createOscillator(),gain=audioContext.createGain();osc.type="sine";osc.frequency.setValueAtTime(freq,audioContext.currentTime);gain.gain.setValueAtTime(.08,audioContext.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+.4);osc.connect(gain);gain.connect(audioContext.destination);osc.start();osc.stop(audioContext.currentTime+.42)}catch(e){}}
 function playVictory(){[523,659,784,1046].forEach((freq,i)=>setTimeout(()=>playTone(freq),i*190))}
 function finishReviewScene(){$("mathCard").classList.add("hidden");$("winPanel").classList.remove("hidden");$("storyText").textContent="Тик: «Ура! Свет вернулся на улицы. Твой фонарик уже ждёт тебя в коллекции. Можешь повторить испытание, когда захочешь»."}
 function updateCircuits(){const holder=$("sceneProgress");holder.replaceChildren();for(let i=0;i<3;i++){const complete=isDone()||solved().includes(i),current=!complete&&index===i;let btn=document.createElement("button");btn.type="button";btn.className="circuit "+(complete?"complete":current?"active":"");btn.disabled=!isDone()&&(complete||i!==([0,1,2].find(n=>!solved().includes(n))??0));let number=document.createElement("span");number.textContent=complete?"✓":i+1;let description=document.createElement("div");let bold=document.createElement("strong");bold.textContent=["Северный контур","Центральный контур","Южный контур"][i];let small=document.createElement("small");small.textContent=complete?"Свет включён":current?"Готов к ремонту":"Ожидает запуска";description.append(bold,small);btn.append(number,description);btn.onclick=()=>{index=i;review=isDone();renderQuestion();openTask()};holder.append(btn)}}
-function updateScene(){if(!scene)return;let count=isDone()?3:solved().length;let lines=["Тик: «Ты вовремя! Город тонет во тьме. В щите три секции, каждая питает два фонаря. Поможешь?»","Тик: «Видишь? Первый участок улицы уже светится! Продолжим, пока не замёрзли шестерёнки!»","Тик: «Ещё немного! Осталась последняя пара фонарей. Весь город ждёт!»","Тик: «Мы справились! Первые огни вернулись в Хронбург. Это только начало нашей истории!»"];$("storyText").textContent=lines[count];$("sceneInstructions").textContent=count===3?"Все три секции восстановлены. Открой панель, чтобы повторить задания, или возвращайся на карту.":"Нажми на щит, чтобы "+(count?"продолжить ремонт":"начать ремонт")+". После правильного ответа окно закроется, и загорится пара фонарей.";$("openTaskBtn").textContent=count===3?"↻ Повторить испытание":"⚙ Открыть задание "+(count+1);updateCircuits()}
+function updateScene(){if(!scene)return;let count=isDone()?3:solved().filter(i=>i<3).length;let lines=["Тик: «Ты вовремя! Город тонет во тьме. В щите три секции, каждая питает два фонаря. Поможешь?»","Тик: «Видишь? Первый участок улицы уже светится! Продолжим, пока не замёрзли шестерёнки!»","Тик: «Ещё немного! Осталась последняя пара фонарей. Весь город ждёт!»","Тик: «Все фонари горят! Но Искра времени заперта в последнем замке. Реши четвёртое задание!»"];$("storyText").textContent=lines[count];$("bonusPanel").classList.toggle("hidden",count!==3||isDone());$("sceneInstructions").textContent=isDone()?"Первый день завершён: все фонари горят, награда получена.":count===3?"Три рычага переключены! Теперь открой последний замок Искры времени.":"Нажми на щит, чтобы "+(count?"продолжить ремонт":"начать ремонт")+". После правильного ответа окно закроется, и загорится пара фонарей.";$("openTaskBtn").textContent=isDone()?"↻ Повторить испытание":count===3?"🔑 Финальное задание":"⚙ Открыть задание "+(count+1);updateCircuits()}
 
 let focusBeforeModal=null;
-function openTask(){if(isDone()||$("mathCard").classList.contains("hidden")){index=0;review=true;renderQuestion()}else{index=[0,1,2].find(i=>!progress.solved.includes(i))??0;renderQuestion()}focusBeforeModal=document.activeElement;$("taskModal").classList.remove("hidden");document.body.style.overflow="hidden";$("closeTaskBtn").focus()}
+function openTask(){if(isDone()||$("mathCard").classList.contains("hidden")){index=0;review=true;renderQuestion()}else{index=[0,1,2,3].find(i=>!progress.solved.includes(i))??0;renderQuestion()}focusBeforeModal=document.activeElement;$("taskModal").classList.remove("hidden");document.body.style.overflow="hidden";$("closeTaskBtn").focus()}
 function closeTask(){$("taskModal").classList.add("hidden");document.body.style.overflow="";if(focusBeforeModal&&document.contains(focusBeforeModal))focusBeforeModal.focus();focusBeforeModal=null}
 function rich(el,content){el.replaceChildren();const pieces=String(content).split(/(\$[^$]+\$)/g);for(const part of pieces){if(part.startsWith("$")&&part.endsWith("$")&&part.length>2){const node=document.createElement("span");node.className="math-inline";let latex=part.slice(1,-1);if(window.katex){try{katex.render(latex,node,{throwOnError:false})}catch(e){node.textContent=latex}}else{node.textContent=latex}el.append(node)}else{el.append(document.createTextNode(part))}}}
 function feedback(message,kind=""){rich($("feedback"),message);$("feedback").className="feedback"+(kind?" "+kind:"")}
+let activeReserve=false;
 function renderQuestion(){
-const tasks=exams[exam].tasks;let total=tasks.length;if(isDone()&&!review)review=true;
-$("taskCount").textContent="Задание "+(index+1)+" из "+total;$("taskTitle").textContent=tasks[index].title;$("formula").textContent=tasks[index].latex;
+activeReserve=false;const tasks=exams[exam].tasks;let total=tasks.length;if(isDone()&&!review)review=true;
+$("taskCount").textContent="Задание "+(index+1)+" из "+total;$("taskTitle").textContent=tasks[index].title;$("formula").textContent=tasks[index].latex;$("reserveBtn").classList.add("hidden");
 if(window.katex){try{katex.render(tasks[index].latex,$("formula"),{throwOnError:false,displayMode:true})}catch(e){}}
 $("answer").value="";feedback(review?"Режим повторения: можно решать заново, результат не будет стёрт.":"Каждый верный ответ зажжёт два фонаря.");$("nextBtn").classList.add("hidden");$("checkBtn").disabled=false;$("answer").disabled=false;
 if(!review&&solved().includes(index)){feedback("Уже решено! "+tasks[index].explain,"good");$("checkBtn").disabled=true;$("answer").disabled=true;$("nextBtn").classList.remove("hidden");}
-$("nextBtn").textContent=index===2?"Завершить испытание →":"Следующее задание →";$("winPanel").classList.add("hidden");$("mathCard").classList.remove("hidden");renderLights();updateScene()
+$("nextBtn").textContent=index===3?"Завершить испытание →":"Следующее задание →";$("winPanel").classList.add("hidden");$("mathCard").classList.remove("hidden");renderLights();updateScene()
 }
 function numeric(x){let s=String(x).trim().replace(/\s/g,"").replace(",",".");if(!/^-?(?:\d+(?:\.\d+)?|\.\d+)(?:\/-?(?:\d+(?:\.\d+)?|\.\d+))?$/.test(s))return NaN;let v=s.split("/");let num=Number(v[0]),den=v.length===2?Number(v[1]):1;return den!==0?num/den:NaN}
-function check(){let task=exams[exam].tasks[index],raw=$("answer").value,v=numeric(raw);if(!Number.isFinite(v)){feedback("Введите число или дробь, например $\\frac{7}{8}$.","bad");return}
-const ok=Math.abs(v-numeric(task.answer))<1e-9;if(ok){feedback("Правильно! "+task.explain,"good");$("nextBtn").classList.remove("hidden");$("answer").disabled=true;$("checkBtn").disabled=true;if(!review&&!progress.solved.includes(index)){progress.solved.push(index);save();playTone([440,554,659][index]);}
-closeTask();
-renderLights();
-updateScene();
-if(!review&&solved().length===3){finish()}else if(!review){index=[0,1,2].find(i=>!progress.solved.includes(i))??0;updateCircuits();$("openTaskBtn").textContent="⚙ Открыть задание "+(index+1)}
-else{$("sceneInstructions").textContent="Правильно! Закрой щит и посмотри на восстановленные фонари."}}else{feedback("Пока неверно. Проверь вычисления или открой подсказку.","bad");if(!review){progress.errors.push({day:1,task:index+1,value:raw,at:new Date().toISOString()});save()}}}
+function check(){
+const task=activeReserve?exams[exam].reserve[index]:exams[exam].tasks[index];
+const raw=$("answer").value,v=numeric(raw);
+if(!Number.isFinite(v)){feedback("Введите число или дробь, например $\\frac{7}{8}$.","bad");return}
+const ok=Math.abs(v-numeric(task.answer))<1e-9;
+if(ok){
+feedback("Правильно! "+task.explain,"good");$("checkBtn").disabled=true;$("answer").disabled=true;
+if(!review&&!progress.solved.includes(index)){progress.solved.push(index);save();playTone([440,554,659,784][index])}
+closeTask();renderLights();updateScene();
+if(!review&&progress.solved.includes(3)){finish();return}
+if(!review){index=[0,1,2,3].find(i=>!progress.solved.includes(i))??0;updateCircuits()}
+}else{
+feedback("Пока неверно. Проверь вычисления. Можно попробовать резервный аналог.","bad");
+if(!review){progress.errors.push({day:1,task:index+1,value:raw,at:new Date().toISOString(),reserve:activeReserve});save();if(!activeReserve)$("reserveBtn").classList.remove("hidden")}
+}}
 function finish(){closeTask();if(!review&&!isDone()){progress.completed.push(1);save();playVictory()}review=true;finishReviewScene();renderLights();refreshSide();updateScene();$("openTaskBtn").textContent="↻ Повторить испытание"}
-function next(){if(index===2){finish();return}index++;renderQuestion()}
+function next(){if(index===3){finish();return}index++;renderQuestion()}
 function goMap(){showScene(false);refreshSide()}
-$("ogeBtn").onclick=()=>setExam("oge");$("egeBtn").onclick=()=>setExam("ege");$("sceneBack").onclick=goMap;$("homeBtn").onclick=goMap;$("winMap").onclick=goMap;$("replay").onclick=()=>{index=0;review=true;renderQuestion();openTask()};$("openTaskBtn").onclick=()=>{if(isDone()){index=0;review=true;renderQuestion()}openTask()};$("shieldBtn").onclick=$("openTaskBtn").onclick;$("soundBtn").onclick=()=>{soundEnabled=!soundEnabled;$("soundBtn").textContent=soundEnabled?"♫ Звук: вкл.":"♪ Звук: выкл.";$("soundBtn").setAttribute("aria-pressed",String(soundEnabled));if(soundEnabled)playTone(550)};$("closeTaskBtn").onclick=closeTask;$("modalBackdrop").onclick=closeTask;document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("taskModal").classList.contains("hidden"))closeTask();if(e.key==="Tab"&&!$("taskModal").classList.contains("hidden")){let nodes=[...$("taskModal").querySelectorAll("button:not(:disabled),input:not(:disabled)")].filter(x=>x.getClientRects().length);if(nodes.length){let first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}});$("checkBtn").onclick=check;$("nextBtn").onclick=next;$("answer").addEventListener("keydown",e=>{if(e.key==="Enter"&&!$("checkBtn").disabled)check()});$("hintBtn").onclick=()=>{const t=exams[exam].tasks[index];feedback("💡 "+t.hint);if(!review){progress.hints++;save()}};
+$("ogeBtn").onclick=()=>setExam("oge");$("egeBtn").onclick=()=>setExam("ege");$("sceneBack").onclick=goMap;$("homeBtn").onclick=goMap;$("winMap").onclick=goMap;$("replay").onclick=()=>{index=0;review=true;renderQuestion();openTask()};$("bonusBtn").onclick=()=>{index=3;renderQuestion();openTask()};$("reserveBtn").onclick=()=>{if(review)return;activeReserve=true;let t=exams[exam].reserve[index];$("taskTitle").textContent=t.title;$("formula").textContent=t.latex;if(window.katex)katex.render(t.latex,$("formula"),{throwOnError:false,displayMode:true});$("answer").value="";feedback("Резервное задание на ту же тему.");$("reserveBtn").classList.add("hidden")};$("openTaskBtn").onclick=()=>{if(isDone()){index=0;review=true;renderQuestion()}openTask()};$("shieldBtn").onclick=$("openTaskBtn").onclick;$("soundBtn").onclick=()=>{soundEnabled=!soundEnabled;$("soundBtn").textContent=soundEnabled?"♫ Звук: вкл.":"♪ Звук: выкл.";$("soundBtn").setAttribute("aria-pressed",String(soundEnabled));if(soundEnabled)playTone(550)};$("closeTaskBtn").onclick=closeTask;$("modalBackdrop").onclick=closeTask;document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("taskModal").classList.contains("hidden"))closeTask();if(e.key==="Tab"&&!$("taskModal").classList.contains("hidden")){let nodes=[...$("taskModal").querySelectorAll("button:not(:disabled),input:not(:disabled)")].filter(x=>x.getClientRects().length);if(nodes.length){let first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}});$("checkBtn").onclick=check;$("nextBtn").onclick=next;$("answer").addEventListener("keydown",e=>{if(e.key==="Enter"&&!$("checkBtn").disabled)check()});$("hintBtn").onclick=()=>{const t=activeReserve?exams[exam].reserve[index]:exams[exam].tasks[index];feedback("💡 "+t.hint);if(!review){progress.hints++;save()}};
 const keys=["1","2","3","4","5","6","7","8","9","0","/","−",",","⌫"];for(const key of keys){const btn=document.createElement("button");btn.textContent=key;btn.setAttribute("aria-label","Ввести "+key);btn.onclick=()=>{const inp=$("answer");if(key==="⌫")inp.value=inp.value.slice(0,-1);else inp.value+=key==="−"?"-":key;inp.focus()};$("keypad").append(btn)}
 const canvas=$("draft"),ctx=canvas.getContext("2d");let down=false;function point(ev){let rect=canvas.getBoundingClientRect();return {x:(ev.clientX-rect.left)*canvas.width/rect.width,y:(ev.clientY-rect.top)*canvas.height/rect.height}};canvas.addEventListener("pointerdown",e=>{down=true;canvas.setPointerCapture(e.pointerId);const p=point(e);ctx.beginPath();ctx.moveTo(p.x,p.y)});canvas.addEventListener("pointermove",e=>{if(!down)return;const p=point(e);ctx.lineTo(p.x,p.y);ctx.strokeStyle="#21364d";ctx.lineWidth=3;ctx.lineCap="round";ctx.lineJoin="round";ctx.stroke()});canvas.addEventListener("pointerup",()=>down=false);canvas.addEventListener("pointercancel",()=>down=false);
 $("draftBtn").onclick=()=>$("draftWrap").classList.toggle("hidden");$("clearDraft").onclick=()=>ctx.clearRect(0,0,canvas.width,canvas.height);
