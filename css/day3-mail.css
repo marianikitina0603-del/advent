@@ -40,3 +40,35 @@
 .post-game .label{font-size:12px}
 @media(max-width:700px){.mail-slot{padding:4px;border-radius:7px;font-size:10px;gap:1px}.mail-slot small{font-size:8px}.mail-tray{border-radius:9px}.post-game .layer-instruction{font-size:9px;max-width:88%}.mail-letter{border-radius:6px}.post-status-list{grid-template-columns:repeat(2,1fr)}}
 @media(prefers-reduced-motion:reduce){.mail-slot.active{animation:none!important}.mail-letter.returning,.post-game .post-success-ink{transition:none!important}}
+
+/* Uploaded Chronburg artwork. Keep interaction boxes larger than the visible artwork. */
+.scene.post-game .mail-slot{width:clamp(88px,17%,170px);height:clamp(74px,22%,155px);padding:0;background:transparent;border:0;border-radius:0;box-shadow:none;overflow:visible}
+.scene.post-game .mail-slot.active{background:transparent;border:0;box-shadow:none;animation:none}
+.scene.post-game .mail-slot.hovered{background:transparent;border:0;box-shadow:none;transform:scale(1.05)}
+.scene.post-game .mail-slot.done{background:transparent;border:0;box-shadow:none}
+.scene.post-game .mail-slot.done::before{display:none}
+.scene.post-game .mail-slot.inactive{opacity:.7}
+.scene.post-game .mail-slot[data-zone="sorting"]{left:40%;top:13%}
+.scene.post-game .mail-slot[data-zone="stamps"]{left:21%;top:43%}
+.scene.post-game .mail-slot[data-zone="routes"]{left:64%;top:43%}
+.scene.post-game .mail-slot[data-zone="dispatch"]{left:46%;top:64%}
+.scene.post-game .mail-slot .slot-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:none;pointer-events:none;user-select:none}
+.scene.post-game .mail-slot .slot-idle{display:block}
+.scene.post-game .mail-slot.active .slot-idle,.scene.post-game .mail-slot.done .slot-idle{display:none}
+.scene.post-game .mail-slot.active .slot-active{display:block;filter:drop-shadow(0 0 13px #f9c76ccc)}
+.scene.post-game .mail-slot.hovered .slot-active{filter:drop-shadow(0 0 19px #ffe4a6)}
+.scene.post-game .mail-slot.done .slot-active{display:none}
+.scene.post-game .mail-slot.done .slot-done{display:block}
+.scene.post-game .mail-slot .slot-caption{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);white-space:nowrap;pointer-events:none;background:#132d49eb;border:1px solid #d1ae6e;border-radius:20px;padding:3px 8px;font-weight:700;font-size:clamp(9px,1vw,12px);color:#fff2d6;text-shadow:0 1px 3px #000}
+.scene.post-game .mail-slot.done .slot-caption{border-color:#93d8b0}
+.scene.post-game .mail-letter{width:clamp(75px,14%,135px);height:clamp(60px,18%,112px);padding:0;background:transparent;border:0;border-radius:0;box-shadow:none;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab}
+.scene.post-game .mail-letter .letter-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:none;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.scene.post-game .mail-letter .letter-idle{display:block}
+.scene.post-game .mail-letter.dragging .letter-idle,.scene.post-game .mail-letter.delivered .letter-idle{display:none}
+.scene.post-game .mail-letter.dragging .letter-hover{display:block;filter:drop-shadow(0 0 11px #ffe3a7)}
+.scene.post-game .mail-letter.delivered .letter-hover{display:none}
+.scene.post-game .mail-letter.delivered .letter-done{display:block}
+.scene.post-game .mail-letter.dragging{cursor:grabbing;box-shadow:none;filter:drop-shadow(0 12px 15px #0009)}
+.scene.post-game .mail-letter.delivered{filter:drop-shadow(0 0 12px #ffdf8a);opacity:1}
+.scene.post-game .mail-tray{left:2.2%;bottom:5.2%;width:clamp(90px,16%,172px);height:clamp(75px,27%,148px)}
+@media(max-width:700px){.scene.post-game .mail-slot{width:18%;height:26%}.scene.post-game .mail-letter{width:17%;height:22%}.scene.post-game .mail-slot .slot-caption{font-size:9px;padding:2px 5px}}
