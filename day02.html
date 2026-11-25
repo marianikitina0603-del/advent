@@ -23,17 +23,38 @@
 .scene .hotspot[data-zone="oven"]{left:80%;top:66%}
 .scene .hotspot[data-zone="pastries"]{left:16%;top:40%}
 .scene .layer-instruction{font-size:11px}
+</style><style id="day2-v3">
+.scene .bakery-background,.scene .color-layer{object-fit:fill}
+.scene .bakery-background{filter:grayscale(1) brightness(.83) contrast(1.025);transition:filter 1s ease}
+.scene.complete .bakery-background{filter:none}
+.scene .color-layer{filter:none!important;opacity:0;transition:opacity .85s ease;pointer-events:none;mix-blend-mode:normal}
+.scene .color-layer.restored{opacity:1}
+.scene .color-layer.preview{opacity:.48}
+.scene.complete .color-layer{opacity:0!important}
+.scene .color-layer[data-layer="oven"]{mask-image:radial-gradient(ellipse 28% 42% at 84% 62%,black 33%,transparent 100%);-webkit-mask-image:radial-gradient(ellipse 28% 42% at 84% 62%,black 33%,transparent 100%)}
+.scene .color-layer[data-layer="pastries"]{mask-image:radial-gradient(ellipse 26% 39% at 16% 45%,black 30%,transparent 100%);-webkit-mask-image:radial-gradient(ellipse 26% 39% at 16% 45%,black 30%,transparent 100%)}
+.scene .color-layer[data-layer="ingredients"]{mask-image:radial-gradient(ellipse 29% 31% at 39% 73%,black 33%,transparent 100%);-webkit-mask-image:radial-gradient(ellipse 29% 31% at 39% 73%,black 33%,transparent 100%)}
+.scene .hotspot[data-zone="oven"]{left:81%;top:66%}
+.scene .hotspot[data-zone="pastries"]{left:18%;top:44%}
+.scene .hotspot[data-zone="ingredients"]{left:40%;top:72%}
+.scene .hotspot{min-width:37px;width:37px;height:37px;font-size:16px;padding:0;background:#263549dd;border:1px solid #f8d396;box-shadow:0 0 0 4px #fac76b2a,0 0 18px #f6b65b7a}
+.scene .hotspot.done{display:none}
+.scene .hotspot.current{animation:day2Pulse 2.5s ease-in-out infinite}
+@keyframes day2Pulse{50%{box-shadow:0 0 0 8px #fac76b19,0 0 22px #f4bb78a8}}
+.scene .label{font-size:12px;background:#16273bd9}
+.scene .layer-instruction{font-size:11px;opacity:.87;max-width:85%}
+@media(max-width:650px){.scene .hotspot{min-width:31px;width:31px;height:31px}.scene .layer-instruction{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.scene .hotspot.current{animation:none!important}.scene .color-layer{transition:none!important}}
 </style></head><body>
 <div class="wrap">
 <header class="top"><div><small>Новогодний математический квест • Хронбург • 2 декабря</small><h1>✦ Пекарня Марты</h1></div><nav class="topnav"><a class="btn secondary" href="index.html?preview=1" style="text-decoration:none">← Карта Хронбурга</a><button class="btn secondary" id="export">↓ Прогресс</button></nav></header>
 <div class="layout"><main class="frame">
 <div class="scene" id="scene">
-<img class="bakery-background" src="assets/locations/day02_bakery.png" alt="Пекарня Марты до восстановления: все зоны обесцвечены">
-<img class="color-layer" data-layer="supplies" src="assets/locations/day02_bakery.png" alt="" aria-hidden="true" decoding="async">
+<img class="bakery-background" src="assets/locations/day02_bakery.png" alt="Пекарня Марты: чёрно-белая сцена постепенно становится цветной">
 <img class="color-layer" data-layer="ingredients" src="assets/locations/day02_bakery.png" alt="" aria-hidden="true" decoding="async">
 <img class="color-layer" data-layer="oven" src="assets/locations/day02_bakery.png" alt="" aria-hidden="true" decoding="async">
 <img class="color-layer" data-layer="pastries" src="assets/locations/day02_bakery.png" alt="" aria-hidden="true" decoding="async">
-<div class="label" id="sceneLabel">Пекарня ждёт помощи</div><div class="scene-tools" id="hotspots"></div><div class="layer-instruction">Наведите на активный объект, затем нажмите, чтобы открыть задание</div></div>
+<div class="label" id="sceneLabel">Пекарня ждёт помощи</div><div class="scene-tools" id="hotspots"></div><div class="layer-instruction">Наведи на золотую искру, чтобы увидеть область, затем нажми для задания</div></div>
 <div class="counter"><b id="countLabel">Подготовлено заказов: 0</b><span id="timeLabel">Математика: 10–20 минут</span></div>
 <div class="status-list" id="stageButtons"></div>
 <div class="story"><img src="assets/characters/character_tik.png" alt="Сова Тик"><p id="storyText">Тик: «У Марты важные праздничные заказы. Помоги разобраться с расчётами, чтобы пекарня ожила!»</p></div>
@@ -41,7 +62,7 @@
 <div class="reward hidden" id="finishPanel"><img src="assets/ornaments/ornament_day02_gingerbread.png" onerror="this.style.display='none'" alt="Украшение-пряник"><div><b>Праздничные заказы готовы!</b><p>Тик: «В пекарне снова пахнет выпечкой. Ещё одна искра спасена!»</p><button class="btn secondary" id="replay">Повторить задания</button></div></div>
 </main>
 <aside class="aside"><div><h2>Экзамен</h2><div class="exam-switch"><button class="btn active" id="oge">ОГЭ</button><button class="btn secondary" id="ege">ЕГЭ профиль</button></div><p class="helper">У каждого экзамена собственный набор заданий и сохранение прогресса.</p></div>
-<div><h2>Заказы Марты</h2><div class="pills"><span class="pill" id="questionCount">— заданий</span><span class="pill" id="doneCount">0 выполнено</span></div><div class="progress" style="margin-top:12px"><b id="progressBar"></b></div><p class="helper">Выполни заказы один за другим. При наведении активная зона подсвечивается, а после верного ответа остаётся цветной.</p></div>
+<div><h2>Заказы Марты</h2><div class="pills"><span class="pill" id="questionCount">— заданий</span><span class="pill" id="doneCount">0 выполнено</span></div><div class="progress" style="margin-top:12px"><b id="progressBar"></b></div><p class="helper">Сначала печь, затем вкусности и ингредиенты. Цвет появляется только после правильного решения. В ЕГЭ четвёртое задание раскрывает всю пекарню.</p></div>
 <div class="teacher"><details open><summary>🔐 Учительский предпросмотр</summary><p class="helper">Чтобы проверить реальные задания второго дня, выбери закрытый JSON-файл, подготовленный отдельно. Он останется на твоём устройстве и не загрузится в GitHub.</p><input type="file" id="import" accept=".json,application/json"><p class="helper" id="importStatus" aria-live="polite">Набор ещё не загружен.</p></details></div>
 <div class="secret">В публичной версии нет заданий и ответов будущего дня. Учитель загружает их локально для тестирования. Это не система авторизации: не пересылай приватный JSON ученикам до даты открытия.</div>
 <div><button class="btn secondary" id="reset" style="width:100%">↻ Сбросить прохождение</button></div></aside></div></div>
@@ -54,23 +75,26 @@
 const $=id=>document.getElementById(id);
 let exam=new URLSearchParams(location.search).get("exam")==="ege"?"ege":"oge";
 let bank=null,index=0,alternate=false,review=false,soundOn=false,audio=null;
-const zones=["supplies","ingredients","oven","pastries"];
-const zoneFor=(n,i)=>zones[n===3?[0,2,3][i]:i];
+const zoneNames=["oven","pastries","ingredients"];
+const stepZones=()=>exam==="oge"?["oven","pastries","ingredients"]:["oven","pastries","ingredients","all"];
+const zoneFor=(n,i)=>stepZones()[i]||"all";
 const imageLayer=name=>document.querySelector('.color-layer[data-layer="'+name+'"]');
 let previewZone=null;
-function paintLayers(){document.getElementById("scene").classList.toggle("complete",!!progress.complete);
- const n=data()?data().length:(exam==="oge"?3:4);
+function paintLayers(){
  const done=new Set(progress.solved);
- for(let i=0;i<zones.length;i++){
-   const layer=imageLayer(zones[i]);
-   const idx=n===3?[0,2,3].indexOf(i):i;
-   const restored=idx>=0&&(progress.complete||done.has(idx));
-   const hovering=idx>=0&&!restored&&previewZone===zones[i];
-   layer.classList.toggle("restored",restored);
-   layer.classList.toggle("preview",hovering);
+ const names=stepZones();
+ const scene=$("scene");
+ scene.classList.toggle("complete",!!progress.complete);
+ for(const name of zoneNames){
+   const layer=imageLayer(name);
+   if(!layer)continue;
+   const step=names.indexOf(name);
+   const restored=step>=0&&done.has(step);
+   layer.classList.toggle("restored",restored&&!progress.complete);
+   layer.classList.toggle("preview",!restored&&!progress.complete&&previewZone===name);
  }
 }
-function preview(name){previewZone=name;paintLayers()}
+function preview(name){previewZone=name==="all"?null:name;paintLayers()}
 function clearPreview(name){if(previewZone===name){previewZone=null;paintLayers()}}
 
 function saveKey(){return "chronburg:2026:day02:"+exam+":v1"}
@@ -82,12 +106,67 @@ function inlineMath(el,text){el.replaceChildren();const parts=String(text||"").s
 function notify(text,kind){inlineMath($("feedback"),text);$("feedback").className="feedback"+(kind?" "+kind:"")}
 function activeTask(){const d=data();return d&&d[index]?alternate?d[index].reserve:d[index]:null}
 function sendAudio(pitch){if(!soundOn)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();let o=audio.createOscillator(),g=audio.createGain();o.frequency.value=pitch;g.gain.setValueAtTime(.07,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.22);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+.23)}catch(e){}}
-function show(){const d=data();const n=d?d.length:0,solved=progress.solved.filter(x=>x<n).length;$("oge").className="btn "+(exam==="oge"?"active":"secondary");$("ege").className="btn "+(exam==="ege"?"active":"secondary");$("questionCount").textContent=n?n+" заданий":"Набор не загружен";$("doneCount").textContent=solved+" выполнено";$("countLabel").textContent="Подготовлено заказов: "+solved+" из "+(n||"—");$("progressBar").style.width=n?solved/n*100+"%":"0%";$("sceneLabel").textContent=progress.complete?"Пекарня готова к празднику":solved?"Пекарня оживает · "+solved+" этап(а)":"Пекарня ждёт помощи";$("timeLabel").textContent=exam==="oge"?"ОГЭ · около 17 минут":"ЕГЭ · около 15 минут";$("taskOpen").textContent=progress.complete?"↻ Повторить испытания":"🍪 Открыть заказ "+(solved+1);
-$("finishPanel").classList.toggle("hidden",!progress.complete);$("hotspots").replaceChildren();$("stageButtons").replaceChildren();
-const labels=exam==="oge"?["Поставка продуктов","Печь","Готовая выпечка"]:["Поставки","Рабочий стол","Печь","Готовая выпечка"];
-for(let i=0;i<(n||(exam==="oge"?3:4));i++){const done=progress.complete||progress.solved.includes(i),current=i===(progress.solved.length);const zone=zoneFor(n|| (exam==="oge"?3:4),i);const hot=document.createElement("button");hot.type="button";hot.className="hotspot "+(done?"done":current?"current":"");hot.dataset.zone=zone;hot.innerHTML=done?"":"✧";hot.setAttribute("aria-label",(labels[i]||"Заказ "+(i+1))+(done?" — выполнено":""));hot.disabled=!d||(!review&&i!==progress.solved.length);hot.onpointerenter=()=>preview(zone);hot.onpointerleave=()=>clearPreview(zone);hot.onfocus=()=>preview(zone);hot.onblur=()=>clearPreview(zone);hot.onclick=()=>{clearPreview(zone);open(i)};$("hotspots").appendChild(hot);const card=document.createElement("button");card.type="button";card.className="stagebtn "+(done?"done":current?"current":"");card.textContent=(done?"✓ ":""+(i+1)+". ")+(labels[i]||"Заказ");const small=document.createElement("small");small.textContent=done?"Готово":current?"Нажми, чтобы открыть":"Ожидает";card.append(small);card.disabled=hot.disabled;card.onpointerenter=()=>preview(zone);card.onpointerleave=()=>clearPreview(zone);card.onfocus=()=>preview(zone);card.onblur=()=>clearPreview(zone);card.onclick=()=>{clearPreview(zone);open(i)};$("stageButtons").append(card)}
-paintLayers();
-$("storyText").textContent=progress.complete?"Тик: «Праздник спасён! Марта уже включает печь, а Хронбург наполняется ароматом выпечки».":solved?"Тик: «Смотри, пекарня оживает! Ещё немного — и заказы будут готовы».":"Тик: «Марта просит помочь с праздничными заказами. Выбери светящуюся точку на сцене или карточку внизу».";
+function show(){
+ const d=data(),n=d?d.length:stepZones().length;
+ const completed=new Set(progress.solved.filter(i=>Number.isInteger(i)&&i>=0&&i<n));
+ const solved=completed.size;
+ const labels=exam==="oge"?["Печь","Вкусности","Ингредиенты"]:["Печь","Вкусности","Ингредиенты","Праздничный финал"];
+ const steps=stepZones();
+ const active=progress.complete?-1:steps.findIndex((_,i)=>!completed.has(i));
+ $("oge").className="btn "+(exam==="oge"?"active":"secondary");
+ $("ege").className="btn "+(exam==="ege"?"active":"secondary");
+ $("questionCount").textContent=d?n+" заданий":"Для проверки загрузи задания";
+ $("doneCount").textContent=solved+" выполнено";
+ $("countLabel").textContent="Восстановлено: "+solved+" из "+n;
+ $("progressBar").style.width=n?solved/n*100+"%":"0%";
+ $("sceneLabel").textContent=progress.complete?"Пекарня готова к празднику":"Пекарня оживает · этап "+Math.min(solved+1,n)+" из "+n;
+ $("timeLabel").textContent=exam==="oge"?"ОГЭ · около 17 минут":"ЕГЭ · около 15 минут";
+ $("taskOpen").textContent=progress.complete?"↻ Повторить задания":active===3?"✦ Завершить восстановление":"✦ "+(labels[active]||"Открыть заказ");
+ $("finishPanel").classList.toggle("hidden",!progress.complete);
+ $("hotspots").replaceChildren();
+ $("stageButtons").replaceChildren();
+ for(let i=0;i<n;i++){
+   const zone=steps[i],done=completed.has(i),current=i===active;
+   // Only one active marker, never permanent check marks on the artwork.
+   if(current&&zone!=="all"){
+     const hot=document.createElement("button");
+     hot.type="button";
+     hot.className="hotspot current";
+     hot.dataset.zone=zone;
+     hot.textContent="✦";
+     hot.setAttribute("aria-label","Открыть этап: "+labels[i]);
+     hot.onpointerenter=()=>preview(zone);
+     hot.onpointerleave=()=>clearPreview(zone);
+     hot.onfocus=()=>preview(zone);
+     hot.onblur=()=>clearPreview(zone);
+     hot.onclick=()=>{clearPreview(zone);open(i)};
+     $("hotspots").append(hot);
+   }
+   const card=document.createElement("button");
+   card.type="button";
+   card.className="stagebtn "+(done?"done":current?"current":"");
+   card.textContent=(done?"✓ ":i+1+". ")+(labels[i]||"Заказ "+(i+1));
+   const small=document.createElement("small");
+   small.textContent=done?"Восстановлено":current?"Нажми для задания":"Ожидает";
+   card.append(small);
+   card.disabled=!current&&!progress.complete;
+   if(current&&zone!=="all"){
+     card.onpointerenter=()=>preview(zone);
+     card.onpointerleave=()=>clearPreview(zone);
+     card.onfocus=()=>preview(zone);
+     card.onblur=()=>clearPreview(zone);
+   }
+   card.onclick=()=>{clearPreview(zone);open(i)};
+   $("stageButtons").append(card);
+ }
+ paintLayers();
+ const dialogue=progress.complete
+ ?"Тик: «Всё получилось! Пекарня наполнена светом, а праздничные угощения готовы!»"
+ :active===0?"Тик: «Сначала разожжём печь, чтобы в пекарне снова стало тепло!»"
+ :active===1?"Тик: «Печь работает! Теперь вернём цвет праздничным вкусностям»."
+ :active===2?"Тик: «Какие чудесные пряники! Осталось оживить рабочий стол с ингредиентами»."
+ :"Тик: «Все три зоны ожили! Последнее испытание вернёт краски всей пекарне».";
+ $("storyText").textContent=dialogue;
 }
 function renderTask(){const t=activeTask();if(!t)return;$("taskNumber").textContent=(alternate?"Резервный аналог":"Заказ")+" "+(index+1)+" из "+data().length;$("questionTitle").textContent=alternate?"Дополнительная проверка":"Заказ "+(index+1);inlineMath($("questionText"),t.text);$("source").textContent="Источник: "+t.source;$("tableArea").replaceChildren();if(t.table&&Array.isArray(t.table.columns)&&Array.isArray(t.table.rows)){const wrap=document.createElement("div");wrap.className="tblwrap";const table=document.createElement("table");table.className="tbl";const head=document.createElement("tr");t.table.columns.forEach(x=>{const cell=document.createElement("th");cell.textContent=x;head.append(cell)});table.append(head);t.table.rows.forEach(row=>{const tr=document.createElement("tr");row.forEach(val=>{const td=document.createElement("td");td.textContent=val;tr.append(td)});table.append(tr)});wrap.append(table);$("tableArea").append(wrap)}$("answer").value="";$("check").disabled=false;$("answer").disabled=false;$("reserve").classList.add("hidden");notify("Проверь вычисления и введи ответ.");}
 function open(i){if(!data()){alert("Сначала загрузи учительский JSON для проверки дня 2.");return}index=i;review=progress.complete;alternate=false;renderTask();$("dialog").classList.remove("hidden");document.body.style.overflow="hidden";$("close").focus()}
