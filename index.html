@@ -46,7 +46,7 @@
 <div class="scene-actions"><button class="btn" id="openTaskBtn">⚙ Проверить распределительный щит</button><button class="btn secondary" id="soundBtn" aria-pressed="false">♪ Звук: выкл.</button><p class="muted" id="sceneInstructions">Нажми на щит или первую секцию, чтобы открыть задание. После верного ответа окно закроется, и загорятся два фонаря.</p></div><p class="scene-note" id="sceneNote">Три секции сети · по два фонаря в каждой · прогресс сохраняется автоматически</p>
 <div class="task-modal hidden" id="taskModal" role="dialog" aria-modal="true" aria-labelledby="taskTitle"><div class="modal-backdrop" id="modalBackdrop"></div><div class="modal-inner chronburg-math-modal"><div class="modal-tools"><span>✦ Математическое испытание</span><button type="button" id="closeTaskBtn" aria-label="Закрыть окно задания">✕</button></div>
 <div class="mathcard chronburg-math-paper" id="mathCard">
-<div class="tag" id="taskCount">Задание 1 из 3</div>
+<div class="tag" id="taskCount">Задание 1 из 4</div>
 <h3 id="taskTitle">Запусти первую пару фонарей</h3>
 <div class="formula" id="formula"></div>
 <div class="inputrow"><input id="answer" autocomplete="off" inputmode="decimal" placeholder="Ответ" aria-label="Ответ на математическую задачу"><button class="btn" id="checkBtn">Проверить</button></div>
@@ -69,6 +69,7 @@
 </div><p class="footer">Хронбург · Прототип 0.4 · 2026 · Дата на устройстве используется лишь для визуального календаря. Защищённое расписание публикаций будет настроено отдельно.</p>
 </div>
 <script src="js/chronburg-collection.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
 <script src="data/day01.js"></script>
 <script>
 "use strict";
