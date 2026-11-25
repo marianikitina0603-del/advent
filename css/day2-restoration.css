@@ -1,0 +1,24 @@
+
+/* Day 2 restoration layers: exact-overlay PNGs on a grayscale scene */
+.scene{background:#444;isolation:isolate}
+.scene .bakery-background{position:relative;z-index:0;display:block;width:100%;height:100%;object-fit:fill}
+.scene .color-layer{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:fill;opacity:0;pointer-events:none;transition:opacity .75s ease,filter .45s ease;will-change:opacity}
+.scene .color-layer.restored{opacity:1;filter:drop-shadow(0 0 9px #e9ae4d22)}
+.scene .color-layer.preview{opacity:.75;filter:drop-shadow(0 0 18px #ffd47a88) brightness(1.12)}
+.scene .color-layer.just-restored{animation:colorAwake 1.1s ease-out}
+@keyframes colorAwake{0%{filter:drop-shadow(0 0 24px #ffeab2dd) brightness(1.7)}100%{filter:drop-shadow(0 0 9px #e9ae4d22) brightness(1)}}
+.scene:after{z-index:2;pointer-events:none}
+.scene .label{z-index:7}
+.scene .scene-tools{z-index:6}
+.scene .hotspot{transition:background .2s,box-shadow .2s,transform .2s}
+.scene .hotspot:hover:not(:disabled),.scene .hotspot:focus-visible{transform:translate(-50%,-50%) scale(1.08);border-color:#ffedbd;box-shadow:0 0 0 11px #f5b66333,0 0 35px 10px #e8b36088}
+.scene .hotspot.done{opacity:.96}
+.scene .hotspot:disabled{pointer-events:none}
+.scene .hotspot[data-zone="supplies"]{left:24%;top:65%}
+.scene .hotspot[data-zone="ingredients"]{left:49%;top:47%}
+.scene .hotspot[data-zone="oven"]{left:75%;top:60%}
+.scene .hotspot[data-zone="pastries"]{left:58%;top:76%}
+.scene .stagebtn:focus-visible{outline:3px solid #ffe6a8}
+.scene .layer-instruction{position:absolute;z-index:4;bottom:9px;left:12px;background:#0b203bc9;border:1px solid #e3b977;border-radius:10px;padding:8px 11px;font-size:12px;color:#faebcc;pointer-events:none}
+@media(max-width:680px){.scene .hotspot{min-width:42px;height:42px}.scene .layer-instruction{font-size:10px;bottom:5px;left:5px;padding:5px 7px}}
+@media(prefers-reduced-motion:reduce){.scene .color-layer{transition:none!important}.scene .color-layer.just-restored{animation:none!important}}
