@@ -1,0 +1,29 @@
+
+/* Chronburg shared visual language — map, streets and bakery */
+:root{
+  color-scheme:dark;
+  --bg:#0a1326;--panel:#132440ed;--panel2:#172b4a;
+  --gold:#efc477;--line:#56708a88;--text:#f7f1df;
+  --muted:#bdcde0;--mint:#8ee4c6;
+}
+body{background:radial-gradient(ellipse at 50% -15%,#29456a,#0a1326 70%);color:var(--text);font-family:Manrope,Arial,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #fff0a2;outline-offset:3px}
+.btn{border:1px solid #c59c5d;background:linear-gradient(180deg,#705336,#47351e);color:#fff9e6;border-radius:13px;padding:11px 16px;font-weight:800;box-shadow:0 4px 15px #070f22aa;transition:transform .16s,filter .16s}
+.btn:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.13)}
+.btn.secondary{background:#192e4b;border-color:#637c96}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.ornament{display:flex;align-items:center;gap:12px;padding:10px;background:#182e4a;border:1px dashed #b18a4a;border-radius:14px}
+.ornament img{height:72px;width:72px;object-fit:contain}
+.ornament.locked img{filter:grayscale(1);opacity:.3}
+.tree-preview{position:relative;width:160px;max-width:100%;margin:5px auto}
+.tree-preview>.tree-base{width:100%;height:auto;display:block;filter:drop-shadow(0 5px 13px #0009)}
+.tree-preview .placed{position:absolute;width:40px;height:auto;object-fit:contain;filter:drop-shadow(0 2px 8px #ffe68b)}
+.tree-preview .placed-lantern{left:45%;top:46%}
+.tree-preview .placed-gingerbread{left:29%;top:58%;width:39px}
+.chronburg-tree-caption{text-align:center;font-size:12px;line-height:1.6;color:var(--muted)}
+.chronburg-collection-title{font:600 23px "Playfair Display",Georgia,serif;color:#ffdda4;margin:0 0 13px}
+.bakery-collection{display:flex;flex-direction:column;gap:10px}
+.bakery-collection .ornament p{margin:5px 0 0;font-size:12px;color:var(--muted)}
+.bakery-collection .ornament b{font-weight:750}
+@media(prefers-reduced-motion:reduce){.btn{transition:none!important}}
