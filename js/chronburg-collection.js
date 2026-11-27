@@ -3,13 +3,14 @@ window.ChronburgCollection=(function(){
 const known=[
  {day:1,name:"Золотой фонарик",file:"assets/ornaments/ornament_day01_lantern.png"},
  {day:2,name:"Пряник Марты",file:"assets/ornaments/ornament_day02_gingerbread.png"},
- {day:3,name:"Почтовый ящик",file:"assets/ornaments/ornament_day03_mailbox.png"}
+ {day:3,name:"Почтовый ящик",file:"assets/ornaments/ornament_day03_mailbox.png"},
+ {day:4,name:"Золотая заводная шестерёнка",file:"assets/ornaments/ornament_day04_clockwork_gear.png"}
 ];
 function read(key){try{return JSON.parse(localStorage.getItem(key))}catch(e){return null}}
 function earned(exam){
  const p=read("chronburg:2026:"+exam+":v1");
  const d1=!!(p&&Array.isArray(p.completed)&&p.completed.includes(1));
- return new Set([...(d1?[1]:[]),...[2,3].filter(n=>{const x=read("chronburg:2026:day0"+n+":"+exam+":v1");return !!(x&&x.complete===true)})]);
+ return new Set([...(d1?[1]:[]),...[2,3,4].filter(n=>{const x=read("chronburg:2026:day0"+n+":"+exam+":v1");return !!(x&&x.complete===true)})]);
 }
 function elt(type,classes,text){const el=document.createElement(type);if(classes)el.className=classes;if(text!==undefined)el.textContent=text;return el}
 function image(src,alt,classes){const img=document.createElement("img");img.src=src;img.alt=alt;if(classes)img.className=classes;return img}
