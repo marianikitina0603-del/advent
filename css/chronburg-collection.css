@@ -37,3 +37,5 @@ body.chronburg-collection-open{overflow:hidden}
 @media(prefers-reduced-motion:reduce){.chronburg-collect .tree-toy{animation:none!important}}
 
 .chronburg-collect .tree-toy[data-day="4"]{left:37%;top:24%;width:26%;height:18%}
+
+.chronburg-collect .tree-toy[data-day="5"]{left:58%;top:30%;width:24%;height:18%}
