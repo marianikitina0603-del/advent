@@ -219,13 +219,13 @@ function show(){
  const labels=stepLabels(),active=progress.complete?-1:currentStep();
  $("oge").className="btn "+(exam==="oge"?"active":"secondary");
  $("ege").className="btn "+(exam==="ege"?"active":"secondary");
- $("questionCount").textContent=d?n+" заданий":"Задания ещё не загружены";
+ $("questionCount").textContent=d?n+" заданий":isPreview?"Загрузи закрытый комплект":"Ожидание публикации заданий";
  $("doneCount").textContent=solved+" выполнено";
  $("countLabel").textContent="Рассортировано писем: "+solved+" из "+n;
  $("progressBar").style.width=n?solved/n*100+"%":"0%";
  $("sceneLabel").textContent=progress.complete?"Почта Хронбурга работает":"Новогодняя почта · письмо "+Math.min(solved+1,n)+" из "+n;
  $("timeLabel").textContent=exam==="oge"?"ОГЭ · около 10 минут":"ЕГЭ · около 12 минут";
- $("taskOpen").disabled=progress.complete;
+ $("taskOpen").disabled=progress.complete||!d;
  $("taskOpen").classList.toggle("hidden",!!progress.complete);
  $("finishPanel").classList.toggle("hidden",!progress.complete);
  $("stageButtons").replaceChildren();
@@ -240,7 +240,7 @@ function show(){
  $("storyText").textContent=progress.complete?"Тик: «Все праздничные письма на месте! Хронбург готов к отправке новогодних поздравлений».":active===0?"Тик: «Смотри, первая ячейка светится! Перетащи туда письмо, и мы узнаем, что с ним делать».":active===1?"Тик: «Первое письмо обработано. Поместим следующее в ячейку марок».":active===2?"Тик: «Осталось восстановить маршрут доставки. Найди подсвеченную ячейку!».":"Тик: «Последнее письмо отправляется на праздничную почту!».";
 }
 function renderTask(){const t=activeTask();if(!t)return;$("taskNumber").textContent=(alternate?"Резервное письмо":"Письмо")+" "+(index+1)+" из "+data().length;$("questionTitle").textContent=alternate?"Дополнительное письмо":"Письмо "+(index+1);window.ChronburgMath.render($("questionText"),removeDrawingPlaceholders(t.text),choice=>{$("answer").value=String(choice);$("answer").focus()});$("source").textContent="Источник: "+t.source;$("tableArea").replaceChildren();if(t.table&&Array.isArray(t.table.columns)&&Array.isArray(t.table.rows)){const wrap=document.createElement("div");wrap.className="tblwrap";const table=document.createElement("table");table.className="tbl";const head=document.createElement("tr");t.table.columns.forEach(x=>{const cell=document.createElement("th");cell.textContent=x;head.append(cell)});table.append(head);t.table.rows.forEach(row=>{const tr=document.createElement("tr");row.forEach(val=>{const td=document.createElement("td");td.textContent=val;tr.append(td)});table.append(tr)});wrap.append(table);$("tableArea").append(wrap)}$("answer").value="";$("check").disabled=false;$("answer").disabled=false;$("reserve").classList.add("hidden");if(t.image){const picture=document.createElement("img");picture.src=t.image;picture.alt="Рисунок к заданию";picture.style.cssText="display:block;width:min(100%,640px);height:auto;object-fit:contain;margin:12px auto;border-radius:10px";$("tableArea").append(picture)}notify(t.answer===null||t.answer===undefined?"Ответ требует проверки рисунка преподавателем. Автоматическая проверка отключена.":"Проверь вычисления и введи ответ.");}
-function open(i){if(!data()){alert("Сначала загрузи учительский JSON для проверки дня 3.");return}index=i;review=progress.complete;alternate=false;renderTask();$("dialog").classList.remove("hidden");document.body.style.overflow="hidden";$("close").focus()}
+function open(i){if(!data()){if(isPreview)alert("Для проверки задач загрузи закрытый комплект в разделе преподавателя.");return}index=i;review=progress.complete;alternate=false;renderTask();$("dialog").classList.remove("hidden");document.body.style.overflow="hidden";$("close").focus()}
 function close(){const wasOpen=!$("dialog").classList.contains("hidden");$("dialog").classList.add("hidden");document.body.style.overflow="";if(wasOpen&&!progress.complete){restoreLetter();const z=slot(currentZone());if(z)z.classList.remove("hovered")}}
 function check(){const t=activeTask();if(!t)return;if(t.answer===null||t.answer===undefined||t.review_status==="requires_image_visual_review"){notify("Это задание ещё требует проверки рисунка преподавателем. Автоматическая проверка недоступна.","bad");return}const val=num($("answer").value),expect=num(t.answer);if(!Number.isFinite(val)){notify("Введите число. Для дроби можно использовать запись a/b.","bad");return}if(!Number.isFinite(expect)){notify("Ошибка подготовленного ключа: сообщи преподавателю.","bad");return}
 if(Math.abs(val-expect)<1e-8){const already=progress.solved.includes(index);if(!review&&!already){progress.solved.push(index);progress.solved.sort((a,b)=>a-b);if(progress.solved.length===data().length)progress.complete=true;save()}sendAudio(660);restoreLetter();close();show()}
