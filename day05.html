@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10263e"><title>Хронбург — 5 декабря. Ёлка должна успеть!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+<link rel="stylesheet" href="css/chronburg-shared.css">
+<link rel="stylesheet" href="css/chronburg-math.css">
+<link rel="stylesheet" href="css/chronburg-collection.css">
+<link rel="stylesheet" href="css/day5-route.css">
+</head><body>
+<div class="route-wrap">
+<header class="route-top">
+<div><small>Хронбург · 5 декабря · Новогодний математический квест</small><h1>🎄 Ёлка должна успеть!</h1></div>
+<nav><a class="btn secondary" id="mapLink" href="index.html">← Карта Хронбурга</a><button type="button" class="btn secondary" id="exportProgress">↓ Сохранить результат</button></nav>
+</header>
+<div class="route-grid">
+<main class="route-main">
+<div class="chronburg-date-tabs"><span class="pill">5 декабря</span><span class="pill" id="examPill">ОГЭ</span><span class="pill" id="stagePill">Развилка 1 из 4</span></div>
+<div class="route-map" id="mapArea" aria-label="Интерактивная карта маршрута праздничной ёлки">
+<img class="map-bg" id="routeMap" src="assets/locations/day05_route_map.png" alt="Изометрическая карта зимнего Хронбурга: склад, лесные дороги, два моста, пекарня, почта и центральная площадь">
+<svg class="route-lines" id="routes" viewBox="0 0 1648 928" preserveAspectRatio="none" aria-hidden="true"></svg>
+<div class="map-label" id="mapHint">Управляй санями на зимних развилках</div>
+<div class="route-sleigh" id="sleigh"><img id="sleighImage" src="assets/locations/day05_sleigh_tree.png" alt="Механические сани с большой рождественской ёлкой" draggable="false"></div>
+<div id="choices" aria-label="Выбор дорог на текущей развилке"></div>
+</div>
+<div class="route-final hidden" id="finished">
+<img src="assets/locations/day05_square_complete.png" alt="Главная ель установлена на круглой площадке центральной площади Хронбурга">
+<div class="final-caption"><img src="assets/ornaments/ornament_day05_winter_compass.png" alt="Золотой компас зимнего пути с еловой веточкой">
+<div><strong>Пятая Искра времени спасена!</strong><p id="rewardTip">Компас зимнего пути появился в коллекции.</p><a id="finalMapLink" href="index.html" class="btn">✨ Вернуться на карту</a></div>
+</div>
+</div>
+<div id="status" class="route-note" role="status" aria-live="polite">Проверяем публикацию математических заданий…</div>
+<div class="route-log" id="routeLog" role="status" aria-live="polite">Перед началом реши математическое задание.</div>
+<div class="route-info route-bottom"><b id="lastStep">Лесная развилка</b><div><span id="mathCount">3 математических задания</span><span>·</span><span id="timer">15–17 минут</span></div></div>
+<div class="route-progress"><b id="progressBar"></b></div>
+<div class="route-story"><img src="assets/characters/character_tik.png" alt="Тик — механическая сова"><p id="tikText">Тик: «Ёлка нужна Хронбургу до праздника. Проложим безопасный путь!»</p></div>
+<div class="route-choice" id="choiceInfo">
+<strong id="hintHeading">Подсказка Тика</strong>
+<p id="hintText">Для огромной ели нужна широкая дорога.</p>
+<div class="route-actions"><button type="button" class="btn" id="startMath">📜 Открыть математическое задание</button></div>
+<p class="route-mode" id="mathStatus">Задания станут доступны после публикации.</p>
+</div>
+</main>
+<aside class="route-side">
+<section><h2>Экзамен</h2><div class="exam-choices">
+<button type="button" class="btn selected" id="oge">ОГЭ</button><button type="button" class="btn secondary" id="ege">ЕГЭ профиль</button></div>
+<p>Прогресс и ответы для ОГЭ и ЕГЭ сохраняются независимо.</p>
+</section>
+<section><h2>Доставка главной ёлки</h2>
+<p>Сначала реши математическую задачу, потом выбери дорогу прямо на карте. Неверный поворот возвращает сани к развилке без потери решения.</p>
+<div class="route-info"><b id="routeCount">0 / 4</b><span>Развилки</span></div>
+<p>Неудачных поворотов: <b id="wrongCount">0</b></p>
+</section>
+<section id="chronburgCollection"></section>
+<section id="previewTools" class="hidden"><h2>🔧 Учительский предпросмотр</h2>
+<p>Демонстрация маршрута не требует заданий и не выдаёт настоящую награду. Для проверки математики можно загрузить закрытый JSON локально.</p>
+<button type="button" class="btn secondary" id="demoButton">Проверить маршруты без заданий</button>
+<p id="teacherDemo" class="hidden">Сейчас включена демонстрация движения. Для полного игрового прохождения загрузите задания и отключите демонстрацию.</p>
+<input id="importTasks" type="file" accept=".json,application/json" style="max-width:100%;margin:12px 0">
+<p id="importStatus" role="status" aria-live="polite">Учительский JSON не загружен.</p>
+<button type="button" class="btn secondary" id="resetProgress">↻ Сбросить прогресс дня 5</button>
+</section>
+</aside>
+</div>
+</div>
+<div class="route-modal hidden" id="dialog" role="dialog" aria-modal="true" aria-labelledby="taskTitle">
+<div class="route-paper"><div class="route-modal-top"><strong>Математический замок маршрута</strong><button type="button" id="closeTask" aria-label="Закрыть задание">×</button></div>
+<div class="route-task">
+<h2 id="taskTitle">Математическое задание</h2>
+<div id="taskText"></div><div id="taskFigure"></div>
+<div class="answer-line"><input id="answer" placeholder="Ответ" inputmode="decimal" autocomplete="off" aria-label="Числовой ответ"><button type="button" class="btn" id="check">Проверить</button></div>
+<div id="keys" aria-label="Экранная клавиатура"></div>
+<div class="tools"><button type="button" class="btn secondary hidden" id="reserve">↻ Резервный аналог</button><button type="button" class="btn secondary" id="hint">💡 Подсказка</button><button type="button" class="btn secondary" id="scratchToggle">✎ Черновик</button></div>
+<div class="hidden" id="scratchWrap"><canvas id="scratch" width="800" height="180" aria-label="Черновик для записи решений"></canvas><div class="tools"><button type="button" class="btn secondary" id="clearScratch">Очистить черновик</button></div></div>
+<div id="taskReply" class="reply" role="status" aria-live="polite"></div>
+</div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+<script src="js/chronburg-math.js"></script>
+<script src="js/chronburg-collection.js"></script>
+<script src="js/chronburg-release-client.js"></script>
+<script src="js/day5-route.js"></script>
+</body></html>
