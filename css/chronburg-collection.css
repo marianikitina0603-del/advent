@@ -35,3 +35,5 @@ body.chronburg-collection-open{overflow:hidden}
 @keyframes collectReveal{from{opacity:0;transform:scale(.45)}to{opacity:1;transform:scale(1)}}
 @media(max-width:650px){.chronburg-collect .collect-tree{width:min(190px,100%)}.chronburg-collect .collect-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.chronburg-collect .collect-item{padding:8px 4px}.chronburg-collect .collect-item img,.chronburg-collect .collect-item .mystery{width:59px;height:58px}.chronburg-collect .collect-window{padding:12px}}
 @media(prefers-reduced-motion:reduce){.chronburg-collect .tree-toy{animation:none!important}}
+
+.chronburg-collect .tree-toy[data-day="4"]{left:37%;top:24%;width:26%;height:18%}
