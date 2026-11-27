@@ -50,7 +50,7 @@ function drawLines(){
   svg.append(makeSvg("path",{d:pathD(junctions[i].good.path),class:"route-line"}));
  }
  if(n===0)svg.append(makeSvg("path",{d:pathD(junctions[0].from),class:"route-line-preview"}));
- if(n<4)svg.append(makeSvg("path",{d:pathD(junctions[n].good.path),class:"route-line-preview"}));
+ // Do not reveal the correct branch before the pupil chooses the route.
 }
 function moveSprite(p,glowing=false){
  pos($("sleigh"),p);
