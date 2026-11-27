@@ -92,9 +92,10 @@ function save(){progress.updated=new Date().toISOString();localStorage.setItem(s
 function isDone(){return progress.completed.includes(1)}
 function day2Progress(){try{const p=JSON.parse(localStorage.getItem("chronburg:2026:day02:"+exam+":v1"));return p&&p.complete===true}catch(e){return false}}
 function day3Progress(){try{const p=JSON.parse(localStorage.getItem("chronburg:2026:day03:"+exam+":v1"));return !!(p&&p.complete===true)}catch(e){return false}}
-function dayDone(d){return d===1?isDone():d===2?day2Progress():d===3?day3Progress():false}
-function available(day){return day>=1&&day<=3&&(preview||unlocked>=day)} // Future tasks remain outside the public repository.
-function renderDates(){$("todayPill").textContent=preview?"🔧 Предпросмотр":"📅 "+new Intl.DateTimeFormat("ru-RU",{timeZone:"Europe/Moscow",day:"numeric",month:"long"}).format(new Date());$("releaseNotice").textContent=preview?"🔧 Режим предпросмотра интерфейса (не защищён авторизацией). День 1 доступен для игры; дни 2 и 3 доступны как игровые локации с локальной загрузкой учительских наборов. Будущие задания не опубликованы.":"🔐 Прототип: сейчас опубликован день 1; для дней 2 и 3 подготовлены локации, но задания пока хранятся вне публичной сборки. Строгая ежедневная публикация ещё не включена."}
+function day4Progress(){try{const p=JSON.parse(localStorage.getItem("chronburg:2026:day04:"+exam+":v1"));return !!(p&&p.complete===true)}catch(e){return false}}
+function dayDone(d){return d===1?isDone():d===2?day2Progress():d===3?day3Progress():d===4?day4Progress():false}
+function available(day){return day>=1&&day<=4&&(preview||unlocked>=day)} // Unreleased tasks are kept outside the public site.
+function renderDates(){$("todayPill").textContent=preview?"🔧 Предпросмотр":"📅 "+new Intl.DateTimeFormat("ru-RU",{timeZone:"Europe/Moscow",day:"numeric",month:"long"}).format(new Date());$("releaseNotice").textContent=preview?"🔧 Режим предпросмотра интерфейса (не защищён авторизацией). Дни 1–4 доступны для проверки сцен. Для неопубликованных заданий предусмотрен локальный предпросмотр; для учеников задания откроются по московским датам.":"🔐 Прототип: дни 2–4 получают задания автоматически по расписанию. До наступления даты задания остаются зашифрованными; доступ к будущим локациям закрыт."}
 function renderMap(){
 const map=$("mapMarkers"),grid=$("dayGrid");map.replaceChildren();grid.replaceChildren();
 for(let d=1;d<=24;d++){
@@ -108,16 +109,16 @@ function refreshSide(){
  $("egeBtn").className="btn "+(exam==="ege"?"selected":"secondary");
  $("modeInfo").textContent=exams[exam].name;
  $("sceneMode").textContent=exams[exam].name;
- const n=Number(isDone())+Number(day2Progress())+Number(day3Progress());
+ const n=Number(isDone())+Number(day2Progress())+Number(day3Progress())+Number(day4Progress());
  $("progressNumber").textContent=n+" / 24";
  $("progressFill").style.width=n/24*100+"%";
  collectionView.refresh(exam);
- $("tikLine").textContent=day3Progress()?"«Письма отправлены! Три Искры времени спасены».":day2Progress()?"«Пекарня спасена! Следующее испытание — новогодняя почта».":isDone()?"«Первый свет возвращён! Теперь пекарне Марты нужна наша помощь».":"«Хронбургу нужны искры времени! Начни с фонарей на городской улице».";
+ $("tikLine").textContent=day4Progress()?"«Мастерская игрушек ожила! Четыре Искры времени спасены».":day3Progress()?"«Письма отправлены! Три Искры времени спасены».":day2Progress()?"«Пекарня спасена! Следующее испытание — новогодняя почта».":isDone()?"«Первый свет возвращён! Теперь пекарне Марты нужна наша помощь».":"«Хронбургу нужны искры времени! Начни с фонарей на городской улице».";
  renderMap();
 }
 function setExam(e){closeTask();exam=e;progress=load();index=0;review=false;history.replaceState({},'',location.pathname+"?exam="+exam+(preview?"&preview=1":""));refreshSide();if(scene)openDay(1)}
 function showScene(v){if(!v)closeTask();scene=v;$("mapScreen").classList.toggle("hidden",v);$("sceneScreen").classList.toggle("hidden",!v);$("homeBtn").classList.toggle("hidden",!v);window.scrollTo({top:0,behavior:"smooth"})}
-function openDay(d){if(!available(d))return;if(d===2||d===3){location.href="day0"+d+".html?exam="+exam+(preview?"&preview=1":"");return;}review=isDone();index=review?0:([0,1,2,3].find(i=>!progress.solved.includes(i))??0);showScene(true);setSceneState(isDone()?3:solved().length,true);renderQuestion();updateScene();if(isDone())finishReviewScene()}
+function openDay(d){if(!available(d))return;if(d>=2&&d<=4){location.href="day0"+d+".html?exam="+exam+(preview?"&preview=1":"");return;}review=isDone();index=review?0:([0,1,2,3].find(i=>!progress.solved.includes(i))??0);showScene(true);setSceneState(isDone()?3:solved().length,true);renderQuestion();updateScene();if(isDone())finishReviewScene()}
 function solved(){return progress.solved.filter(n=>Number.isInteger(n)&&n>=0&&n<=3)}
 const sceneStates=["assets/locations/day01_street_lanterns.png","assets/locations/day01_street_lanterns_state1.webp","assets/locations/day01_street_lanterns_state2.webp","assets/locations/day01_street_lanterns_state3.webp"];
 let currentSceneState=0,sceneTransitionVersion=0;
