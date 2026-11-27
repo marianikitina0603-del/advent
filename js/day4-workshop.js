@@ -173,7 +173,7 @@ function selectExam(next){
  closeTask();exam=next;progress=load();review=false;alternate=false;
  history.replaceState({},"","day04.html?exam="+exam+(preview?"&preview=1":""));
  $("mapLink").href="index.html?exam="+exam+(preview?"&preview=1":"");
- $("sceneBackLink").href=$("mapLink").href;$("rewardMapLink").href=$("mapLink").href;
+ $("sceneBackLink").href=$("mapLink").href;$("rewardMapLink").href=$("mapLink").href;const now=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Moscow",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date());const dateOf=t=>now.find(x=>x.type===t)?.value||"00";const today=dateOf("year")+"-"+dateOf("month")+"-"+dateOf("day");$("nextDayLink").classList.toggle("hidden",!preview&&today<"2026-12-05");$("nextDayLink").href="day05.html?exam="+exam+(preview?"&preview=1":"");
  render();
 }
 function validateBank(x){
