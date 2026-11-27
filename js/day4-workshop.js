@@ -79,7 +79,6 @@ function render(){
  $("oge").className="btn "+(exam==="oge"?"active":"secondary");
  $("ege").className="btn "+(exam==="ege"?"active":"secondary");
  $("sceneMode").textContent=exam==="oge"?"ОГЭ":"ЕГЭ профиль";
- $("dateHeading").textContent="4 декабря · Мастерская игрушек";
  $("countLabel").textContent="Установлено деталей: "+count+" из "+n;
  $("doneCount").textContent=count+" / "+n;
  $("questionCount").textContent=data?n+" заданий":"Набор ожидается";
