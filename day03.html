@@ -128,7 +128,7 @@ function updateMailGame(){
 }
 function dropLetter(){
  if(progress.complete||delivering||currentStep()<0)return;
- if(!data()){$("dropFeedback").textContent="Для проверки задания загрузи учительский JSON в правой панели.";restoreLetter();return}
+ if(!data()){$("dropFeedback").textContent=isPreview?"Для проверки загрузи закрытый комплект заданий в панели преподавателя.":"Письма ждут автоматической публикации заданий. Попробуй позже.";restoreLetter();return}
  const zone=slot(currentZone()),box=zone.getBoundingClientRect(),sc=$("scene").getBoundingClientRect();
  delivering=true;
  const letter=$("activeLetter");
