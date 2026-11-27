@@ -161,13 +161,14 @@ function show(){
  const active=progress.complete?-1:steps.findIndex((_,i)=>!completed.has(i));
  $("oge").className="btn "+(exam==="oge"?"active":"secondary");
  $("ege").className="btn "+(exam==="ege"?"active":"secondary");
- $("questionCount").textContent=d?n+" заданий":"Для проверки загрузи задания";
+ $("questionCount").textContent=d?n+" заданий":isPreview?"Загрузи закрытый комплект":"Ожидание публикации заданий";
  $("doneCount").textContent=solved+" выполнено";
  $("countLabel").textContent="Восстановлено: "+solved+" из "+n;
  $("progressBar").style.width=n?solved/n*100+"%":"0%";
  $("sceneLabel").textContent=progress.complete?"Пекарня готова к празднику":"Пекарня оживает · этап "+Math.min(solved+1,n)+" из "+n;
  $("timeLabel").textContent=exam==="oge"?"ОГЭ · около 17 минут":"ЕГЭ · около 15 минут";
- $("taskOpen").textContent=progress.complete?"↻ Повторить задания":active===3?"✦ Завершить восстановление":"✦ "+(labels[active]||"Открыть заказ");
+ $("taskOpen").textContent=progress.complete?"↻ Повторить задания":!d?"🔒 Задания пока закрыты":active===3?"✦ Завершить восстановление":"✦ "+(labels[active]||"Открыть заказ");
+ $("taskOpen").disabled=!d;
  $("finishPanel").classList.toggle("hidden",!progress.complete);
  $("hotspots").replaceChildren();
  $("stageButtons").replaceChildren();
@@ -181,6 +182,7 @@ function show(){
      hot.dataset.zone=zone;
      hot.textContent="✦";
      hot.setAttribute("aria-label","Открыть этап: "+labels[i]);
+     hot.disabled=!d;
      hot.onpointerenter=()=>preview(zone);
      hot.onpointerleave=()=>clearPreview(zone);
      hot.onfocus=()=>preview(zone);
@@ -195,7 +197,7 @@ function show(){
    const small=document.createElement("small");
    small.textContent=done?"Восстановлено":current?"Нажми для задания":"Ожидает";
    card.append(small);
-   card.disabled=!current&&!progress.complete;
+   card.disabled=!d||(!current&&!progress.complete);
    if(current&&zone!=="all"){
      card.onpointerenter=()=>preview(zone);
      card.onpointerleave=()=>clearPreview(zone);
@@ -215,7 +217,7 @@ function show(){
  $("storyText").textContent=dialogue;
 }
 function renderTask(){const t=activeTask();if(!t)return;$("taskNumber").textContent=(alternate?"Резервный аналог":"Заказ")+" "+(index+1)+" из "+data().length;$("questionTitle").textContent=alternate?"Дополнительная проверка":"Заказ "+(index+1);window.ChronburgMath.render($("questionText"),removeDrawingPlaceholders(t.text),choice=>{$("answer").value=String(choice);$("answer").focus()});$("source").textContent="Источник: "+t.source;$("tableArea").replaceChildren();if(t.table&&Array.isArray(t.table.columns)&&Array.isArray(t.table.rows)){const wrap=document.createElement("div");wrap.className="tblwrap";const table=document.createElement("table");table.className="tbl";const head=document.createElement("tr");t.table.columns.forEach(x=>{const cell=document.createElement("th");cell.textContent=x;head.append(cell)});table.append(head);t.table.rows.forEach(row=>{const tr=document.createElement("tr");row.forEach(val=>{const td=document.createElement("td");td.textContent=val;tr.append(td)});table.append(tr)});wrap.append(table);$("tableArea").append(wrap)}$("answer").value="";$("check").disabled=false;$("answer").disabled=false;$("reserve").classList.add("hidden");notify("Проверь вычисления и введи ответ.");}
-function open(i){if(!data()){alert("Сначала загрузи учительский JSON для проверки дня 2.");return}index=i;review=progress.complete;alternate=false;renderTask();$("dialog").classList.remove("hidden");document.body.style.overflow="hidden";$("close").focus()}
+function open(i){if(!data()){if(isPreview)alert("Для проверки задач загрузи закрытый комплект в разделе преподавателя.");return}index=i;review=progress.complete;alternate=false;renderTask();$("dialog").classList.remove("hidden");document.body.style.overflow="hidden";$("close").focus()}
 function close(){$("dialog").classList.add("hidden");document.body.style.overflow=""}
 function check(){const t=activeTask();if(!t)return;const val=num($("answer").value),expect=num(t.answer);if(!Number.isFinite(val)){notify("Введите число. Для дроби можно использовать запись a/b.","bad");return}if(!Number.isFinite(expect)){notify("Ошибка подготовленного ключа: сообщи преподавателю.","bad");return}
 if(Math.abs(val-expect)<1e-8){const already=progress.solved.includes(index);if(!review&&!already){progress.solved.push(index);progress.solved.sort((a,b)=>a-b);if(progress.solved.length===data().length)progress.complete=true;save()}sendAudio(660);previewZone=null;close();show()}
