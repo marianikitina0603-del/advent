@@ -8,12 +8,12 @@ let bank=null,progress=null,previewStage=0,previewDemo=false,activeTask=-1,reser
 const MAP_W=1648,MAP_H=928;
 // Route points measured against the supplied 1648 × 928 map. These can be
 // calibrated from real screenshots without changing the state machine.
-const start=[145,761];
+const start=[318,807];
 const junctions=[
  {name:"Лесная развилка",at:[386,747],hint:"Нашим саням нужна широкая дорога. Узкая тропа среди елей для высокой ёлки не подойдёт.",
   good:{label:"Широкая дорога",icon:"↘",button:[35,80],path:[[386,747],[418,822],[520,861],[600,832]]},
   bad:{label:"Узкая лесная тропа",icon:"↖",button:[15,50],path:[[386,747],[286,586],[212,455]]},
-  from:[[145,761],[250,795],[328,778],[386,747]],returnMessage:"Сани не поместятся между заснеженными елями."},
+  from:[[318,807],[355,805],[386,747]],returnMessage:"Сани не поместятся между заснеженными елями."},
  {name:"Переправа через реку",at:[600,832],hint:"Тяжёлые сани смогут пересечь реку только по широкому каменному мосту.",
   good:{label:"Каменный мост",icon:"↗",button:[44,69],path:[[600,832],[522,792],[486,731],[523,657],[618,611],[745,605],[836,597]]},
   bad:{label:"Деревянный мост",icon:"↖",button:[23,37],path:[[600,832],[475,667],[350,450],[389,331]]},
@@ -23,7 +23,7 @@ const junctions=[
   bad:{label:"Закрытые ворота",icon:"↖",button:[60,30],path:[[836,597],[921,494],[986,362]]},
   returnMessage:"Железные ворота закрыты. Выбери освещённую улицу."},
  {name:"Въезд на площадь",at:[1090,315],hint:"Через низкую арку высокая ёлка не пройдёт. Нужен широкий въезд с золотыми воротами.",
-  good:{label:"Широкие золотые ворота",icon:"↗",button:[85,43],path:[[1090,315],[1148,375],[1264,429],[1390,416],[1474,364],[1465,274],[1405,219]]},
+  good:{label:"Широкие золотые ворота",icon:"↗",button:[85,43],path:[[1090,315],[1050,388],[1030,445],[1050,488],[1160,485],[1280,463],[1350,427],[1450,420],[1474,364],[1465,274],[1405,219]]},
   bad:{label:"Низкая каменная арка",icon:"↖",button:[66,19],path:[[1090,315],[1080,225],[1096,165]]},
   returnMessage:"Арка слишком низкая для верхушки ели. Нужно выбрать широкие ворота."}
 ];
@@ -39,7 +39,7 @@ const tasks=()=>bank&&bank.exams&&bank.exams[exam];
 const taskUnlocked=()=>!!tasks()&&stage()<4&&(exam==="oge"&&stage()===3||progress.solved.includes(stage()));
 const canChoose=()=>previewDemo||taskUnlocked();
 function pos(el,p){el.style.left=(p[0]/MAP_W*100)+"%";el.style.top=(p[1]/MAP_H*100)+"%"}
-function currentPosition(n=stage()){return n===0?junctions[0].at:n<4?junctions[n].at:finish}
+function currentPosition(n=stage()){return n===0?start:n<4?junctions[n].at:finish}
 function makeSvg(tag,attrs){const node=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const [k,v] of Object.entries(attrs))node.setAttribute(k,v);return node}
 function pathD(arr){return arr.map((p,i)=>(i?"L":"M")+p.join(" ")).join(" ")}
 function drawLines(){
@@ -131,7 +131,7 @@ async function choose(which){
  const n=stage(),j=junctions[n],good=which==="good";
  if(good){
   note("✓ Верное направление! Сани отправляются дальше.");
-  let ok=await animate(j.good.path,2200);if(!ok)return;
+  let ok=await animate(n===0?[...j.from,...j.good.path.slice(1)]:j.good.path,2400);if(!ok)return;
   travel=false;$("sleigh").classList.remove("moving");
   if(previewDemo)previewStage=Math.min(4,previewStage+1);
   else{progress.stage=Math.min(4,progress.stage+1);if(progress.stage===4)progress.complete=true;save()}
@@ -140,8 +140,9 @@ async function choose(which){
   note("⛔ "+j.returnMessage+" Сани возвращаются на развилку.");
   if(previewDemo)wrongCount++;
   else{progress.wrongTurns++;save()}
-  const out=await animate(j.bad.path,1450);if(!out)return;
-  const back=await animate([...j.bad.path].reverse(),1250);if(!back)return;
+  const wrongPath=n===0?[...j.from,...j.bad.path.slice(1)]:j.bad.path;
+  const out=await animate(wrongPath,1450);if(!out)return;
+  const back=await animate([...wrongPath].reverse(),1250);if(!back)return;
   travel=false;$("sleigh").classList.remove("moving");render();note("↩ "+j.returnMessage+" Выбери другое направление.");
  }
 }
