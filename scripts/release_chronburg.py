@@ -32,7 +32,7 @@ def decode_bank(key_b64: str) -> dict:
         raise ValueError("Invalid bank manifest")
     # Extra days use independent encrypted envelopes so existing releases and their
     # already-verified keys remain unchanged when new days are added.
-    extras = [ROOT / "data" / "locked" / "day04-2026.enc.json"]
+    extras = [ROOT / "data" / "locked" / f"day{day:02d}-2026.enc.json" for day in range(4, 25)]
     for path in extras:
         if not path.exists():
             continue
