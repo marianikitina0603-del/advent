@@ -30,6 +30,23 @@ def decode_bank(key_b64: str) -> dict:
     bank = json.loads(zlib.decompress(plaintext))
     if bank.get("version") != 1 or bank.get("timezone") != "Europe/Moscow":
         raise ValueError("Invalid bank manifest")
+    # Extra days use independent encrypted envelopes so existing releases and their
+    # already-verified keys remain unchanged when new days are added.
+    extras = [ROOT / "data" / "locked" / "day04-2026.enc.json"]
+    for path in extras:
+        if not path.exists():
+            continue
+        envelope = json.loads(path.read_text(encoding="utf-8"))
+        if envelope.get("version") != 1 or envelope.get("scheme") != "aes-256-gcm+zlib":
+            raise ValueError(f"Bad encrypted envelope: {path.name}")
+        raw = AESGCM(key).decrypt(base64.b64decode(envelope["nonce"]), base64.b64decode(envelope["ciphertext"]), AAD)
+        extra = json.loads(zlib.decompress(raw))
+        if extra.get("version") != 1 or extra.get("timezone") != "Europe/Moscow":
+            raise ValueError(f"Bad bank manifest in {path.name}")
+        for day, record in extra["days"].items():
+            if day in bank["days"]:
+                raise ValueError(f"Duplicate locked day {day}")
+            bank["days"][day] = record
     return bank
 
 def validate_day(payload, day):
