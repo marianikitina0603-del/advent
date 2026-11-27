@@ -4,6 +4,10 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/release-safety-test.yml"
+      - ".github/workflows/release-days.yml"
+      - "scripts/release_chronburg.py"
+      - "data/locked/**"
+      - "assets/pic/**"
   workflow_dispatch:
 permissions:
   contents: read
