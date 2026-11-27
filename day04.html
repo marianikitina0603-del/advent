@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Хронбург — 4 декабря. Мастерская игрушек</title>
+<meta name="theme-color" content="#101d36">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+<link rel="stylesheet" href="css/chronburg-shared.css">
+<link rel="stylesheet" href="css/chronburg-math.css">
+<link rel="stylesheet" href="css/chronburg-collection.css">
+<link rel="stylesheet" href="css/day4-workshop.css">
+</head>
+<body>
+<div class="work-wrap">
+<header class="work-head">
+<div><small>Новогодний математический квест • Хронбург • 4 декабря</small><h1>✦ Мастерская игрушек</h1></div>
+<nav class="work-nav"><a class="btn secondary" id="mapLink" href="index.html?preview=1">← Карта Хронбурга</a><button type="button" class="btn secondary" id="export">↓ Сохранить прогресс</button></nav>
+</header>
+<div class="work-layout">
+<main class="work-main">
+<div class="chronburg-date-tabs" aria-label="Дата и экзамен"><a class="btn secondary" id="sceneBackLink" href="index.html?preview=1">← К карте</a><span class="pill" id="sceneDate">4 декабря</span><span class="pill" id="sceneMode">ОГЭ</span></div>
+<div class="work-scene" id="scene">
+<img class="work-bg" id="workshopBg" src="assets/locations/day04_workshop_fallback.svg" alt="Волшебная мастерская игрушек: деревянные полки, латунная станция для сборки механизмов">
+<div class="stage-caption" id="stageLabel">Сборка механизма · этап 1 из 3</div>
+<div class="work-board" id="workBoard" aria-label="Механическое сердце мастерской">
+<div class="part-socket locked" id="socket0"><span class="socket-ring"></span><span class="socket-icon">◌</span></div>
+<div class="part-socket locked" id="socket1"><span class="socket-ring"></span><span class="socket-icon">◌</span></div>
+<div class="part-socket locked" id="socket2"><span class="socket-ring"></span><span class="socket-icon">◌</span></div>
+<div class="part-socket locked" id="socket3"><span class="socket-ring"></span><span class="socket-icon">◌</span></div>
+</div>
+<div class="work-tray" id="tray" aria-label="Детали для установки на механизм"></div>
+</div>
+<div class="release-status" id="releaseStatus" role="status" aria-live="polite">Проверяем публикацию заданий…</div>
+<div class="work-info"><b id="countLabel">Установлено деталей: 0 из 3</b><span id="timeLabel">Математика: 10–20 минут</span></div>
+<div class="work-story"><img src="assets/characters/character_tik.png" alt="Механическая сова Тик"><p id="storyText">Тик: «У часовщика остановилось Сердце мастерской. Начнём сборку!»</p></div>
+<div class="work-actions"><button class="btn" type="button" id="taskOpen">⚙ Открыть следующую деталь</button><button class="btn secondary" type="button" id="sound">♪ Звук: выкл.</button></div>
+<div class="work-reward hidden" id="finishPanel">
+<img src="assets/ornaments/ornament_day04_clockwork_gear.png" alt="Золотая заводная шестерёнка с красным бантом">
+<div><b>Четвёртая Искра времени получена!</b><p>Все шестерёнки зацепились и механизм заработал. Забери золотую заводную шестерёнку с красным бантом — она уже появилась на общей ёлке Хронбурга.</p>
+<a class="btn" id="rewardMapLink" href="index.html?preview=1">✨ На карту Хронбурга</a>
+<button class="btn secondary" id="replay" type="button">Повторить испытание</button>
+</div></div>
+</main>
+<aside class="work-aside">
+<section>
+<h2>Экзамен</h2><div class="exam-switch"><button id="oge" class="btn active" type="button">ОГЭ</button><button id="ege" class="btn secondary" type="button">ЕГЭ профиль</button></div>
+<p class="muted">У ОГЭ и ЕГЭ разные задания и независимое сохранение прогресса.</p>
+</section>
+<section>
+<h2>Механизм игрушек</h2><div class="row"><span class="pill" id="questionCount">Набор ожидается</span> <span class="pill" id="doneCount">0 / 3</span></div><div class="work-progress"><b id="progressBar"></b></div>
+<p class="muted">Выбери подсвеченную деталь и реши математический замок. После правильного ответа деталь самостоятельно встанет на место и механизм оживёт.</p>
+<p class="muted">ОГЭ: 3 задания, затем последняя праздничная деталь устанавливается автоматически. ЕГЭ: 4 задания, включая золотое сердце механизма.</p>
+</section>
+<section id="chronburgCollection"></section>
+<section id="teacherPanel" class="hidden"><details class="work-side-details" open><summary>🔐 Учительский предпросмотр</summary><p class="muted">Для предварительной проверки выбери закрытый JSON с заданиями четвёртого дня. Не загружай его в публичный GitHub.</p><input id="import" type="file" accept=".json,application/json"><p class="muted" id="importStatus" aria-live="polite">Файл не загружен.</p><button id="reset" type="button" class="btn secondary">↻ Сбросить день 4</button></details></section>
+</aside>
+</div>
+</div>
+<div class="work-modal hidden" id="dialog" role="dialog" aria-modal="true" aria-labelledby="questionTitle">
+<div class="work-modal-box">
+<div class="work-modal-head"><span id="taskCount">Математический замок</span><button type="button" id="close" aria-label="Закрыть задание">×</button></div>
+<div class="chronburg-math-paper">
+<h2 id="questionTitle">Собираем механизм</h2>
+<div id="questionText" class="math-question"></div>
+<div id="source" class="work-hint"></div>
+<div id="taskMedia"></div>
+<div class="answerbox"><input id="answer" inputmode="decimal" autocomplete="off" placeholder="Ответ" aria-label="Числовой ответ"><button class="btn" id="check" type="button">Проверить</button></div>
+<div id="keyboard" class="keyboard" aria-label="Математическая клавиатура"></div>
+<div class="tools"><button type="button" id="reserve" class="btn secondary hidden">↻ Резервный аналог</button><button type="button" id="hint" class="btn secondary">💡 Подсказка</button><button type="button" id="draftBtn" class="btn secondary">✎ Черновик</button></div>
+<div id="draftWrap" class="hidden"><canvas width="840" height="210" id="draftCanvas" aria-label="Черновик для записи вычислений"></canvas><div class="tools"><button type="button" id="clearDraft" class="btn secondary">Очистить черновик</button></div></div>
+<div class="feedback" id="feedback" role="status" aria-live="polite">Введи ответ.</div>
+</div>
+</div>
+<div id="curtain" style="position:fixed;inset:0;z-index:-1" aria-hidden="true"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+<script src="js/chronburg-collection.js"></script>
+<script src="js/chronburg-math.js"></script>
+<script src="js/chronburg-release-client.js"></script>
+<script src="js/day4-workshop.js"></script>
+</body></html>
