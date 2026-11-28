@@ -15,9 +15,9 @@ EXTRA_JS = ["js/chronburg-release-client.js", "js/chronburg-collection.js",
 PUBLIC_ASSET = re.compile(
     r"assets/(?:locations|characters|ornaments|maps|trees|ui|pic/"
     r"(?:oge_osn|oge_reserve|ege_osn|ege_reserve))/"
-    r"[A-Za-z0-9._/-]+\\.(?:png|webp|svg|jpe?g)"
+    r"[A-Za-z0-9._/-]+\.(?:png|webp|svg|jpe?g)"
 )
-DOM_ID = re.compile(r'(?:\\$\\(|getElementById\\()\\s*["\\']([^"\\']+)["\\']\\s*\\)')
+DOM_ID = re.compile(r"""(?:\$\(|getElementById\()\s*['"]([^'"]+)['"]\s*\)""")
 ISSUES: list[str] = []
 WARNINGS: list[str] = []
 
@@ -77,15 +77,15 @@ for page in PAGES:
     for dep in parsed.dependencies:
         if not exists(dep):
             ISSUES.append(f"{page}: missing linked file {dep}")
-    js = "\\n".join(parsed.inline_scripts)
+    js = "\n".join(parsed.inline_scripts)
     for dep in parsed.dependencies:
         if dep.endswith(".js") and exists(dep):
-            js += "\\n" + (ROOT / dep).read_text(encoding="utf-8")
+            js += "\n" + (ROOT / dep).read_text(encoding="utf-8")
     known_ids = set(parsed.ids)
     missing = sorted({ref for ref in DOM_ID.findall(js) if ref not in known_ids})
     if missing:
         ISSUES.append(f"{page}: missing HTML nodes referenced by JS: {', '.join(missing)}")
-    scan_assets(page, text + "\\n" + js)
+    scan_assets(page, text + "\n" + js)
     for dep in parsed.dependencies:
         if dep.endswith(".css") and exists(dep):
             scan_assets(dep, (ROOT / dep).read_text(encoding="utf-8"))
