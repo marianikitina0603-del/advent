@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10263e"><title>Хронбург — 6 декабря. За подарками к звёздам</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+<link rel="stylesheet" href="css/chronburg-shared.css">
+<link rel="stylesheet" href="css/chronburg-math.css">
+<link rel="stylesheet" href="css/chronburg-collection.css">
+<link rel="stylesheet" href="css/day6-climb.css">
+</head><body>
+<div class="climb-shell">
+<header class="climb-header"><div><small>Хронбург · 6 декабря · Зимняя ярмарка</small><h1>🎁 За подарками к звёздам</h1></div>
+<nav><a class="btn secondary" id="mapLink" href="index.html">← Карта Хронбурга</a><button type="button" class="btn secondary" id="exportProgress">↓ Сохранить результат</button></nav>
+</header>
+<div class="climb-layout">
+<main class="climb-main">
+<div class="chronburg-date-tabs"><span class="pill">6 декабря</span><span class="pill" id="examPill">ОГЭ</span><span class="pill" id="levelPill">Подъём 0 из 3</span></div>
+<div class="climb-scene" id="climbScene" aria-label="Зимняя ярмарка, праздничный столб, помощник Финн и четыре подарка">
+<img class="fair-background" src="assets/locations/day06_winter_fair_base.webp" alt="Заснеженная зимняя ярмарка Хронбурга в вечернем свете" draggable="false">
+<img class="fair-glow" id="fairGlow" src="assets/locations/day06_fair_magic_overlay.webp" alt="" aria-hidden="true">
+<div class="climb-shadow" aria-hidden="true"></div>
+<img id="pole" class="climb-pole" src="assets/locations/day06_climbing_pole.webp" alt="Высокий праздничный столб с перекладиной для подарков" draggable="false">
+<div class="climb-markers" id="heightMarkers" aria-hidden="true"></div>
+<div class="climb-gifts" id="giftsLayer" aria-hidden="true"></div>
+<img id="finn" class="climb-finn" src="assets/characters/day06_finn_idle.webp" alt="Помощник Финн у подножия столба" draggable="false">
+<div class="climb-scene-caption" id="sceneCaption">Подъём начинается у подножия столба</div>
+<div class="climb-scene-meter"><span id="heightLabel">Высота 0%</span><div class="climb-meter-track"><b id="heightFill"></b></div></div>
+</div>
+<div class="release-status" id="releaseStatus" role="status" aria-live="polite">Проверяем публикацию заданий шестого дня…</div>
+<div class="climb-status" id="climbStatus" role="status" aria-live="polite">Финн готов к подъёму. Реши первое задание!</div>
+<div class="climb-bottom"><div><strong id="stageCount">0 из 3 подъёмов</strong><span id="timeLabel">10–20 минут</span></div><div><strong id="giftCount">🎁 4 из 4 подарков</strong><span id="mistakeCount">Ошибки: 0</span></div></div>
+<div class="climb-story"><img src="assets/characters/character_tik.png" alt="Сова Тик"><p id="tikText">Тик: «Каждый верный ответ поможет Финну подняться. А упавшие подарки мы обязательно вернём!»</p></div>
+<div class="climb-actions"><button type="button" class="btn" id="taskOpen" disabled>🔒 Задания ждут публикации</button><button type="button" class="btn secondary" id="sound">♪ Звук: выкл.</button></div>
+<div class="climb-final hidden" id="finishPanel">
+<img src="assets/ornaments/ornament_day06_fair_bell.webp" alt="Золотой ярмарочный колокольчик — награда шестого дня">
+<div><strong>Финн добрался до вершины!</strong><p id="finishText">Все четыре подарка возвращены. Шестая Искра времени спасена!</p><a id="rewardMapLink" href="index.html" class="btn">✨ Вернуться на карту</a><button id="reviewTask" class="btn secondary" type="button">↻ Повторить задания</button></div>
+</div>
+</main>
+<aside class="climb-side">
+<section><h2>Экзамен</h2><div class="climb-exams"><button type="button" id="oge" class="btn selected">ОГЭ</button><button type="button" id="ege" class="btn secondary">ЕГЭ профиль</button></div><p>ОГЭ — 3 задания. ЕГЭ — 4 задания. Прогресс хранится раздельно.</p></section>
+<section><h2>Ярмарочное испытание</h2><p>Верный ответ поднимает Финна на следующий уровень. После неверного ответа один из четырёх подарков падает в сугроб.</p><p><strong>Подарки возвращаются</strong>, как только задание решено правильно. Достигнутая высота не теряется.</p><div class="climb-level-list" id="levels"></div></section>
+<section id="chronburgCollection"></section>
+<section class="climb-teacher hidden" id="teacherPanel"><h2>🔧 Учительский предпросмотр</h2><p>Демонстрационные кнопки работают без математического банка и не засчитывают награду. Настоящие задания можно проверить только через локальный учительский JSON.</p>
+<div class="climb-demo-controls"><button type="button" class="btn secondary" id="demoToggle">Включить демонстрацию</button><button type="button" class="btn secondary" id="demoWrong">✖ Ошибка</button><button type="button" class="btn secondary" id="demoCorrect">✓ Верный ответ</button></div>
+<p id="demoStatus" role="status">Демонстрация выключена.</p><label for="importTasks">Локально загрузить закрытый комплект дня 6:</label><input id="importTasks" type="file" accept=".json,application/json"><p id="importStatus">Файл не загружен.</p><button class="btn secondary" type="button" id="resetProgress">↻ Сбросить прогресс ОГЭ/ЕГЭ</button>
+</section>
+</aside>
+</div></div>
+<div class="climb-dialog hidden" id="dialog" role="dialog" aria-modal="true" aria-labelledby="taskTitle">
+<div class="climb-paper"><div class="climb-dialog-head"><strong>Математическое испытание</strong><button type="button" id="closeTask" aria-label="Закрыть окно задания">×</button></div>
+<div class="climb-task"><h2 id="taskTitle">Задание</h2><div id="taskText" class="math-question"></div><div id="taskFigure"></div>
+<div class="climb-answer"><input id="answer" placeholder="Ответ" inputmode="decimal" autocomplete="off" aria-label="Числовой ответ"><button type="button" class="btn" id="check">Проверить</button></div>
+<div id="keys" class="climb-keypad" aria-label="Экранная клавиатура"></div>
+<div class="climb-tools"><button type="button" class="btn secondary hidden" id="reserve">↻ Резервный аналог</button><button type="button" class="btn secondary" id="hint">💡 Подсказка</button><button type="button" class="btn secondary" id="scratchToggle">✎ Черновик</button></div>
+<div class="hidden" id="scratchWrap"><canvas id="scratch" width="800" height="180" aria-label="Черновик для записи решений"></canvas><div class="climb-tools"><button type="button" class="btn secondary" id="clearScratch">Очистить черновик</button></div></div>
+<div class="climb-reply" id="taskReply" role="status" aria-live="polite"></div></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+<script src="js/chronburg-math.js"></script>
+<script src="js/chronburg-collection.js"></script>
+<script src="js/chronburg-release-client.js"></script>
+<script src="js/day6-climb.js"></script>
+</body></html>
