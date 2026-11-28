@@ -1,0 +1,78 @@
+*{box-sizing:border-box}
+body{margin:0;color:#f7f1df;background:radial-gradient(ellipse at 50% -10%,#2b4767,#0b1528 72%);font-family:Manrope,Arial,sans-serif}
+.hidden{display:none!important}.light-shell{max-width:1530px;margin:auto;padding:16px clamp(12px,2vw,32px) 36px}
+.light-header{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:15px}
+.light-header small{color:#cbd9e7;font-size:12px;letter-spacing:.11em;text-transform:uppercase}
+.light-header h1{font:600 clamp(26px,3vw,44px) "Playfair Display",Georgia,serif;color:#f2c783;margin:4px 0}
+.light-header nav{display:flex;gap:9px;flex-wrap:wrap}.light-header .btn{text-decoration:none}
+.light-layout{display:grid;grid-template-columns:minmax(0,1fr) 325px;gap:16px;align-items:start}
+.light-main,.light-side{background:#132740eb;border:1px solid #bca07883;box-shadow:0 15px 40px #0006;border-radius:20px;min-width:0;overflow:hidden}
+.light-scene{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;isolation:isolate;user-select:none;background:#29455b}
+.light-background,.light-magic,.garland-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.light-background{object-fit:fill;z-index:0}.garland-overlay{z-index:2;overflow:visible}
+.light-magic{object-fit:fill;z-index:3;opacity:0;transition:opacity 1.5s ease}
+.light-scene.complete .light-magic{opacity:.82}
+.light-scene-label,.light-scene-meter{position:absolute;z-index:5;top:3%;color:#ffe7b7;background:#0b223bdc;border:1px solid #b89a6a;border-radius:11px;padding:8px 11px;font-size:clamp(10px,1.3vw,14px)}
+.light-scene-label{left:2%;max-width:38%}.light-scene-meter{right:2%;width:23%;font-weight:750}
+.light-track{margin-top:7px;height:9px;border-radius:10px;overflow:hidden;border:1px solid #bba06c;background:#10273d}
+.light-track b{height:100%;display:block;width:0;background:linear-gradient(90deg,#bd8d40,#ffe1a0);transition:width 1.2s ease}
+.garland-wire{fill:none;stroke:#342a25;stroke-width:6;stroke-linecap:round;filter:drop-shadow(0 1px 2px #0f1723)}
+.garland-wire-lit{fill:none;stroke:#dab86a;stroke-width:3;stroke-linecap:round;opacity:0;transition:opacity .55s}
+.garland-wire-lit.active{opacity:1}
+.garland-bulb{fill:#4a5866;stroke:#b3b3a5;stroke-width:2;transition:fill .24s,filter .24s}
+.garland-bulb.on{filter:drop-shadow(0 0 11px currentColor) drop-shadow(0 0 6px currentColor);stroke:#ffeac0;stroke-width:2.5}
+.garland-bulb.fault{animation:lightFault .22s ease-in-out infinite alternate}
+@keyframes lightFault{from{fill:#e2af55;opacity:1}to{fill:#5a6673;opacity:.5}}
+.garland-spark{fill:#fff6ce;stroke:#ffd16b;stroke-width:6;filter:drop-shadow(0 0 17px #ffe4a1) drop-shadow(0 0 9px #fff3cc);pointer-events:none}
+.tower-star{fill:#4a5363;stroke:#a18d67;stroke-width:5;transition:fill .65s,filter .65s}
+.tower-star.on{fill:#ffdc79;stroke:#fff3c2;filter:drop-shadow(0 0 24px #fff1aa) drop-shadow(0 0 8px #f7a94b)}
+.light-release,.light-status{padding:10px 16px;line-height:1.55;border-bottom:1px solid #59728c6b}
+.light-release{background:#192f49;color:#f1d5a2;font-size:12px;font-weight:600}
+.light-release[data-status="success"]{background:#1d453b;color:#d9f9e9}
+.light-release[data-status="error"]{background:#53302f;color:#ffe2d5}
+.light-status{background:#1a3550;color:#ffe1ab;font-weight:700;font-size:14px}
+.light-score{display:flex;justify-content:space-between;gap:12px;padding:13px 17px;border-bottom:1px solid #69819a65;flex-wrap:wrap}
+.light-score>div{display:flex;gap:6px;flex-direction:column}.light-score span{color:#bbcadb;font-size:12px}
+.light-story{display:flex;align-items:center;gap:13px;margin:15px;padding:10px;border:2px solid #b8945f;border-radius:14px;background:#ead9b6;color:#48301f}
+.light-story img{width:72px;height:80px;object-fit:contain;flex:0 0 auto}
+.light-story p{margin:0;line-height:1.55;font-size:14px}
+.light-actions{display:flex;gap:11px;padding:0 15px 17px;flex-wrap:wrap}
+.light-side{padding:16px;display:flex;flex-direction:column;gap:14px}
+.light-side section{border:1px solid #71869a61;border-radius:14px;padding:13px;background:#1c3551}
+.light-side h2{color:#ffdda4;font:600 22px "Playfair Display",Georgia,serif;margin:0 0 10px}
+.light-side p{color:#d2deeb;font-size:13px;line-height:1.55;margin:9px 0}
+.light-exams{display:flex;gap:8px}.light-exams button{flex:1;padding:9px 8px;font-size:12px}
+.light-exams .selected{background:#b18a4a;color:#061a2e}
+.light-route-list{display:grid;gap:7px;margin-top:12px}
+.light-route{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:9px;background:#173049;border-radius:10px;border:1px solid #54718b;color:#dde7e9;font-size:12px}
+.light-route.current{border-color:#e4ba74;background:#4f402d}
+.light-route.done{border-color:#8ddab3;background:#254b43}
+.light-route small{font-size:11px;color:#cbd8e4}
+.light-preview-actions{display:flex;gap:8px;flex-wrap:wrap}
+.light-preview-actions button{font-size:12px;padding:8px}
+#teacherPanel input{display:block;width:100%;margin:12px 0;color:#f6f0e2}
+.light-finale{display:flex;gap:20px;align-items:center;margin:15px;padding:15px;border:2px solid #cfac77;border-radius:16px;background:linear-gradient(125deg,#194e42,#263a53)}
+.light-finale img{width:110px;height:110px;object-fit:contain}
+.light-finale strong{color:#ffe3af;font:600 22px "Playfair Display",Georgia,serif}
+.light-finale p{line-height:1.5}.light-finale .btn{display:inline-block;margin:4px 8px 4px 0;text-decoration:none}
+.light-dialog{position:fixed;inset:0;z-index:2000;padding:16px;background:#050d1bdb;backdrop-filter:blur(7px);display:grid;place-items:center}
+.light-paper{width:min(870px,100%);max-height:93dvh;overflow:auto;padding:13px;border:2px solid #d5af77;border-radius:19px;background:linear-gradient(140deg,#27405b,#0d2137);box-shadow:0 25px 85px #000c}
+.light-dialog-head{display:flex;justify-content:space-between;align-items:center;color:#ffdda4;font:600 18px "Playfair Display",Georgia,serif;padding:2px 4px 12px}
+.light-dialog-head button{width:40px;height:40px;border-radius:50%;font-size:24px;color:white;background:#2c4360;border:1px solid #d4ae76;cursor:pointer}
+.light-task{background:#f4ecd8;color:#302c26;border:5px ridge #b18c57;border-radius:15px;padding:20px}
+.light-task h2{margin:0 0 14px;font-size:23px}
+#taskFigure{max-width:100%;overflow:auto}
+#taskFigure img{display:block;max-width:100%;max-height:340px;object-fit:contain;margin:12px auto}
+#taskFigure table{border-collapse:collapse;max-width:100%;margin:10px auto;color:#302c26}
+#taskFigure th,#taskFigure td{border:1px solid #927952;padding:7px 10px}
+.light-answer{display:flex;gap:9px;justify-content:center;align-items:center;margin-top:15px;flex-wrap:wrap}
+.light-answer input{background:#fff;color:#2d2a24;caret-color:#2d2a24;padding:10px;border:2px solid #a48d6b;border-radius:11px;width:min(230px,100%);font-size:22px;text-align:center}
+.light-keypad{display:flex;flex-wrap:wrap;gap:5px;max-width:390px;justify-content:center;margin:10px auto}
+.light-keypad button{color:#302820;background:#fff9e9;border:1px solid #bba178;border-radius:7px;min-width:37px;min-height:36px;font-weight:750;cursor:pointer}
+.light-tools{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:11px auto}
+.light-tools .btn{font-size:12px;padding:9px 11px}
+.light-reply{background:#e4d8c0;border-radius:10px;min-height:40px;padding:9px;color:#433321;line-height:1.6;font-size:13px}
+#scratch{width:100%;height:180px;display:block;background:repeating-linear-gradient(white 0,white 21px,#d2e0ea 22px);border:1px solid #a7b3bd;border-radius:8px;touch-action:none}
+@media(max-width:1050px){.light-layout{grid-template-columns:1fr}.light-side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:660px){.light-shell{padding:9px}.light-header nav{width:100%}.light-header nav .btn{flex:1;font-size:11px;text-align:center}.light-side{display:flex}.light-story{margin:9px}.light-story img{width:52px;height:62px}.light-story p{font-size:12px}.light-scene-label{font-size:9px;padding:4px 6px}.light-scene-meter{padding:5px 6px;font-size:9px}.light-track{height:5px;margin-top:4px}.light-task{padding:11px;border-width:3px}.light-paper{padding:7px;max-height:96dvh}.light-finale{flex-wrap:wrap}.light-finale img{width:75px;height:75px}}
+@media(prefers-reduced-motion:reduce){.garland-bulb,.tower-star,.light-track b,.light-magic{transition:none!important}.garland-bulb.fault{animation:none!important}}
