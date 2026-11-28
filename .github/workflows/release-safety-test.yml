@@ -32,10 +32,12 @@ jobs:
           python scripts/release_chronburg.py --dry-run --as-of 2026-12-03 > /tmp/third.txt
           python scripts/release_chronburg.py --dry-run --as-of 2026-12-04 > /tmp/fourth.txt
           python scripts/release_chronburg.py --dry-run --as-of 2026-12-05 > /tmp/fifth.txt
+          python scripts/release_chronburg.py --dry-run --as-of 2026-12-06 > /tmp/sixth.txt
           grep -q 'Day 02: locked until 2026-12-02' /tmp/before.txt
           grep -q 'Day 03: locked until 2026-12-03' /tmp/before.txt
           grep -q 'Day 04: locked until 2026-12-04' /tmp/before.txt
           grep -q 'Day 05: locked until 2026-12-05' /tmp/before.txt
+          grep -q 'Day 06: locked until 2026-12-06' /tmp/before.txt
           grep -q 'Day 02: eligible (dry run)' /tmp/second.txt
           grep -q 'Day 03: locked until 2026-12-03' /tmp/second.txt
           grep -q 'Day 02: eligible (dry run)' /tmp/third.txt
@@ -44,8 +46,11 @@ jobs:
           grep -q 'Day 04: eligible (dry run)' /tmp/fourth.txt
           grep -q 'Day 05: locked until 2026-12-05' /tmp/fourth.txt
           grep -q 'Day 05: eligible (dry run)' /tmp/fifth.txt
+          grep -q 'Day 06: locked until 2026-12-06' /tmp/fifth.txt
+          grep -q 'Day 06: eligible (dry run)' /tmp/sixth.txt
           test ! -e data/day02.json
           test ! -e data/day03.json
           test ! -e data/day04.json
           test ! -e data/day05.json
+          test ! -e data/day06.json
           echo 'PASS: key decrypts, date boundaries valid, future tasks remain unpublished'
