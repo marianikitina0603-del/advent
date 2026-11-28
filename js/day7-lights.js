@@ -14,7 +14,7 @@ const routes=[
 ];
 const lightState={};
 let bank=null,progress=null,demo=false,demoData={solved:0,errors:0,fault:false};
-let activeTask=-1,reserve=false,review=false,busy=false,animationId=0,faultTimer=null,prevFocus=null,sound=false,audio=null;
+let activeTask=-1,reserve=false,review=false,busy=false,animationId=0,faultTimer=null,prevFocus=null,sound=false,audio=null,visualLitCount=0;
 const reduced=()=>window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches===true;
 const steps=()=>exam==="ege"?4:3;
 const key=()=> "chronburg:2026:day07:"+exam+":v1";
@@ -67,10 +67,7 @@ function makeRoutes(){
  const spark=svg("circle",{id:"lightSpark",class:"garland-spark",r:10,cx:-100,cy:-100},stage);
  lightState.spark=spark;
 }
-function litRoutes(){
- if(demo)return demoData.solved===steps()?4:demoData.solved;
- return progress.complete?4:progress.solved.length;
-}
+function litRoutes(){return visualLitCount}
 function applyLights(partial=-1,ratio=0){
  const lit=litRoutes();
  for(let i=0;i<4;i++){
@@ -88,7 +85,7 @@ function applyLights(partial=-1,ratio=0){
 function stopAnimation(){
  animationId++;
  if(faultTimer!==null){clearTimeout(faultTimer);faultTimer=null}
- busy=false;lightState.spark.setAttribute("cx",-100);lightState.spark.setAttribute("cy",-100);
+ busy=false;visualLitCount=finished()?4:count();lightState.spark.setAttribute("cx",-100);lightState.spark.setAttribute("cy",-100);
  for(let i=0;i<4;i++)lightState[i].bulbs.forEach(b=>b.classList.remove("fault"));
  applyLights();
 }
@@ -121,11 +118,12 @@ async function runWave(oldCount){
  for(const i of routesToRun){
   const success=await animateRoute(i,token);
   if(!success)return;
-  // The target portion was already saved before animating; update all fully lit paths.
-  applyLights(i,1);
+  // Commit visual state only after the spark has travelled across this route.
+  visualLitCount=Math.max(visualLitCount,i+1);
+  applyLights();
  }
  if(token!==animationId)return;
- busy=false;lightState.spark.setAttribute("cx",-100);lightState.spark.setAttribute("cy",-100);
+ busy=false;visualLitCount=finished()?4:count();lightState.spark.setAttribute("cx",-100);lightState.spark.setAttribute("cy",-100);
  applyLights();render();
 }
 function fault(){
@@ -248,7 +246,7 @@ function check(){
 }
 function toggleDemo(){
  if(!preview)return;
- stopAnimation();closeTask();demo=!demo;demoData={solved:0,errors:0,fault:false};render();
+ stopAnimation();closeTask();demo=!demo;demoData={solved:0,errors:0,fault:false};visualLitCount=demo?0:(progress.complete?4:progress.solved.length);render();
 }
 function demoWrong(){
  if(!demo||busy||finished())return;
@@ -261,7 +259,7 @@ function demoCorrect(){
 function changeExam(e){
  if(e===exam)return;
  stopAnimation();closeTask();demo=false;
- exam=e;progress=load();demoData={solved:0,errors:0,fault:false};
+ exam=e;progress=load();demoData={solved:0,errors:0,fault:false};visualLitCount=progress.complete?4:progress.solved.length;
  history.replaceState({},"","day07.html?exam="+exam+(preview?"&preview=1":""));
  render();
 }
@@ -284,7 +282,7 @@ $("exportProgress").onclick=exportProgress;
 $("demoToggle").onclick=toggleDemo;$("demoWrong").onclick=demoWrong;$("demoCorrect").onclick=demoCorrect;
 $("resetProgress").onclick=()=>{
  if(!preview||!confirm("Сбросить результаты 7 декабря для "+exam.toUpperCase()+"?"))return;
- stopAnimation();closeTask();demo=false;progress=initial();save();render();
+ stopAnimation();closeTask();demo=false;progress=initial();visualLitCount=0;save();render();
 };
 $("importTasks").onchange=async e=>{
  const file=e.target.files?.[0];if(!file)return;
@@ -304,11 +302,11 @@ canvas.addEventListener("pointermove",e=>{if(!drawing)return;const [x,y]=point(e
 canvas.addEventListener("pointerup",()=>drawing=false);canvas.addEventListener("pointercancel",()=>drawing=false);
 $("scratchToggle").onclick=()=>$("scratchWrap").classList.toggle("hidden");
 $("clearScratch").onclick=()=>ctx.clearRect(0,0,canvas.width,canvas.height);
-progress=load();makeRoutes();render();
+progress=load();visualLitCount=progress.complete?4:progress.solved.length;makeRoutes();render();
 window.ChronburgRelease.attach({
  day:7,
  onReady:x=>{try{bank=validateBank(x);render()}catch(e){$("releaseStatus").textContent="Ошибка комплекта: "+e.message;$("releaseStatus").dataset.status="error"}},
  onStatus:(msg,kind)=>{const s=$("releaseStatus");s.textContent=msg;s.dataset.status=kind}
 });
-window.addEventListener("pageshow",()=>{if(demo)return;stopAnimation();progress=load();render()});
+window.addEventListener("pageshow",()=>{if(demo)return;stopAnimation();progress=load();visualLitCount=progress.complete?4:progress.solved.length;render()});
 })();
