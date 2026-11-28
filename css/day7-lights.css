@@ -19,10 +19,31 @@ body{margin:0;color:#f7f1df;background:radial-gradient(ellipse at 50% -10%,#2b47
 .garland-wire{fill:none;stroke:#342a25;stroke-width:6;stroke-linecap:round;filter:drop-shadow(0 1px 2px #0f1723)}
 .garland-wire-lit{fill:none;stroke:#dab86a;stroke-width:3;stroke-linecap:round;opacity:0;transition:opacity .55s}
 .garland-wire-lit.active{opacity:1}
-.garland-bulb{fill:#4a5866;stroke:#b3b3a5;stroke-width:2;transition:fill .24s,filter .24s}
-.garland-bulb.on{filter:drop-shadow(0 0 11px currentColor) drop-shadow(0 0 6px currentColor);stroke:#ffeac0;stroke-width:2.5}
-.garland-bulb.fault{animation:lightFault .22s ease-in-out infinite alternate}
-@keyframes lightFault{from{fill:#e2af55;opacity:1}to{fill:#5a6673;opacity:.5}}
+/* Hand-drawn Victorian bulbs: the antique glass is visible even with no power.
+   Color halos are behind the glass and light up only when a passing spark arrives. */
+.garland-bulb{pointer-events:none}
+.bulb-stem{fill:none;stroke:#574633;stroke-width:4;stroke-linecap:round}
+.bulb-brass-cap{stroke:#5f452c;stroke-width:1.9;stroke-linejoin:round}
+.bulb-brass-rim{stroke:#f5d492;stroke-width:2.2;stroke-linecap:round}
+.bulb-glass{stroke:#dbe4e9;stroke-width:1.8}
+.bulb-halo{opacity:0;transform-origin:0 16px;transition:opacity .42s ease,transform .52s ease}
+.bulb-colored-glass{fill:var(--bulb-color);opacity:.09;stroke:transparent;transition:opacity .45s ease}
+.bulb-filament{stroke:#8e9ba8;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:stroke .38s}
+.bulb-glass-highlight{stroke:#fffaf0;stroke-width:2.4;stroke-linecap:round;fill:none;opacity:.76}
+.bulb-glass-sheen{fill:#fff;opacity:.26}
+.garland-bulb.on .bulb-halo{opacity:.94}
+.garland-bulb.on .bulb-colored-glass{opacity:.68}
+.garland-bulb.on .bulb-filament{stroke:#fff6c8}
+.garland-bulb.on .bulb-glass{stroke:#fcefd7}
+.garland-bulb.on .bulb-glass-sheen{opacity:.8}
+.garland-bulb.fault .bulb-halo{animation:lightFaultHalo .19s ease-in-out alternate 7}
+.garland-bulb.fault .bulb-colored-glass{animation:lightFaultGlass .19s ease-in-out alternate 7}
+@keyframes lightFaultHalo{from{opacity:.48}to{opacity:0}}
+@keyframes lightFaultGlass{from{opacity:.58}to{opacity:.09}}
+/* A celebratory glow bloom after the fourth route, then stable warm lighting. */
+.light-scene.complete .garland-bulb.on .bulb-halo{animation:lightVictoryBloom 1.3s ease-out both}
+@keyframes lightVictoryBloom{0%{opacity:.94;transform:scale(1)}36%{opacity:1;transform:scale(1.3)}100%{opacity:.94;transform:scale(1)}}
+
 .garland-spark{fill:#fff6ce;stroke:#ffd16b;stroke-width:6;filter:drop-shadow(0 0 17px #ffe4a1) drop-shadow(0 0 9px #fff3cc);pointer-events:none}
 .tower-star{fill:#4a5363;stroke:#a18d67;stroke-width:5;transition:fill .65s,filter .65s}
 .tower-star.on{fill:#ffdc79;stroke:#fff3c2;filter:drop-shadow(0 0 24px #fff1aa) drop-shadow(0 0 8px #f7a94b)}
@@ -75,4 +96,4 @@ body{margin:0;color:#f7f1df;background:radial-gradient(ellipse at 50% -10%,#2b47
 #scratch{width:100%;height:180px;display:block;background:repeating-linear-gradient(white 0,white 21px,#d2e0ea 22px);border:1px solid #a7b3bd;border-radius:8px;touch-action:none}
 @media(max-width:1050px){.light-layout{grid-template-columns:1fr}.light-side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:660px){.light-shell{padding:9px}.light-header nav{width:100%}.light-header nav .btn{flex:1;font-size:11px;text-align:center}.light-side{display:flex}.light-story{margin:9px}.light-story img{width:52px;height:62px}.light-story p{font-size:12px}.light-scene-label{font-size:9px;padding:4px 6px}.light-scene-meter{padding:5px 6px;font-size:9px}.light-track{height:5px;margin-top:4px}.light-task{padding:11px;border-width:3px}.light-paper{padding:7px;max-height:96dvh}.light-finale{flex-wrap:wrap}.light-finale img{width:75px;height:75px}}
-@media(prefers-reduced-motion:reduce){.garland-bulb,.tower-star,.light-track b,.light-magic{transition:none!important}.garland-bulb.fault{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.garland-bulb *,.tower-star,.light-track b,.light-magic{transition:none!important;animation:none!important}}
