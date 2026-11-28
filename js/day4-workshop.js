@@ -222,7 +222,7 @@ $("teacherPanel").classList.toggle("hidden",!preview);
 selectExam(exam);
 window.ChronburgRelease.attach({
  day:4,
- onReady:x=>{try{if(!bank){bank=validateBank(x);render()}}catch(e){$("releaseStatus").textContent="Ошибка формата опубликованного комплекта: "+e.message}},
+ onReady:x=>{try{if(!bank){bank=validateBank(x);render()}return true}catch(e){$("releaseStatus").textContent="Ошибка формата опубликованного комплекта: "+e.message;return false}},
  onStatus:(message,kind)=>{const el=$("releaseStatus");el.textContent=message;el.dataset.status=kind}
 });
 window.addEventListener("pageshow",()=>{progress=load();render()});
