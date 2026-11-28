@@ -76,7 +76,7 @@
 (function(){
 const A={map:"assets/maps/chronburg_map_base.png"};
 const exams=window.CHRONBURG_DAY1;
-const titleDays=["Огонёк надежды","Рецепт праздника","Новогодняя почта","Мастерская игрушек","Доставка ёлки","Ярмарка случайностей","Новогодние гирлянды","Снежный эликсир","Мост к саду","Лестница звёзд","Зимняя оранжерея","Обсерватория","Праздничные арки","Разбитая звезда","Библиотека теорем","Архив праздников","Сломанные игрушки","Лабиринт","Зеркала огней","Сейф часовщика","Испытание хранителя","Репетиция","Ошибка мастера","Сердце Нового года"];
+const titleDays=["Огонёк надежды","Рецепт праздника","Новогодняя почта","Мастерская игрушек","Доставка ёлки","За подарками к звёздам","Новогодние гирлянды","Снежный эликсир","Мост к саду","Лестница звёзд","Зимняя оранжерея","Обсерватория","Праздничные арки","Разбитая звезда","Библиотека теорем","Архив праздников","Сломанные игрушки","Лабиринт","Зеркала огней","Сейф часовщика","Испытание хранителя","Репетиция","Ошибка мастера","Сердце Нового года"];
 const positions=[[81,76],[68,74],[57,76],[44,71],[27,66],[87,61],[74,47],[59,56],[48,56],[34,50],[85,40],[72,34],[50,38],[32,34],[20,30],[10,23],[17,45],[60,24],[82,21],[36,19],[47,14],[65,14],[73,11],[55,7]];
 const $=id=>document.getElementById(id);
 const params=new URLSearchParams(location.search);const preview=params.has("preview"); // Preview only removes date lock; unreleased content stays unavailable.
@@ -94,9 +94,10 @@ function day2Progress(){try{const p=JSON.parse(localStorage.getItem("chronburg:2
 function day3Progress(){try{const p=JSON.parse(localStorage.getItem("chronburg:2026:day03:"+exam+":v1"));return !!(p&&p.complete===true)}catch(e){return false}}
 function day4Progress(){try{const p=JSON.parse(localStorage.getItem("chronburg:2026:day04:"+exam+":v1"));return !!(p&&p.complete===true)}catch(e){return false}}
 function day5Progress(){try{const p=JSON.parse(localStorage.getItem("chronburg:2026:day05:"+exam+":v1"));return !!(p&&p.complete===true)}catch(e){return false}}
-function dayDone(d){return d===1?isDone():d===2?day2Progress():d===3?day3Progress():d===4?day4Progress():d===5?day5Progress():false}
-function available(day){return day>=1&&day<=5&&(preview||unlocked>=day)} // Unreleased tasks are kept outside the public site.
-function renderDates(){$("todayPill").textContent=preview?"🔧 Предпросмотр":"📅 "+new Intl.DateTimeFormat("ru-RU",{timeZone:"Europe/Moscow",day:"numeric",month:"long"}).format(new Date());$("releaseNotice").textContent=preview?"🔧 Режим предпросмотра интерфейса (не защищён авторизацией). Дни 1–5 доступны для проверки сцен. Для неопубликованных заданий предусмотрен локальный предпросмотр; для учеников задания откроются по московским датам.":"🔐 Прототип: дни 2–5 получают математические задания автоматически по расписанию. Задания будущих дней остаются зашифрованными до даты открытия, а недоступные локации закрыты."}
+function day6Progress(){try{const p=JSON.parse(localStorage.getItem("chronburg:2026:day06:"+exam+":v1"));return !!(p&&p.complete===true)}catch(e){return false}}
+function dayDone(d){return d===1?isDone():d===2?day2Progress():d===3?day3Progress():d===4?day4Progress():d===5?day5Progress():d===6?day6Progress():false}
+function available(day){return day>=1&&day<=6&&(preview||unlocked>=day)} // Unreleased tasks are kept outside the public site.
+function renderDates(){$("todayPill").textContent=preview?"🔧 Предпросмотр":"📅 "+new Intl.DateTimeFormat("ru-RU",{timeZone:"Europe/Moscow",day:"numeric",month:"long"}).format(new Date());$("releaseNotice").textContent=preview?"🔧 Режим предпросмотра интерфейса (не защищён авторизацией). Дни 1–6 доступны для проверки сцен. Для неопубликованных заданий предусмотрен локальный предпросмотр; для учеников задания откроются по московским датам.":"🔐 Прототип: дни 2–6 получают математические задания автоматически по расписанию. Задания будущих дней остаются зашифрованными до даты открытия, а недоступные локации закрыты."}
 function renderMap(){
 const map=$("mapMarkers"),grid=$("dayGrid");map.replaceChildren();grid.replaceChildren();
 for(let d=1;d<=24;d++){
@@ -110,16 +111,16 @@ function refreshSide(){
  $("egeBtn").className="btn "+(exam==="ege"?"selected":"secondary");
  $("modeInfo").textContent=exams[exam].name;
  $("sceneMode").textContent=exams[exam].name;
- const n=Number(isDone())+Number(day2Progress())+Number(day3Progress())+Number(day4Progress())+Number(day5Progress());
+ const n=Number(isDone())+Number(day2Progress())+Number(day3Progress())+Number(day4Progress())+Number(day5Progress())+Number(day6Progress());
  $("progressNumber").textContent=n+" / 24";
  $("progressFill").style.width=n/24*100+"%";
  collectionView.refresh(exam);
- $("tikLine").textContent=day5Progress()?"«Главная ёлка спасена! Уже пять Искр времени вернулись в Хронбург».":day4Progress()?"«Мастерская игрушек ожила! Четыре Искры времени спасены».":day3Progress()?"«Письма отправлены! Три Искры времени спасены».":day2Progress()?"«Пекарня спасена! Следующее испытание — новогодняя почта».":isDone()?"«Первый свет возвращён! Теперь пекарне Марты нужна наша помощь».":"«Хронбургу нужны искры времени! Начни с фонарей на городской улице».";
+ $("tikLine").textContent=day6Progress()?"«Шестая Искра времени спасена! Финн добрался до вершины и сохранил подарки».":day5Progress()?"«Главная ёлка спасена! Уже пять Искр времени вернулись в Хронбург».":day4Progress()?"«Мастерская игрушек ожила! Четыре Искры времени спасены».":day3Progress()?"«Письма отправлены! Три Искры времени спасены».":day2Progress()?"«Пекарня спасена! Следующее испытание — новогодняя почта».":isDone()?"«Первый свет возвращён! Теперь пекарне Марты нужна наша помощь».":"«Хронбургу нужны искры времени! Начни с фонарей на городской улице».";
  renderMap();
 }
 function setExam(e){closeTask();exam=e;progress=load();index=0;review=false;history.replaceState({},'',location.pathname+"?exam="+exam+(preview?"&preview=1":""));refreshSide();if(scene)openDay(1)}
 function showScene(v){if(!v)closeTask();scene=v;$("mapScreen").classList.toggle("hidden",v);$("sceneScreen").classList.toggle("hidden",!v);$("homeBtn").classList.toggle("hidden",!v);window.scrollTo({top:0,behavior:"smooth"})}
-function openDay(d){if(!available(d))return;if(d>=2&&d<=5){location.href="day0"+d+".html?exam="+exam+(preview?"&preview=1":"");return;}review=isDone();index=review?0:([0,1,2,3].find(i=>!progress.solved.includes(i))??0);showScene(true);setSceneState(isDone()?3:solved().length,true);renderQuestion();updateScene();if(isDone())finishReviewScene()}
+function openDay(d){if(!available(d))return;if(d>=2&&d<=6){location.href="day0"+d+".html?exam="+exam+(preview?"&preview=1":"");return;}review=isDone();index=review?0:([0,1,2,3].find(i=>!progress.solved.includes(i))??0);showScene(true);setSceneState(isDone()?3:solved().length,true);renderQuestion();updateScene();if(isDone())finishReviewScene()}
 function solved(){return progress.solved.filter(n=>Number.isInteger(n)&&n>=0&&n<=3)}
 const sceneStates=["assets/locations/day01_street_lanterns.png","assets/locations/day01_street_lanterns_state1.webp","assets/locations/day01_street_lanterns_state2.webp","assets/locations/day01_street_lanterns_state3.webp"];
 let currentSceneState=0,sceneTransitionVersion=0;
