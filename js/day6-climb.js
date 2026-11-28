@@ -291,7 +291,7 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>{
 }));
 window.ChronburgRelease.attach({
  day:6,
- onReady:x=>{try{bank=validateBank(x);render()}catch(e){$("releaseStatus").textContent="Ошибка опубликованного комплекта: "+e.message;$("releaseStatus").dataset.status="error"}},
+ onReady:x=>{try{bank=validateBank(x);render();return true}catch(e){$("releaseStatus").textContent="Ошибка опубликованного комплекта: "+e.message;$("releaseStatus").dataset.status="error";return false}},
  onStatus:(msg,kind)=>{const s=$("releaseStatus");s.textContent=msg;s.dataset.status=kind}
 });
 window.addEventListener("pageshow",()=>{if(demo)return;progress=load();render()});
