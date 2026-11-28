@@ -148,7 +148,7 @@ function render(){
  $("meterText").textContent="Освещение "+Math.round(lit/4*100)+"%";
  $("meterFill").style.width=(lit/4*100)+"%";
  $("sceneLabel").textContent=done?"Праздничные гирлянды сияют!":n?"Освещено участков: "+lit+" из 4":"Гирлянды ждут первой искры";
- $("finishPanel").classList.toggle("hidden",!done);
+ $("finishPanel").classList.toggle("hidden",!done||busy);
  $("finishText").textContent=demo?"Демонстрация завершена. Награда не сохранена.":"Праздничные гирлянды вновь освещают Хронбург. Седьмая Искра времени спасена!";
  $("reviewTask").disabled=!tasks()||demo;
  $("openTask").classList.toggle("hidden",done);
