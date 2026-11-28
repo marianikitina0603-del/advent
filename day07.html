@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10263e"><title>Хронбург — 7 декабря. Волна праздничного света</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+<link rel="stylesheet" href="css/chronburg-shared.css">
+<link rel="stylesheet" href="css/chronburg-math.css">
+<link rel="stylesheet" href="css/chronburg-collection.css">
+<link rel="stylesheet" href="css/day7-lights.css">
+</head><body>
+<div class="light-shell">
+<header class="light-header"><div><small>Хронбург · 7 декабря · Центральная площадь</small><h1>✨ Волна праздничного света</h1></div>
+<nav><a class="btn secondary" id="mapLink" href="index.html">← Карта Хронбурга</a><button type="button" class="btn secondary" id="exportProgress">↓ Сохранить результат</button></nav>
+</header>
+<div class="light-layout">
+<main class="light-main">
+<div class="chronburg-date-tabs"><span class="pill">7 декабря</span><span class="pill" id="examPill">ОГЭ</span><span class="pill" id="stagePill">Участок 1 из 3</span></div>
+<div class="light-scene" id="lightScene" aria-label="Интерактивная площадь Хронбурга. По гирляндам пробегают световые импульсы">
+<img class="light-background" src="assets/locations/day07_square_unlit.webp" alt="Заснеженная площадь Хронбурга и часовая башня в сумерках" draggable="false">
+<svg class="garland-overlay" id="garlandSVG" viewBox="0 0 1920 1080" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"></svg>
+<img class="light-magic" id="lightMagic" src="assets/locations/day07_magic_glow.webp" alt="" aria-hidden="true">
+<div class="light-scene-label" id="sceneLabel">Гирлянды ждут первой искры</div>
+<div class="light-scene-meter"><span id="meterText">Освещение 0%</span><div class="light-track"><b id="meterFill"></b></div></div>
+</div>
+<div class="light-release" id="releaseStatus" role="status" aria-live="polite">Проверяем публикацию заданий седьмого дня…</div>
+<div class="light-status" id="status" role="status" aria-live="polite">Площадь ждёт праздничный свет. Реши первое задание!</div>
+<div class="light-score"><div><b id="stageCount">0 из 3 заданий</b><span id="timeLabel">10–20 минут</span></div><div><b id="litCount">0 из 4 световых маршрутов</b><span id="errorCount">Ошибки: 0</span></div></div>
+<div class="light-story"><img src="assets/characters/character_tik.png" alt="Тик — механическая сова"><p id="tikText">Тик: «Восстановим гирлянды по одной! За каждой искрой последует целая волна огней».</p></div>
+<div class="light-actions"><button type="button" class="btn" id="openTask" disabled>🔒 Задания ждут публикации</button><button type="button" class="btn secondary" id="sound">♪ Звук: выкл.</button></div>
+<div class="light-finale hidden" id="finishPanel">
+<img src="assets/ornaments/ornament_day07_garland.webp" alt="Награда седьмого дня — золотая миниатюрная гирлянда">
+<div><strong>Вся площадь сияет!</strong><p id="finishText">Праздничные гирлянды вновь освещают Хронбург. Седьмая Искра времени спасена!</p><a id="finishMap" class="btn" href="index.html">✨ Вернуться на карту</a><button type="button" id="reviewTask" class="btn secondary">↻ Повторить задания</button></div>
+</div>
+</main>
+<aside class="light-side">
+<section><h2>Экзамен</h2><div class="light-exams"><button type="button" id="oge" class="btn selected">ОГЭ</button><button type="button" id="ege" class="btn secondary">ЕГЭ профиль</button></div><p>ОГЭ: 3 математических задания. ЕГЭ профиль: 4. Прогресс хранится раздельно.</p></section>
+<section><h2>Световые маршруты</h2><p>После верного ответа световой импульс пробегает по очередной гирлянде. После ошибки искра останавливается, но уже зажжённые гирлянды не гаснут.</p><div id="routeList" class="light-route-list"></div></section>
+<section id="chronburgCollection"></section>
+<section id="teacherPanel" class="hidden"><h2>🔧 Учительский предпросмотр</h2><p>Демонстрация не записывает результат и не выдаёт награду. Для проверки реальных задач можно загрузить закрытый JSON с ответами локально.</p>
+<div class="light-preview-actions"><button type="button" class="btn secondary" id="demoToggle">Включить демонстрацию</button><button type="button" class="btn secondary" id="demoWrong">✖ Ошибка</button><button type="button" class="btn secondary" id="demoCorrect">✓ Верный ответ</button></div>
+<p id="demoStatus" role="status">Демонстрация выключена.</p><label for="importTasks">Локальный комплект заданий дня 7:</label><input id="importTasks" type="file" accept=".json,application/json"><p id="importStatus">Файл не загружен.</p>
+<button type="button" class="btn secondary" id="resetProgress">↻ Сбросить прогресс этого экзамена</button>
+</section>
+</aside></div></div>
+<div class="light-dialog hidden" id="dialog" role="dialog" aria-modal="true" aria-labelledby="taskTitle">
+<div class="light-paper"><div class="light-dialog-head"><strong>Математический ключ гирлянды</strong><button type="button" id="closeTask" aria-label="Закрыть задание">×</button></div>
+<div class="light-task"><h2 id="taskTitle">Математическое задание</h2><div id="taskText"></div><div id="taskFigure"></div>
+<div class="light-answer"><input id="answer" inputmode="decimal" autocomplete="off" placeholder="Ответ" aria-label="Числовой ответ"><button type="button" class="btn" id="check">Проверить</button></div>
+<div class="light-keypad" id="keys" aria-label="Экранная клавиатура"></div>
+<div class="light-tools"><button type="button" id="reserve" class="btn secondary hidden">↻ Резервный аналог</button><button type="button" id="hint" class="btn secondary">💡 Подсказка</button><button type="button" id="scratchToggle" class="btn secondary">✎ Черновик</button></div>
+<div id="scratchWrap" class="hidden"><canvas id="scratch" width="800" height="180" aria-label="Черновик для записи решений"></canvas><div class="light-tools"><button type="button" id="clearScratch" class="btn secondary">Очистить черновик</button></div></div>
+<div id="taskReply" class="light-reply" role="status" aria-live="polite"></div></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+<script src="js/chronburg-math.js"></script>
+<script src="js/chronburg-collection.js"></script>
+<script src="js/chronburg-release-client.js"></script>
+<script src="js/day7-lights.js"></script>
+</body></html>
