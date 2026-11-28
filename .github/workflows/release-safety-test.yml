@@ -40,18 +40,18 @@ jobs:
           grep -q 'Day 05: locked until 2026-12-05' /tmp/before.txt
           grep -q 'Day 06: locked until 2026-12-06' /tmp/before.txt
           grep -q 'Day 07: locked until 2026-12-07' /tmp/before.txt
-          grep -Eq 'Day 02: (eligible \\(dry run\\)|already published)' /tmp/second.txt
+          grep -Eq 'Day 02: (eligible \(dry run\)|already published)' /tmp/second.txt
           grep -q 'Day 03: locked until 2026-12-03' /tmp/second.txt
           grep -q 'Day 02: eligible (dry run)' /tmp/third.txt
-          grep -Eq 'Day 03: (eligible \\(dry run\\)|already published)' /tmp/third.txt
+          grep -Eq 'Day 03: (eligible \(dry run\)|already published)' /tmp/third.txt
           grep -q 'Day 04: locked until 2026-12-04' /tmp/third.txt
-          grep -Eq 'Day 04: (eligible \\(dry run\\)|already published)' /tmp/fourth.txt
+          grep -Eq 'Day 04: (eligible \(dry run\)|already published)' /tmp/fourth.txt
           grep -q 'Day 05: locked until 2026-12-05' /tmp/fourth.txt
-          grep -Eq 'Day 05: (eligible \\(dry run\\)|already published)' /tmp/fifth.txt
+          grep -Eq 'Day 05: (eligible \(dry run\)|already published)' /tmp/fifth.txt
           grep -q 'Day 06: locked until 2026-12-06' /tmp/fifth.txt
-          grep -Eq 'Day 06: (eligible \\(dry run\\)|already published)' /tmp/sixth.txt
+          grep -Eq 'Day 06: (eligible \(dry run\)|already published)' /tmp/sixth.txt
           grep -q 'Day 07: locked until 2026-12-07' /tmp/sixth.txt
-          grep -Eq 'Day 07: (eligible \\(dry run\\)|already published)' /tmp/seventh.txt
+          grep -Eq 'Day 07: (eligible \(dry run\)|already published)' /tmp/seventh.txt
           # Previously published days must not break the safety test on or after Dec 2.
           # However, a prematurely published FUTURE day remains a hard failure.
           python - <<'PY'
