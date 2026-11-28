@@ -2,7 +2,7 @@
 /* Only publicly released dayXX.json files are fetched. This cannot access
    encrypted future banks or the secret, which stay on the release runner. */
 window.ChronburgRelease = (function () {
-  const releaseDates = {2: "2026-12-02", 3: "2026-12-03", 4: "2026-12-04", 5: "2026-12-05"};
+  const releaseDates = {2: "2026-12-02", 3: "2026-12-03", 4: "2026-12-04", 5: "2026-12-05", 6: "2026-12-06"};
   function moscowDate() {
     const parts = new Intl.DateTimeFormat("en-GB", {
       timeZone: "Europe/Moscow", year: "numeric", month: "2-digit", day: "2-digit"
