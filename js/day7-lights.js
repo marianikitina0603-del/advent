@@ -43,21 +43,59 @@ function svg(tag,attrs={},parent=null){
  if(parent)parent.append(e);
  return e;
 }
+const bulbPalette=[
+ {name:"amber",color:"#ffd17a"},{name:"ruby",color:"#f77b78"},
+ {name:"emerald",color:"#85ecc0"},{name:"sapphire",color:"#8cbbff"}
+];
+function addBulbDefs(stage){
+ const defs=svg("defs",{},stage);
+ const glass=svg("linearGradient",{id:"day7-clear-glass",x1:"0%",y1:"0%",x2:"95%",y2:"100%"},defs);
+ svg("stop",{offset:"0%","stop-color":"#f5f9ff","stop-opacity":".78"},glass);
+ svg("stop",{offset:"33%","stop-color":"#afc5d6","stop-opacity":".65"},glass);
+ svg("stop",{offset:"77%","stop-color":"#38485e","stop-opacity":".9"},glass);
+ svg("stop",{offset:"100%","stop-color":"#a8b8c5","stop-opacity":".85"},glass);
+ const brass=svg("linearGradient",{id:"day7-antique-brass",x1:"0%",y1:"0%",x2:"100%",y2:"10%"},defs);
+ for(const [offset,color] of [["0%","#78502c"],["22%","#f9d997"],["53%","#9d6d3b"],["82%","#e5b970"],["100%","#5d402c"]]){
+  svg("stop",{offset,"stop-color":color},brass);
+ }
+ for(const color of bulbPalette){
+  const halo=svg("radialGradient",{id:"day7-halo-"+color.name},defs);
+  svg("stop",{offset:"0%","stop-color":"#fff7dd","stop-opacity":".96"},halo);
+  svg("stop",{offset:"18%","stop-color":color.color,"stop-opacity":".78"},halo);
+  svg("stop",{offset:"58%","stop-color":color.color,"stop-opacity":".3"},halo);
+  svg("stop",{offset:"100%","stop-color":color.color,"stop-opacity":"0"},halo);
+ }
+}
+function createGlassBulb(parent,point,index){
+ const color=bulbPalette[index%bulbPalette.length];
+ const bulb=svg("g",{class:"garland-bulb",transform:"translate("+point.x+" "+point.y+")"},parent);
+ bulb.style.setProperty("--bulb-color",color.color);
+ // Halos are painted first, so they remain BEHIND the glass and brass fitting.
+ svg("circle",{class:"bulb-halo",cx:0,cy:16,r:45,fill:"url(#day7-halo-"+color.name+")"},bulb);
+ svg("path",{class:"bulb-stem",d:"M0 -13 V-5"},bulb);
+ svg("path",{class:"bulb-brass-cap",d:"M-9 -7 Q0 -11 9 -7 L10 3 Q0 6 -10 3 Z",fill:"url(#day7-antique-brass)"},bulb);
+ svg("path",{class:"bulb-brass-rim",d:"M-11 3 Q0 7 11 3",fill:"none"},bulb);
+ const glassPath="M0 5 C-9 5 -14 14 -14 22 C-14 32 -8 39 0 39 C8 39 14 32 14 22 C14 14 9 5 0 5 Z";
+ svg("path",{class:"bulb-glass",d:glassPath,fill:"url(#day7-clear-glass)"},bulb);
+ svg("path",{class:"bulb-colored-glass",d:glassPath},bulb);
+ svg("path",{class:"bulb-filament",d:"M-5 24 L-3 15 M5 24 L3 15 M-3 15 L0 21 L3 15"},bulb);
+ svg("path",{class:"bulb-glass-highlight",d:"M-8 13 Q-12 21 -9 27"},bulb);
+ svg("circle",{class:"bulb-glass-sheen",cx:6,cy:32,r:2.5},bulb);
+ return bulb;
+}
 function makeRoutes(){
  const stage=$("garlandSVG");stage.replaceChildren();
+ addBulbDefs(stage);
  for(const [i,r] of routes.entries()){
   const group=svg("g",{"data-route":i},stage);
   const wire=svg("path",{d:r.path,class:"garland-wire"},group);
   const litWire=svg("path",{d:r.path,class:"garland-wire-lit"},group);
   const bulbs=[];
-  // SVG coordinates are defined for the same 1920x1080 viewBox as the rendered background.
+  // Preserve all established paths, counts and attachment points.
   const length=wire.getTotalLength();
   for(let n=0;n<r.bulbs;n++){
    const point=wire.getPointAtLength(length*(n+.5)/r.bulbs);
-   const casing=svg("circle",{cx:point.x,cy:point.y-7,r:7,fill:"#c5aa7e",stroke:"#544739","stroke-width":2},group);
-   const bulb=svg("circle",{cx:point.x,cy:point.y+7,r:11,class:"garland-bulb"},group);
-   bulb.style.color=r.color;
-   bulbs.push(bulb);
+   bulbs.push(createGlassBulb(group,point,n));
   }
   lightState[i]={group,wire,litWire,bulbs,length};
  }
@@ -76,7 +114,6 @@ function applyLights(partial=-1,ratio=0){
   r.bulbs.forEach((b,j)=>{
    const on=active||(i===partial&&(j+.5)/r.bulbs.length<=ratio);
    b.classList.toggle("on",on);
-   b.setAttribute("fill",on?routes[i].color:"#4a5866");
   });
  }
  lightState.star.classList.toggle("on",lit===4);
