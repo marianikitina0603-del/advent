@@ -6,13 +6,14 @@ const known=[
  {day:3,name:"Почтовый ящик",file:"assets/ornaments/ornament_day03_mailbox.png"},
  {day:4,name:"Золотая заводная шестерёнка",file:"assets/ornaments/ornament_day04_clockwork_gear.png"},
  {day:5,name:"Компас зимнего пути",file:"assets/ornaments/ornament_day05_winter_compass.png"},
- {day:6,name:"Ярмарочный колокольчик",file:"assets/ornaments/ornament_day06_fair_bell.webp"}
+ {day:6,name:"Ярмарочный колокольчик",file:"assets/ornaments/ornament_day06_fair_bell.webp"},
+ {day:7,name:"Волшебная гирлянда",file:"assets/ornaments/ornament_day07_garland.webp"}
 ];
 function read(key){try{return JSON.parse(localStorage.getItem(key))}catch(e){return null}}
 function earned(exam){
  const p=read("chronburg:2026:"+exam+":v1");
  const d1=!!(p&&Array.isArray(p.completed)&&p.completed.includes(1));
- return new Set([...(d1?[1]:[]),...[2,3,4,5,6].filter(n=>{const x=read("chronburg:2026:day0"+n+":"+exam+":v1");return !!(x&&x.complete===true)})]);
+ return new Set([...(d1?[1]:[]),...[2,3,4,5,6,7].filter(n=>{const x=read("chronburg:2026:day0"+n+":"+exam+":v1");return !!(x&&x.complete===true)})]);
 }
 function elt(type,classes,text){const el=document.createElement(type);if(classes)el.className=classes;if(text!==undefined)el.textContent=text;return el}
 function image(src,alt,classes){const img=document.createElement("img");img.src=src;img.alt=alt;if(classes)img.className=classes;return img}
