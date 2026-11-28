@@ -31,8 +31,9 @@ window.ChronburgRelease = (function () {
         if (payload?.day !== day || payload?.kind !== "chronburg-private-day" + day ||
             !Array.isArray(payload.exams?.oge) || !Array.isArray(payload.exams?.ege))
           throw new Error("bad-release");
+        // The receiving day can reject malformed content; never announce success first.
+        if (onReady(payload) === false) throw new Error("bad-release");
         loaded = true;
-        onReady(payload);
         onStatus("✓ Задания дня загружены автоматически. Можно начинать!", "success");
         if (timer !== null) clearInterval(timer);
       } catch (error) {
