@@ -1,0 +1,85 @@
+/* Chronburg day 6: responsive landscape, separate moving sprites, accessible math. */
+*{box-sizing:border-box}
+body{margin:0;color:#f7f1df;background:radial-gradient(ellipse at 50% -10%,#2b4767,#0b1528 72%);font-family:Manrope,Arial,sans-serif}
+button{cursor:pointer}button:disabled{cursor:not-allowed}
+.hidden{display:none!important}
+.climb-shell{max-width:1530px;margin:auto;padding:16px clamp(12px,2vw,32px) 36px}
+.climb-header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:15px}
+.climb-header small{color:#cbd9e7;letter-spacing:.11em;text-transform:uppercase;font-size:12px}
+.climb-header h1{font:600 clamp(26px,3vw,44px) "Playfair Display",Georgia,serif;color:#f2c783;margin:4px 0}
+.climb-header nav{display:flex;gap:9px;flex-wrap:wrap}
+.climb-header .btn{text-decoration:none}
+.climb-layout{display:grid;grid-template-columns:minmax(0,1fr) 325px;gap:16px;align-items:start}
+.climb-main,.climb-side{background:#132740eb;border:1px solid #bca07883;box-shadow:0 15px 40px #0006;border-radius:20px;min-width:0;overflow:hidden}
+.climb-scene{position:relative;width:100%;aspect-ratio:16/9;isolation:isolate;overflow:hidden;background:#29455b;user-select:none}
+.climb-scene .fair-background{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:0;pointer-events:none}
+.climb-scene .fair-glow{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:6;pointer-events:none;opacity:0;transition:opacity 1.4s}
+.climb-scene.complete .fair-glow{opacity:.94}
+.climb-shadow{position:absolute;z-index:1;left:45%;top:92%;width:21%;height:4%;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(#1724359c,transparent 70%);pointer-events:none}
+.climb-pole{position:absolute;z-index:2;left:45%;top:8%;width:15%;height:84%;object-fit:fill;transform:translateX(-50%);pointer-events:none;filter:drop-shadow(3px 4px 5px #05152486)}
+.climb-finn{position:absolute;z-index:5;left:44.2%;top:84%;width:13%;height:25%;object-fit:contain;transform:translate(-50%,-50%);pointer-events:none;filter:drop-shadow(2px 6px 5px #071625a3);transition:top 1.35s cubic-bezier(.15,.55,.3,1)}
+.climb-finn.climbing{animation:finnGrip .3s ease-in-out infinite alternate;transform-origin:50% 63%}
+.climb-finn.victory{filter:drop-shadow(0 0 16px #f4d28fcc)}
+@keyframes finnGrip{from{transform:translate(-50%,-50%) rotate(-2deg)}to{transform:translate(-50%,-50%) rotate(2deg)}}
+.climb-gifts{position:absolute;inset:0;z-index:4;pointer-events:none}
+.climb-gift{position:absolute;width:7%;height:16%;object-fit:contain;transform:translate(-50%,-50%);filter:drop-shadow(0 5px 5px #0007);transition:left .85s ease-in-out,top .85s cubic-bezier(.3,.15,.65,1),transform .85s ease-in-out,filter .6s;will-change:top,left}
+.climb-gift.fallen{transform:translate(-50%,-50%) rotate(-20deg);filter:drop-shadow(0 5px 3px #16283a)}
+.climb-gift.restoring{filter:drop-shadow(0 0 14px #ffe4a8)}
+.climb-markers{position:absolute;inset:0;z-index:3;pointer-events:none}
+.climb-marker{position:absolute;left:58%;width:4.7%;height:9%;object-fit:contain;transform:translate(-50%,-50%);filter:grayscale(.95) brightness(.6);opacity:.8;transition:filter .6s,opacity .6s}
+.climb-marker.lit{filter:drop-shadow(0 0 11px #ffd68a);opacity:1}
+.climb-scene-caption{position:absolute;z-index:7;left:2%;top:3%;max-width:35%;font-size:clamp(10px,1.3vw,14px);padding:8px 11px;color:#ffe4b2;background:#10263ed9;border:1px solid #b99a69;border-radius:12px;line-height:1.5}
+.climb-scene-meter{position:absolute;z-index:7;right:2%;top:3%;width:22%;padding:10px 12px;color:#ffe4b2;background:#10263ee8;border:1px solid #b99a69;border-radius:12px;font-size:clamp(10px,1.3vw,14px);font-weight:750}
+.climb-meter-track{height:9px;margin-top:8px;background:#0b1c2f;border-radius:10px;overflow:hidden;border:1px solid #9a7c54}
+.climb-meter-track b{height:100%;width:0;display:block;background:linear-gradient(90deg,#bd8d40,#ffe1a0);transition:width 1.2s ease}
+.release-status{padding:10px 16px;background:#192f49;color:#f1d5a2;border-bottom:1px solid #7a664c6b;font:600 12px/1.6 Manrope,Arial,sans-serif}
+.release-status[data-status="success"]{background:#1d453b;color:#d9f9e9}
+.release-status[data-status="error"]{background:#53302f;color:#ffe2d5}
+.climb-status{padding:12px 16px;font-weight:650;line-height:1.5;color:#ffdfa7;background:#1a3550;border-bottom:1px solid #69819a70}
+.climb-bottom{display:flex;justify-content:space-between;gap:12px;padding:13px 17px;border-bottom:1px solid #69819a65;flex-wrap:wrap}
+.climb-bottom>div{display:flex;gap:6px;flex-direction:column}
+.climb-bottom span{color:#bbcadb;font-size:12px}
+.climb-story{display:flex;align-items:center;gap:13px;margin:15px;padding:10px;border:2px solid #b8945f;border-radius:14px;background:#ead9b6;color:#48301f}
+.climb-story img{width:72px;height:80px;object-fit:contain;flex:0 0 auto}
+.climb-story p{margin:0;line-height:1.55;font-size:14px}
+.climb-actions{display:flex;gap:11px;padding:0 15px 17px;flex-wrap:wrap}
+.climb-side{padding:16px;display:flex;flex-direction:column;gap:14px}
+.climb-side section{border:1px solid #71869a61;border-radius:14px;padding:13px;background:#1c3551}
+.climb-side h2{color:#ffdda4;font:600 22px "Playfair Display",Georgia,serif;margin:0 0 10px}
+.climb-side p{color:#d2deeb;font-size:13px;line-height:1.55;margin:9px 0}
+.climb-exams{display:flex;gap:8px}
+.climb-exams button{flex:1;padding:9px 8px;font-size:12px}
+.climb-exams .selected{background:#b18a4a;color:#061a2e}
+.climb-level-list{display:grid;gap:7px;margin-top:12px}
+.climb-level{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:9px;background:#173049;border-radius:10px;border:1px solid #54718b;color:#dde7e9;font-size:12px}
+.climb-level.current{border-color:#e4ba74;background:#4f402d}
+.climb-level.complete{border-color:#8ddab3;background:#254b43}
+.climb-demo-controls{display:flex;gap:8px;flex-wrap:wrap}
+.climb-demo-controls button{font-size:12px;padding:8px}
+.climb-teacher input{display:block;width:100%;margin:12px 0;color:#f6f0e2}
+.climb-final{display:flex;align-items:center;gap:20px;margin:15px;padding:15px;border:2px solid #cfac77;border-radius:16px;background:linear-gradient(125deg,#194e42,#263a53)}
+.climb-final img{width:110px;height:110px;object-fit:contain}
+.climb-final strong{color:#ffe3af;font:600 22px "Playfair Display",Georgia,serif}
+.climb-final p{line-height:1.5}
+.climb-final .btn{display:inline-block;margin:4px 8px 4px 0;text-decoration:none}
+.climb-dialog{position:fixed;inset:0;z-index:2000;padding:16px;background:#050d1bdb;backdrop-filter:blur(7px);display:grid;place-items:center}
+.climb-paper{width:min(870px,100%);max-height:93dvh;overflow:auto;padding:13px;border:2px solid #d5af77;border-radius:19px;background:linear-gradient(140deg,#27405b,#0d2137);box-shadow:0 25px 85px #000c}
+.climb-dialog-head{display:flex;justify-content:space-between;align-items:center;color:#ffdda4;font:600 18px "Playfair Display",Georgia,serif;padding:2px 4px 12px}
+.climb-dialog-head button{width:40px;height:40px;border-radius:50%;font-size:24px;color:white;background:#2c4360;border:1px solid #d4ae76}
+.climb-task{background:#f4ecd8;color:#302c26;border:5px ridge #b18c57;border-radius:15px;padding:20px}
+.climb-task h2{margin:0 0 14px;font-size:23px}
+#taskFigure{max-width:100%;overflow:auto}
+#taskFigure img{display:block;max-width:100%;max-height:340px;object-fit:contain;margin:12px auto}
+#taskFigure table{border-collapse:collapse;max-width:100%;margin:10px auto;color:#302c26}
+#taskFigure th,#taskFigure td{border:1px solid #927952;padding:7px 10px}
+.climb-answer{display:flex;gap:9px;justify-content:center;align-items:center;margin-top:15px;flex-wrap:wrap}
+.climb-answer input{background:#fff;color:#2d2a24;caret-color:#2d2a24;padding:10px;border:2px solid #a48d6b;border-radius:11px;width:min(230px,100%);font-size:22px;text-align:center}
+.climb-keypad{display:flex;flex-wrap:wrap;gap:5px;max-width:390px;justify-content:center;margin:10px auto}
+.climb-keypad button{color:#302820;background:#fff9e9;border:1px solid #bba178;border-radius:7px;min-width:37px;min-height:36px;font-weight:750}
+.climb-tools{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:11px auto}
+.climb-tools .btn{font-size:12px;padding:9px 11px}
+.climb-reply{background:#e4d8c0;border-radius:10px;min-height:40px;padding:9px;color:#433321;line-height:1.6;font-size:13px}
+#scratch{width:100%;height:180px;display:block;background:repeating-linear-gradient(white 0,white 21px,#d2e0ea 22px);border:1px solid #a7b3bd;border-radius:8px;touch-action:none}
+@media(max-width:1050px){.climb-layout{grid-template-columns:1fr}.climb-side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.climb-side section{min-width:0}}
+@media(max-width:660px){.climb-shell{padding:9px}.climb-header nav{width:100%}.climb-header nav .btn{flex:1;font-size:11px;text-align:center}.climb-side{display:flex}.climb-story{margin:9px;font-size:12px}.climb-story img{width:52px;height:62px}.climb-story p{font-size:12px}.climb-scene-caption{font-size:9px;padding:4px 6px}.climb-scene-meter{padding:5px 6px;font-size:9px}.climb-scene-meter .climb-meter-track{height:5px;margin-top:4px}.climb-pole{width:16%}.climb-finn{width:15%}.climb-gift{width:8%}.climb-task{padding:11px;border-width:3px}.climb-paper{padding:7px;max-height:96dvh}.climb-final{flex-wrap:wrap}.climb-final img{width:75px;height:75px}}
+@media(prefers-reduced-motion:reduce){.climb-finn,.climb-gift,.climb-marker,.climb-meter-track b,.fair-glow{transition:none!important}.climb-finn.climbing{animation:none!important}}
