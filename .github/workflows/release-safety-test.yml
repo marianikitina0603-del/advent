@@ -7,11 +7,24 @@ on:
       - ".github/workflows/release-days.yml"
       - "scripts/release_chronburg.py"
       - "data/locked/**"
-      - "assets/pic/**"
+      - "assets/**"
+      - "*.html"
+      - "js/**"
+      - "css/**"
+      - "scripts/check_chronburg_static.py"
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
+  static-scenes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check 7 scenes, static image links and release manifest
+        run: python scripts/check_chronburg_static.py
   dry-run-only:
     runs-on: ubuntu-latest
     steps:
