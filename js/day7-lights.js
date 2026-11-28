@@ -342,7 +342,7 @@ $("clearScratch").onclick=()=>ctx.clearRect(0,0,canvas.width,canvas.height);
 progress=load();visualLitCount=progress.complete?4:progress.solved.length;makeRoutes();render();
 window.ChronburgRelease.attach({
  day:7,
- onReady:x=>{try{bank=validateBank(x);render()}catch(e){$("releaseStatus").textContent="Ошибка комплекта: "+e.message;$("releaseStatus").dataset.status="error"}},
+ onReady:x=>{try{bank=validateBank(x);render();return true}catch(e){$("releaseStatus").textContent="Ошибка комплекта: "+e.message;$("releaseStatus").dataset.status="error";return false}},
  onStatus:(msg,kind)=>{const s=$("releaseStatus");s.textContent=msg;s.dataset.status=kind}
 });
 window.addEventListener("pageshow",()=>{if(demo)return;stopAnimation();progress=load();visualLitCount=progress.complete?4:progress.solved.length;render()});
