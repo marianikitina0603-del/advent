@@ -153,7 +153,8 @@ function drawTask(){
   $("taskFigure").append(table);
  }
  $("answer").value="";
- $("reserve").classList.toggle("hidden",review||reserve);
+ const hasMistake=progress.errors.some(e=>e.task===activeTask+1);
+ $("reserve").classList.toggle("hidden",review||reserve||!hasMistake);
  setReply(review?"Повторение: результат не изменится.":"Правильный ответ поднимет Финна на следующий уровень.");
 }
 function openTask(index,asReview=false){
