@@ -100,6 +100,11 @@ function render(options={}){
   lost?"Тик: «Подарок упал, но ничего не потеряно навсегда. Исправь ответ, и мы всё вернём!»":
   n?"Тик: «Отлично! Продолжаем подъём. Все подарки на месте!»":"Тик: «Каждый верный ответ поможет Финну подняться. А упавшие подарки мы обязательно вернём!»";
  $("mapLink").href=mapLink();$("rewardMapLink").href=mapLink();
+ const dateParts=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Moscow",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date());
+ const dateVal=k=>dateParts.find(x=>x.type===k)?.value||"00";
+ const currentDate=dateVal("year")+"-"+dateVal("month")+"-"+dateVal("day");
+ $("nextDayLink").classList.toggle("hidden",!finished||(!preview&&currentDate<"2026-12-07"));
+ $("nextDayLink").href="day07.html?exam="+exam+(preview?"&preview=1":"");
  $("teacherPanel").classList.toggle("hidden",!preview);
  $("demoToggle").textContent=demo?"Выключить демонстрацию":"Включить демонстрацию";
  $("demoWrong").disabled=!demo||finished||busy;
