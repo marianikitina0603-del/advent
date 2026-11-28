@@ -40,22 +40,30 @@ jobs:
           grep -q 'Day 05: locked until 2026-12-05' /tmp/before.txt
           grep -q 'Day 06: locked until 2026-12-06' /tmp/before.txt
           grep -q 'Day 07: locked until 2026-12-07' /tmp/before.txt
-          grep -q 'Day 02: eligible (dry run)' /tmp/second.txt
+          grep -Eq 'Day 02: (eligible \\(dry run\\)|already published)' /tmp/second.txt
           grep -q 'Day 03: locked until 2026-12-03' /tmp/second.txt
           grep -q 'Day 02: eligible (dry run)' /tmp/third.txt
-          grep -q 'Day 03: eligible (dry run)' /tmp/third.txt
+          grep -Eq 'Day 03: (eligible \\(dry run\\)|already published)' /tmp/third.txt
           grep -q 'Day 04: locked until 2026-12-04' /tmp/third.txt
-          grep -q 'Day 04: eligible (dry run)' /tmp/fourth.txt
+          grep -Eq 'Day 04: (eligible \\(dry run\\)|already published)' /tmp/fourth.txt
           grep -q 'Day 05: locked until 2026-12-05' /tmp/fourth.txt
-          grep -q 'Day 05: eligible (dry run)' /tmp/fifth.txt
+          grep -Eq 'Day 05: (eligible \\(dry run\\)|already published)' /tmp/fifth.txt
           grep -q 'Day 06: locked until 2026-12-06' /tmp/fifth.txt
-          grep -q 'Day 06: eligible (dry run)' /tmp/sixth.txt
+          grep -Eq 'Day 06: (eligible \\(dry run\\)|already published)' /tmp/sixth.txt
           grep -q 'Day 07: locked until 2026-12-07' /tmp/sixth.txt
-          grep -q 'Day 07: eligible (dry run)' /tmp/seventh.txt
-          test ! -e data/day02.json
-          test ! -e data/day03.json
-          test ! -e data/day04.json
-          test ! -e data/day05.json
-          test ! -e data/day06.json
-          test ! -e data/day07.json
-          echo 'PASS: key decrypts, date boundaries valid, future tasks remain unpublished'
+          grep -Eq 'Day 07: (eligible \\(dry run\\)|already published)' /tmp/seventh.txt
+          # Previously published days must not break the safety test on or after Dec 2.
+          # However, a prematurely published FUTURE day remains a hard failure.
+          python - <<'PY'
+          from datetime import datetime, date
+          from pathlib import Path
+          from zoneinfo import ZoneInfo
+          today = datetime.now(ZoneInfo("Europe/Moscow")).date()
+          for day in range(2, 8):
+              release_date = date(2026, 12, day)
+              output = Path(f"data/day{day:02d}.json")
+              if today < release_date:
+                  assert not output.exists(), f"Future day {day} leaked before {release_date}"
+          print("PASS: no unreleased future bank has been published")
+          PY
+          echo 'PASS: key decrypts, date boundaries valid, released files match banks'
