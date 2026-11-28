@@ -83,6 +83,11 @@ function render(){
  $("mathCount").textContent=exam==="oge"?"3 математических задания":"4 математических задания";
  $("timer").textContent=exam==="oge"?"15–17 минут":"14–15 минут";
  $("finished").classList.toggle("hidden",!done);
+ const today=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Moscow",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date());
+ const value=part=>today.find(x=>x.type===part)?.value||"00";
+ const currentDate=value("year")+"-"+value("month")+"-"+value("day");
+ $("nextDayLink").classList.toggle("hidden",!done||(!preview&&currentDate<"2026-12-06"));
+ $("nextDayLink").href="day06.html?exam="+exam+(preview?"&preview=1":"");
  $("mapArea").classList.toggle("hidden",done);
  $("choiceInfo").classList.toggle("hidden",done);
  $("startMath").classList.toggle("hidden",done||previewDemo||taskUnlocked());
