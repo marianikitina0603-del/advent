@@ -259,7 +259,7 @@ $("previewTools").classList.toggle("hidden",!preview);
 progress=load();moveInitial();
 window.ChronburgRelease.attach({
  day:5,
- onReady:x=>{try{bank=validateBank(x);render()}catch(err){$("status").textContent="Ошибка опубликованного комплекта: "+err.message}},
+ onReady:x=>{try{bank=validateBank(x);render();return true}catch(err){$("status").textContent="Ошибка опубликованного комплекта: "+err.message;return false}},
  onStatus:(message,kind)=>{$("status").textContent=message;$("status").dataset.status=kind}
 });
 window.addEventListener("pageshow",()=>{if(!previewDemo){progress=load();render()}});
